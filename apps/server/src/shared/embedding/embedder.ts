@@ -53,6 +53,8 @@ const queryPrompt = (query: string): string => `task: search result | query: ${q
 
 const documentPrompt = (text: string): string => `title: none | text: ${text}`;
 
+const FETCH_DEVICE = "cpu";
+
 const preferLocalModels = (directory: string): void => {
   Object.assign(env, { localModelPath: directory, allowRemoteModels: false, useFSCache: false });
 };
@@ -123,6 +125,24 @@ const make = (
     ),
 });
 
+const loadConfig = Effect.gen(function* loadConfig() {
+  const config = yield* attempt(() => AutoConfig.from_pretrained(MODEL_ID));
+  Reflect.deleteProperty(config, "audio_config");
+  return config;
+});
+
+/** @internal */
+const fetchModel = Effect.fn("fetchModel")(function* fetchModelFiles(directory: string) {
+  yield* Effect.sync(() => {
+    Object.assign(env, { cacheDir: directory, allowLocalModels: false, allowRemoteModels: true });
+  });
+  const config = yield* loadConfig;
+  yield* loadProcessor;
+  yield* attempt(() =>
+    AutoModel.from_pretrained(MODEL_ID, { config, device: FETCH_DEVICE, dtype: DTYPE }),
+  );
+});
+
 /** @internal */
 const embedderLayer = Layer.effect(
   Embedder,
@@ -131,13 +151,12 @@ const embedderLayer = Layer.effect(
     yield* Effect.sync(() => {
       pipe(modelDirectory, Option.map(preferLocalModels));
     });
-    const config = yield* attempt(() => AutoConfig.from_pretrained(MODEL_ID));
-    Reflect.deleteProperty(config, "audio_config");
+    const config = yield* loadConfig;
     const { processor, imageToken } = yield* loadProcessor;
     const { model, device } = yield* loadModel(config);
     return Embedder.of({ device, ...make(embedWith(model), processor, imageToken) });
   }),
 );
 
-export { Embedder, embedderLayer };
+export { Embedder, embedderLayer, fetchModel };
 export type { Vector };

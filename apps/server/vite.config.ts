@@ -1,6 +1,17 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  pack: {
+    entry: { main: "src/app/main.ts" },
+    outDir: "dist",
+    platform: "node",
+    format: "esm",
+    deps: {
+      alwaysBundle: [/./u],
+      onlyBundle: false,
+      neverBundle: ["@huggingface/transformers", "sqlite-vec"],
+    },
+  },
   run: {
     tasks: {
       serve: {
