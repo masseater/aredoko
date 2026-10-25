@@ -2,7 +2,7 @@
 
 - 製品は UPM パッケージ `dev.masseater.aredoko` である。開発用の Unity プロジェクト `apps/unity` に埋め込んで置き、そのプロジェクトで動かして確かめる。
 - インデックスの作成・ランキング・BOOTH の商品情報の取得のように Unity の API が要らない処理は、Unity を参照しないアセンブリに分け、Unity を起動せずにテストできるようにする。
-- 埋め込みは EmbeddingGemma 2 を Unity の Inference Engine（`com.unity.ai.inference`）で動かす。3D モデルは複数の向きからレンダリングした画像を埋め込む。キャプションを生成してから埋め込む方式は取らない。
+- 埋め込みは EmbeddingGemma 2 を Sentis 2.1（`com.unity.sentis`）で動かす。VRChat SDK の Unity 2022.3.22f1 で動かすためで、Unity 6 が要る後継の Inference Engine には VRChat SDK が Unity 6 に移ってから切り替える。3D モデルは複数の向きからレンダリングした画像を埋め込む。キャプションを生成してから埋め込む方式は取らない。
 - 検索の精度は、検索語と正解のアセットを組にした評価セットで測る。ランキングやモデルを変えるときは、変える前と後の結果を比べる。評価は日本語の検索語を主にする。
 
 ## コマンド
