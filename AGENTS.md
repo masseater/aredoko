@@ -11,7 +11,7 @@
 - 常駐サーバーは Windows 10・11 の x64 で動かす。開発とテストはクラウドの Linux でも完結させ、Windows でしか確かめられない処理を作らない。
 - アセットと検索語は PC の外へ送らない。外部への通信は BOOTH の商品ページの公開 JSON の取得だけにする。
 - BOOTH のログイン状態・Cookie・購入履歴は読まない。
-- BOOTH Library Manager と KonoAsset のデータは読み取りだけにし、書き換えない。KonoAsset のコードは流用しない。
+- BOOTH Library Manager のデータは読み取りだけにし、書き換えない。KonoAsset はデータもコードも使わない。
 - 管理用のデスクトップアプリに Electron は使わない。
 - 推論や処理に従量課金の API を使わない。
 
