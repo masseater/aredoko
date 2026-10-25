@@ -41,7 +41,7 @@ jobs:
           @{ name = 'aredoko-server'; private = $true; type = 'module'; dependencies = $versions } |
             ConvertTo-Json | Set-Content "$env:RESOURCES/server/package.json"
       - name: Install the native dependencies of the server
-        run: vp install --ignore-workspace --prod --config.node-linker=hoisted
+        run: vp install --prod --no-frozen-lockfile -- --ignore-workspace --config.node-linker=hoisted
         working-directory: apps/desktop/src-tauri/resources/server
       - name: Drop the onnxruntime binaries for other platforms
         run: |
