@@ -4,7 +4,7 @@
     "preset-ja-technical-writing": {
       "sentence-length": { "max": 120 },
       "ja-no-mixed-period": { "allowPeriodMarks": [":"] },
-      "no-mix-dearu-desumasu": { "preferInBody": "である", "preferInList": "である" },
+      "no-mix-dearu-desumasu": { "preferInBody": "", "preferInList": "" },
       "max-kanji-continuous-len": {
         "max": 6,
         "allow": [
