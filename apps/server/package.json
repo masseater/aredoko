@@ -10,6 +10,8 @@
     "#shared/*": "./src/shared/*/index.ts"
   },
   "scripts": {
+    "bundle": "vp pack",
+    "fetch-model": "node src/app/fetch-model.ts",
     "test": "vp test run",
     "steiger": "steiger ./src",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet"
