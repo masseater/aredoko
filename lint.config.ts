@@ -192,6 +192,8 @@ const generated = [
   "AGENTS.md",
   "skills-lock.json",
   "CHANGELOG.md",
+  "**/src-tauri/target/**",
+  "**/src-tauri/gen/**",
 ];
 
 const decisionPluginName = decisionPlugin.meta.name;

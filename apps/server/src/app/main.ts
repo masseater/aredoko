@@ -1,26 +1,14 @@
 import { NodeRuntime, NodeSocketServer } from "@effect/platform-node";
-import { Effect, Layer, Schema } from "effect";
+import { Effect, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
-import { Rpc, RpcGroup, RpcSerialization, RpcServer } from "effect/rpc";
+import { RpcSerialization, RpcServer } from "effect/rpc";
+import { EmbeddingRpcs } from "protocol";
 
-import { Embedder, EmbeddingFailed, Vector, embedderLive } from "#shared/embedding";
+import { Embedder, embedderLive } from "#shared/embedding";
 
 const HOST = "127.0.0.1";
 const PORT = 52_810;
-
-class EmbeddingRpcs extends RpcGroup.make(
-  Rpc.make("EmbedQuery", {
-    payload: { query: Schema.String },
-    success: Vector,
-    error: EmbeddingFailed,
-  }),
-  Rpc.make("EmbedImage", {
-    payload: { path: Schema.String },
-    success: Vector,
-    error: EmbeddingFailed,
-  }),
-) {}
 
 const handlers = EmbeddingRpcs.toLayer(
   Effect.gen(function* handlers() {

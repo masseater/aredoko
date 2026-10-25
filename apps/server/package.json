@@ -15,7 +15,8 @@
   "dependencies": {
     "@effect/platform-node": "catalog:",
     "@huggingface/transformers": "catalog:stack",
-    "effect": "catalog:stack"
+    "effect": "catalog:stack",
+    "protocol": "workspace:*"
   },
   "devDependencies": {
     "@feature-sliced/steiger-plugin": "0.8.0",

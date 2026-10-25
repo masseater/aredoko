@@ -69,7 +69,10 @@ export default defineConfig({
     ],
     rules: {
       "vite-plus/prefer-vite-plus-imports": "error",
-      "no-comments/disallowComments": ["error", { allow: ["oxlint-disable", "eslint-disable"] }],
+      "no-comments/disallowComments": [
+        "error",
+        { allow: ["oxlint-disable", "eslint-disable", String.raw`\* @internal \*?$`] },
+      ],
       ...tanstackQueryRules,
       ...tanstackRouterRules,
       "drizzle/enforce-delete-with-where": "error",
