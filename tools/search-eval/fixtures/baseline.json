@@ -1,14 +1,14 @@
 {
   "named": {
-    "hitAt1": 0.9117647058823529,
+    "hitAt1": 0.9852941176470589,
     "hitAt5": 1,
     "hitAt10": 1,
-    "mrr": 0.9534313725490198,
+    "mrr": 0.9926470588235294,
     "queries": [
       {
         "query": "木の揺り椅子",
         "rank": 1,
-        "top": ["Rockingchair_01", "WoodenChair_01", "painted_wooden_chair_01"]
+        "top": ["Rockingchair_01", "WoodenChair_01", "chinese_armchair"]
       },
       {
         "query": "白いプラスチックの椅子",
@@ -18,17 +18,17 @@
       {
         "query": "学校の青い椅子",
         "rank": 1,
-        "top": ["SchoolChair_01", "plastic_monobloc_chair_01", "painted_wooden_chair_01"]
+        "top": ["SchoolChair_01", "painted_wooden_chair_01", "plastic_monobloc_chair_01"]
       },
       {
         "query": "黒い革のソファ",
         "rank": 1,
-        "top": ["sofa_02", "Sofa_01", "mid_century_lounge_chair"]
+        "top": ["sofa_02", "Ottoman_01", "Sofa_01"]
       },
       {
         "query": "茶色い革のラウンジチェア",
         "rank": 1,
-        "top": ["mid_century_lounge_chair", "brown_leather", "chinese_armchair"]
+        "top": ["mid_century_lounge_chair", "Ottoman_01", "brown_leather"]
       },
       {
         "query": "白く塗られた木の椅子",
@@ -38,42 +38,42 @@
       {
         "query": "緑の布張りのアンティークの肘掛け椅子",
         "rank": 1,
-        "top": ["GreenChair_01", "ArmChair_01", "chinese_armchair"]
+        "top": ["GreenChair_01", "ArmChair_01", "CoffeeTable_01"]
       },
       {
         "query": "花柄のクッションの古い長椅子",
         "rank": 1,
-        "top": ["vintage_day_bed", "chinese_armchair", "GreenChair_01"]
+        "top": ["vintage_day_bed", "chinese_armchair", "floral_jacquard"]
       },
       {
         "query": "丸い木のテーブル",
         "rank": 1,
-        "top": ["round_wooden_table_01", "WoodenTable_02", "wooden_picnic_table"]
+        "top": ["round_wooden_table_01", "WoodenTable_02", "bar_chair_round_01"]
       },
       {
         "query": "木のピクニックテーブル",
         "rank": 1,
-        "top": ["wooden_picnic_table", "dining_table", "round_wooden_table_01"]
+        "top": ["wooden_picnic_table", "WoodenTable_02", "small_wooden_table_01"]
       },
       {
         "query": "水色の装飾が付いたアンティークのローテーブル",
-        "rank": 3,
-        "top": ["vintage_day_bed", "gothic_coffee_table", "CoffeeTable_01"]
+        "rank": 1,
+        "top": ["CoffeeTable_01", "gothic_coffee_table", "vintage_day_bed"]
       },
       {
         "query": "灰色の金属の事務机",
         "rank": 1,
-        "top": ["metal_office_desk", "industrial_coffee_table", "corrugated_iron"]
+        "top": ["metal_office_desk", "modern_coffee_table_01", "industrial_coffee_table"]
       },
       {
         "query": "チェック柄のテーブルクロスをかけた机",
-        "rank": 2,
-        "top": ["gingham_check", "dining_table", "metal_office_desk"]
+        "rank": 1,
+        "top": ["dining_table", "gingham_check", "metal_office_desk"]
       },
       {
         "query": "シャンデリア",
         "rank": 1,
-        "top": ["Chandelier_01", "brass_candleholders", "wooden_candlestick"]
+        "top": ["Chandelier_01", "brass_candleholders", "ceiling_fan"]
       },
       {
         "query": "古いランタン",
@@ -93,17 +93,17 @@
       {
         "query": "電球",
         "rank": 1,
-        "top": ["lightbulb_01", "street_lamp_01", "vintage_oil_lamp"]
+        "top": ["lightbulb_01", "street_lamp_01", "ceiling_fan"]
       },
       {
         "query": "バナナ",
         "rank": 1,
-        "top": ["bananas", "food_kiwi_01", "food_apple_01"]
+        "top": ["bananas", "bamboo_wall", "carrot_cake"]
       },
       {
         "query": "赤いリンゴ",
         "rank": 1,
-        "top": ["food_apple_01", "strawberry_chocolate_cake", "food_avocado_01"]
+        "top": ["food_apple_01", "lifebuoy", "strawberry_chocolate_cake"]
       },
       {
         "query": "いちごのケーキ",
@@ -113,22 +113,22 @@
       {
         "query": "クロワッサン",
         "rank": 1,
-        "top": ["croissant", "hamburger_buns", "curly_teddy_natural"]
+        "top": ["croissant", "hamburger_buns", "carrot_cake"]
       },
       {
         "query": "白い陶器のティーセット",
         "rank": 1,
-        "top": ["tea_set_01", "ceramic_vase_01", "antique_ceramic_vase_01"]
+        "top": ["tea_set_01", "jug_01", "ceramic_vase_01"]
       },
       {
         "query": "ワインのボトル",
         "rank": 1,
-        "top": ["wine_bottles_01", "jug_01", "ceramic_vase_01"]
+        "top": ["wine_bottles_01", "brass_vase_01", "jug_01"]
       },
       {
         "query": "青い模様の陶器の壺",
         "rank": 1,
-        "top": ["antique_ceramic_vase_01", "ceramic_vase_01", "planter_pot_clay"]
+        "top": ["antique_ceramic_vase_01", "ceramic_vase_01", "blue_metal_plate"]
       },
       {
         "query": "素焼きの植木鉢",
@@ -143,37 +143,37 @@
       {
         "query": "ブラウン管のテレビ",
         "rank": 1,
-        "top": ["Television_01", "vintage_microwave", "hessian_230"]
+        "top": ["Television_01", "vintage_microwave", "brown_leather"]
       },
       {
         "query": "ラジカセ",
         "rank": 1,
-        "top": ["boombox", "cassette_player", "corrugated_iron"]
+        "top": ["boombox", "cassette_player", "Television_01"]
       },
       {
         "query": "古いノートパソコン",
         "rank": 1,
-        "top": ["classic_laptop", "vintage_microwave", "gaming_console"]
+        "top": ["classic_laptop", "Television_01", "metal_office_desk"]
       },
       {
         "query": "丸い壁掛け時計",
         "rank": 1,
-        "top": ["wall_clock", "vintage_grandfather_clock_01", "round_wooden_table_01"]
+        "top": ["wall_clock", "vintage_grandfather_clock_01", "bar_chair_round_01"]
       },
       {
         "query": "大きな振り子の置き時計",
         "rank": 1,
-        "top": ["vintage_grandfather_clock_01", "wall_clock", "wooden_candlestick"]
+        "top": ["vintage_grandfather_clock_01", "wall_clock", "desk_lamp_arm_01"]
       },
       {
         "query": "ウクレレ",
         "rank": 1,
-        "top": ["Ukulele_01", "corrugated_iron", "oak_veneer_01"]
+        "top": ["Ukulele_01", "oak_veneer_01", "thatch_roof_angled"]
       },
       {
         "query": "双眼鏡",
         "rank": 1,
-        "top": ["vintage_binocular", "magnifying_glass_01", "gingham_check"]
+        "top": ["vintage_binocular", "magnifying_glass_01", "Camera_01"]
       },
       {
         "query": "棚に並んだ百科事典",
@@ -183,27 +183,27 @@
       {
         "query": "ゴシック調の木のベッド",
         "rank": 1,
-        "top": ["GothicBed_01", "GothicCabinet_01", "vintage_day_bed"]
+        "top": ["GothicBed_01", "GothicCabinet_01", "WoodenChair_01"]
       },
       {
         "query": "赤いドラム缶",
-        "rank": 2,
-        "top": ["metal_jerrycan", "Barrel_01", "metal_trash_can"]
+        "rank": 1,
+        "top": ["Barrel_01", "metal_jerrycan", "metal_trash_can"]
       },
       {
         "query": "段ボール箱",
         "rank": 1,
-        "top": ["cardboard_box_01", "plastic_crate_01", "metal_toolbox"]
+        "top": ["cardboard_box_01", "plastic_crate_01", "corrugated_iron"]
       },
       {
         "query": "赤い携行缶",
         "rank": 1,
-        "top": ["metal_jerrycan", "metal_trash_can", "plastic_crate_01"]
+        "top": ["metal_jerrycan", "Barrel_01", "plastic_crate_01"]
       },
       {
         "query": "赤いプラスチックのケース",
         "rank": 1,
-        "top": ["plastic_crate_01", "plastic_broom", "plastic_monobloc_chair_01"]
+        "top": ["plastic_crate_01", "metal_jerrycan", "screwdriver"]
       },
       {
         "query": "のこぎり",
@@ -213,82 +213,82 @@
       {
         "query": "ほうき",
         "rank": 1,
-        "top": ["plastic_broom", "thatch_roof_angled", "bamboo_wall"]
+        "top": ["plastic_broom", "dandelion_01", "thatch_roof_angled"]
       },
       {
         "query": "ダーツの的",
         "rank": 1,
-        "top": ["dartboard", "thatch_roof_angled", "dandelion_01"]
+        "top": ["dartboard", "hatchet", "ceiling_fan"]
       },
       {
         "query": "金の額縁に入った風景画",
         "rank": 1,
-        "top": ["fancy_picture_frame_01", "corrugated_iron", "ornate_mirror_01"]
+        "top": ["fancy_picture_frame_01", "ornate_mirror_01", "tea_set_01"]
       },
       {
         "query": "救命用の浮き輪",
         "rank": 1,
-        "top": ["lifebuoy", "WetFloorSign_01", "metal_jerrycan"]
+        "top": ["lifebuoy", "hatchet", "Ukulele_01"]
       },
       {
         "query": "黄色い注意看板",
         "rank": 1,
-        "top": ["WetFloorSign_01", "lemon", "blue_metal_plate"]
+        "top": ["WetFloorSign_01", "Barrel_01", "dandelion_01"]
       },
       {
         "query": "天井のファン",
         "rank": 1,
-        "top": ["ceiling_fan", "Chandelier_01", "lightbulb_01"]
+        "top": ["ceiling_fan", "Chandelier_01", "roof_slates_02"]
       },
       {
         "query": "古いカメラ",
         "rank": 1,
-        "top": ["Camera_01", "vintage_binocular", "vintage_microwave"]
+        "top": ["Camera_01", "vintage_binocular", "Television_01"]
       },
       {
         "query": "ジーンズの生地",
         "rank": 1,
-        "top": ["denim_fabric", "floral_jacquard", "wool_boucle"]
+        "top": ["denim_fabric", "hessian_230", "wool_boucle"]
       },
       {
         "query": "緑と白のギンガムチェック",
         "rank": 1,
-        "top": ["gingham_check", "checkered_pavement_tiles", "rusty_metal_grid"]
+        "top": ["gingham_check", "checkered_pavement_tiles", "dining_table"]
       },
       {
         "query": "茶色い革",
         "rank": 1,
-        "top": ["brown_leather", "rusty_metal", "sakura_bark"]
+        "top": ["brown_leather", "leather_white", "Ottoman_01"]
       },
       {
         "query": "ツイードのチェック柄の布",
         "rank": 1,
-        "top": ["wool_boucle", "gingham_check", "checkered_pavement_tiles"]
+        "top": ["wool_boucle", "gingham_check", "dining_table"]
       },
       {
         "query": "目の粗い麻布",
-        "rank": 1,
-        "top": ["hessian_230", "vintage_binocular", "shrub_01"]
+        "rank": 2,
+        "top": ["vintage_binocular", "hessian_230", "wool_boucle"]
       },
       {
         "query": "錆びたトタン",
-        "rank": 2,
-        "top": ["rusty_metal_grid", "rusty_metal", "metal_plate"]
+        "rank": 1,
+        "top": ["rusty_metal", "rusty_metal_grid", "metal_plate"]
       },
       {
         "query": "滑り止めの模様の金属の床",
         "rank": 1,
-        "top": ["metal_plate", "rusty_metal_grid", "corrugated_iron"]
+        "top": ["metal_plate", "rusty_metal_grid", "blue_metal_plate"]
       },
       {
         "query": "赤茶色のレンガの壁",
         "rank": 1,
-        "top": ["broken_brick_wall", "brick_wall_02", "castle_brick_02_white"]
+        "top": ["broken_brick_wall", "castle_brick_02_white", "brick_wall_02"]
       },
       {
         "query": "テラコッタのタイルの床",
         "rank": 1,
-        "top": ["terracotta_floor_tiles", "interior_tiles", "terrazzo_tiles"]
+        "top": ["terracotta_floor_tiles", "terrazzo_tiles", "clay_roof_tiles"]
       },
       {
         "query": "市松模様の床",
@@ -303,7 +303,355 @@
       {
         "query": "古びた濃い色の木の床板",
         "rank": 1,
-        "top": ["dark_wooden_planks", "oak_veneer_01", "hinoki_planks"]
+        "top": ["dark_wooden_planks", "sakura_bark", "hinoki_planks"]
+      },
+      {
+        "query": "竹の壁",
+        "rank": 1,
+        "top": ["bamboo_wall", "brick_wall_02", "thatch_roof_angled"]
+      },
+      {
+        "query": "瓦屋根",
+        "rank": 1,
+        "top": ["clay_roof_tiles", "roof_slates_02", "thatch_roof_angled"]
+      },
+      {
+        "query": "茅葺き屋根",
+        "rank": 1,
+        "top": ["thatch_roof_angled", "roof_slates_02", "clay_roof_tiles"]
+      },
+      {
+        "query": "雪",
+        "rank": 1,
+        "top": ["snow_02", "curly_teddy_natural", "asphalt_01"]
+      },
+      {
+        "query": "砂浜の砂",
+        "rank": 1,
+        "top": ["coast_sand_01", "gravel_floor", "leather_white"]
+      },
+      {
+        "query": "石畳",
+        "rank": 1,
+        "top": ["cobblestone_floor_01", "gravel_floor", "checkered_pavement_tiles"]
+      },
+      {
+        "query": "アスファルトの道路",
+        "rank": 1,
+        "top": ["asphalt_01", "checkered_pavement_tiles", "gravel_floor"]
+      },
+      {
+        "query": "木の幹の樹皮",
+        "rank": 1,
+        "top": ["pine_bark", "sakura_bark", "thatch_roof_angled"]
+      }
+    ]
+  },
+  "anonymous": {
+    "hitAt1": 0.9411764705882353,
+    "hitAt5": 0.9852941176470589,
+    "hitAt10": 0.9852941176470589,
+    "mrr": 0.9595588235294118,
+    "queries": [
+      {
+        "query": "木の揺り椅子",
+        "rank": 1,
+        "top": ["Rockingchair_01", "chinese_armchair", "mid_century_lounge_chair"]
+      },
+      {
+        "query": "白いプラスチックの椅子",
+        "rank": 1,
+        "top": ["plastic_monobloc_chair_01", "painted_wooden_chair_01", "SchoolChair_01"]
+      },
+      {
+        "query": "学校の青い椅子",
+        "rank": 1,
+        "top": ["SchoolChair_01", "plastic_monobloc_chair_01", "painted_wooden_chair_01"]
+      },
+      {
+        "query": "黒い革のソファ",
+        "rank": 1,
+        "top": ["sofa_02", "Ottoman_01", "Camera_01"]
+      },
+      {
+        "query": "茶色い革のラウンジチェア",
+        "rank": 1,
+        "top": ["mid_century_lounge_chair", "Ottoman_01", "brown_leather"]
+      },
+      {
+        "query": "白く塗られた木の椅子",
+        "rank": 1,
+        "top": ["painted_wooden_chair_01", "plastic_monobloc_chair_01", "chinese_armchair"]
+      },
+      {
+        "query": "緑の布張りのアンティークの肘掛け椅子",
+        "rank": 1,
+        "top": ["GreenChair_01", "ArmChair_01", "CoffeeTable_01"]
+      },
+      {
+        "query": "花柄のクッションの古い長椅子",
+        "rank": 1,
+        "top": ["vintage_day_bed", "chinese_armchair", "dining_table"]
+      },
+      {
+        "query": "丸い木のテーブル",
+        "rank": 1,
+        "top": ["round_wooden_table_01", "WoodenTable_02", "bar_chair_round_01"]
+      },
+      {
+        "query": "木のピクニックテーブル",
+        "rank": 1,
+        "top": ["wooden_picnic_table", "dining_table", "modern_coffee_table_01"]
+      },
+      {
+        "query": "水色の装飾が付いたアンティークのローテーブル",
+        "rank": 1,
+        "top": ["CoffeeTable_01", "gothic_coffee_table", "vintage_day_bed"]
+      },
+      {
+        "query": "灰色の金属の事務机",
+        "rank": 1,
+        "top": ["metal_office_desk", "modern_coffee_table_01", "industrial_coffee_table"]
+      },
+      {
+        "query": "チェック柄のテーブルクロスをかけた机",
+        "rank": 1,
+        "top": ["dining_table", "gingham_check", "metal_office_desk"]
+      },
+      {
+        "query": "シャンデリア",
+        "rank": 1,
+        "top": ["Chandelier_01", "brass_candleholders", "ceiling_fan"]
+      },
+      {
+        "query": "古いランタン",
+        "rank": 1,
+        "top": ["Lantern_01", "street_lamp_01", "vintage_oil_lamp"]
+      },
+      {
+        "query": "オレンジ色のデスクライト",
+        "rank": 1,
+        "top": ["desk_lamp_arm_01", "metal_office_desk", "vintage_oil_lamp"]
+      },
+      {
+        "query": "ろうそく立て",
+        "rank": 1,
+        "top": ["brass_candleholders", "wooden_candlestick", "vintage_oil_lamp"]
+      },
+      {
+        "query": "電球",
+        "rank": 1,
+        "top": ["lightbulb_01", "street_lamp_01", "ceiling_fan"]
+      },
+      {
+        "query": "バナナ",
+        "rank": 1,
+        "top": ["bananas", "metal_plate", "interior_tiles"]
+      },
+      {
+        "query": "赤いリンゴ",
+        "rank": 1,
+        "top": ["food_apple_01", "hinoki_planks", "coast_sand_01"]
+      },
+      {
+        "query": "いちごのケーキ",
+        "rank": 1,
+        "top": ["strawberry_chocolate_cake", "carrot_cake", "pine_bark"]
+      },
+      {
+        "query": "クロワッサン",
+        "rank": 1,
+        "top": ["croissant", "hamburger_buns", "interior_tiles"]
+      },
+      {
+        "query": "白い陶器のティーセット",
+        "rank": 1,
+        "top": ["tea_set_01", "jug_01", "ceramic_vase_01"]
+      },
+      {
+        "query": "ワインのボトル",
+        "rank": 1,
+        "top": ["wine_bottles_01", "brass_vase_01", "oak_veneer_01"]
+      },
+      {
+        "query": "青い模様の陶器の壺",
+        "rank": 1,
+        "top": ["antique_ceramic_vase_01", "potted_plant_02", "tea_set_01"]
+      },
+      {
+        "query": "素焼きの植木鉢",
+        "rank": 1,
+        "top": ["planter_pot_clay", "potted_plant_02", "potted_plant_01"]
+      },
+      {
+        "query": "鉢植えの観葉植物",
+        "rank": 1,
+        "top": ["potted_plant_02", "potted_plant_01", "shrub_01"]
+      },
+      {
+        "query": "ブラウン管のテレビ",
+        "rank": 1,
+        "top": ["Television_01", "vintage_microwave", "GothicCabinet_01"]
+      },
+      {
+        "query": "ラジカセ",
+        "rank": 1,
+        "top": ["boombox", "cassette_player", "Television_01"]
+      },
+      {
+        "query": "古いノートパソコン",
+        "rank": 1,
+        "top": ["classic_laptop", "Television_01", "metal_office_desk"]
+      },
+      {
+        "query": "丸い壁掛け時計",
+        "rank": 1,
+        "top": ["wall_clock", "vintage_grandfather_clock_01", "bar_chair_round_01"]
+      },
+      {
+        "query": "大きな振り子の置き時計",
+        "rank": 1,
+        "top": ["vintage_grandfather_clock_01", "wall_clock", "desk_lamp_arm_01"]
+      },
+      {
+        "query": "ウクレレ",
+        "rank": 1,
+        "top": ["Ukulele_01", "oak_veneer_01", "thatch_roof_angled"]
+      },
+      {
+        "query": "双眼鏡",
+        "rank": 1,
+        "top": ["vintage_binocular", "Camera_01", "flower_gazania"]
+      },
+      {
+        "query": "棚に並んだ百科事典",
+        "rank": 1,
+        "top": ["book_encyclopedia_set_01", "wooden_bookshelf_worn", "GothicCabinet_01"]
+      },
+      {
+        "query": "ゴシック調の木のベッド",
+        "rank": 1,
+        "top": ["GothicBed_01", "GothicCabinet_01", "WoodenChair_01"]
+      },
+      {
+        "query": "赤いドラム缶",
+        "rank": 1,
+        "top": ["Barrel_01", "metal_jerrycan", "metal_trash_can"]
+      },
+      {
+        "query": "段ボール箱",
+        "rank": 1,
+        "top": ["cardboard_box_01", "plastic_crate_01", "industrial_coffee_table"]
+      },
+      {
+        "query": "赤い携行缶",
+        "rank": 1,
+        "top": ["metal_jerrycan", "Barrel_01", "plastic_crate_01"]
+      },
+      {
+        "query": "赤いプラスチックのケース",
+        "rank": 1,
+        "top": ["plastic_crate_01", "metal_jerrycan", "screwdriver"]
+      },
+      {
+        "query": "のこぎり",
+        "rank": 1,
+        "top": ["handsaw_wood", "thatch_roof_angled", "sakura_bark"]
+      },
+      {
+        "query": "ほうき",
+        "rank": 1,
+        "top": ["plastic_broom", "dandelion_01", "blue_metal_plate"]
+      },
+      {
+        "query": "ダーツの的",
+        "rank": 1,
+        "top": ["dartboard", "hatchet", "ceiling_fan"]
+      },
+      {
+        "query": "金の額縁に入った風景画",
+        "rank": 1,
+        "top": ["fancy_picture_frame_01", "ornate_mirror_01", "tea_set_01"]
+      },
+      {
+        "query": "救命用の浮き輪",
+        "rank": 1,
+        "top": ["lifebuoy", "hatchet", "ceramic_vase_01"]
+      },
+      {
+        "query": "黄色い注意看板",
+        "rank": 1,
+        "top": ["WetFloorSign_01", "Barrel_01", "dandelion_01"]
+      },
+      {
+        "query": "天井のファン",
+        "rank": 1,
+        "top": ["ceiling_fan", "Chandelier_01", "oak_veneer_01"]
+      },
+      {
+        "query": "古いカメラ",
+        "rank": 1,
+        "top": ["Camera_01", "vintage_binocular", "Television_01"]
+      },
+      {
+        "query": "ジーンズの生地",
+        "rank": 1,
+        "top": ["denim_fabric", "hessian_230", "blue_metal_plate"]
+      },
+      {
+        "query": "緑と白のギンガムチェック",
+        "rank": 1,
+        "top": ["gingham_check", "dining_table", "wool_boucle"]
+      },
+      {
+        "query": "茶色い革",
+        "rank": 1,
+        "top": ["brown_leather", "Ottoman_01", "terrazzo_tiles"]
+      },
+      {
+        "query": "ツイードのチェック柄の布",
+        "rank": 1,
+        "top": ["wool_boucle", "gingham_check", "dining_table"]
+      },
+      {
+        "query": "目の粗い麻布",
+        "rank": 1,
+        "top": ["hessian_230", "vintage_oil_lamp", "blue_metal_plate"]
+      },
+      {
+        "query": "錆びたトタン",
+        "rank": 2,
+        "top": ["rusty_metal_grid", "rusty_metal", "metal_plate"]
+      },
+      {
+        "query": "滑り止めの模様の金属の床",
+        "rank": 1,
+        "top": ["metal_plate", "corrugated_iron", "rusty_metal_grid"]
+      },
+      {
+        "query": "赤茶色のレンガの壁",
+        "rank": 1,
+        "top": ["broken_brick_wall", "castle_brick_02_white", "brick_wall_02"]
+      },
+      {
+        "query": "テラコッタのタイルの床",
+        "rank": 1,
+        "top": ["terracotta_floor_tiles", "interior_tiles", "clay_roof_tiles"]
+      },
+      {
+        "query": "市松模様の床",
+        "rank": 1,
+        "top": ["checkered_pavement_tiles", "cobblestone_floor_01", "gingham_check"]
+      },
+      {
+        "query": "明るい色の木目",
+        "rank": 1,
+        "top": ["oak_veneer_01", "hinoki_planks", "dark_wooden_planks"]
+      },
+      {
+        "query": "古びた濃い色の木の床板",
+        "rank": 1,
+        "top": ["dark_wooden_planks", "sakura_bark", "blue_metal_plate"]
       },
       {
         "query": "竹の壁",
@@ -317,381 +665,33 @@
       },
       {
         "query": "茅葺き屋根",
-        "rank": 2,
-        "top": ["roof_slates_02", "thatch_roof_angled", "clay_roof_tiles"]
+        "rank": 4,
+        "top": ["roof_slates_02", "clay_roof_tiles", "bamboo_wall"]
       },
       {
         "query": "雪",
         "rank": 1,
-        "top": ["snow_02", "pine_bark", "asphalt_01"]
+        "top": ["snow_02", "interior_tiles", "thatch_roof_angled"]
       },
       {
         "query": "砂浜の砂",
         "rank": 2,
-        "top": ["gravel_floor", "coast_sand_01", "asphalt_01"]
+        "top": ["gravel_floor", "coast_sand_01", "leather_white"]
       },
       {
         "query": "石畳",
         "rank": 1,
-        "top": ["cobblestone_floor_01", "roof_slates_02", "gravel_floor"]
+        "top": ["cobblestone_floor_01", "roof_slates_02", "terrazzo_tiles"]
       },
       {
         "query": "アスファルトの道路",
-        "rank": 1,
-        "top": ["asphalt_01", "gravel_floor", "cobblestone_floor_01"]
+        "rank": 0,
+        "top": ["coast_sand_01", "oak_veneer_01", "snow_02"]
       },
       {
         "query": "木の幹の樹皮",
         "rank": 1,
-        "top": ["pine_bark", "sakura_bark", "oak_veneer_01"]
-      }
-    ]
-  },
-  "anonymous": {
-    "hitAt1": 0.10294117647058823,
-    "hitAt5": 0.3235294117647059,
-    "hitAt10": 0.5441176470588235,
-    "mrr": 0.20696778711484592,
-    "queries": [
-      {
-        "query": "木の揺り椅子",
-        "rank": 0,
-        "top": ["round_wooden_table_01", "gothic_coffee_table", "industrial_coffee_table"]
-      },
-      {
-        "query": "白いプラスチックの椅子",
-        "rank": 0,
-        "top": ["ceramic_vase_01", "Television_01", "plastic_crate_01"]
-      },
-      {
-        "query": "学校の青い椅子",
-        "rank": 0,
-        "top": ["blue_metal_plate", "metal_office_desk", "corrugated_iron"]
-      },
-      {
-        "query": "黒い革のソファ",
-        "rank": 6,
-        "top": ["brown_leather", "WoodenTable_02", "floral_jacquard"]
-      },
-      {
-        "query": "茶色い革のラウンジチェア",
-        "rank": 0,
-        "top": ["terrazzo_tiles", "brown_leather", "asphalt_01"]
-      },
-      {
-        "query": "白く塗られた木の椅子",
-        "rank": 0,
-        "top": ["wooden_candlestick", "GothicBed_01", "gothic_coffee_table"]
-      },
-      {
-        "query": "緑の布張りのアンティークの肘掛け椅子",
-        "rank": 7,
-        "top": ["gingham_check", "metal_plate", "wool_boucle"]
-      },
-      {
-        "query": "花柄のクッションの古い長椅子",
-        "rank": 0,
-        "top": ["wool_boucle", "GreenChair_01", "CoffeeTable_01"]
-      },
-      {
-        "query": "丸い木のテーブル",
-        "rank": 0,
-        "top": ["bar_chair_round_01", "industrial_coffee_table", "wooden_candlestick"]
-      },
-      {
-        "query": "木のピクニックテーブル",
-        "rank": 3,
-        "top": ["dining_table", "modern_coffee_table_01", "wooden_picnic_table"]
-      },
-      {
-        "query": "水色の装飾が付いたアンティークのローテーブル",
-        "rank": 9,
-        "top": ["brick_wall_02", "corrugated_iron", "WoodenTable_02"]
-      },
-      {
-        "query": "灰色の金属の事務机",
-        "rank": 1,
-        "top": ["metal_office_desk", "Television_01", "industrial_coffee_table"]
-      },
-      {
-        "query": "チェック柄のテーブルクロスをかけた机",
-        "rank": 1,
-        "top": ["dining_table", "wool_boucle", "gingham_check"]
-      },
-      {
-        "query": "シャンデリア",
-        "rank": 4,
-        "top": ["corrugated_iron", "thatch_roof_angled", "snow_02"]
-      },
-      {
-        "query": "古いランタン",
-        "rank": 2,
-        "top": ["castle_brick_02_white", "Lantern_01", "blue_metal_plate"]
-      },
-      {
-        "query": "オレンジ色のデスクライト",
-        "rank": 7,
-        "top": ["modern_coffee_table_01", "wooden_candlestick", "Chandelier_01"]
-      },
-      {
-        "query": "ろうそく立て",
-        "rank": 7,
-        "top": ["street_lamp_01", "corrugated_iron", "vintage_oil_lamp"]
-      },
-      {
-        "query": "電球",
-        "rank": 5,
-        "top": ["desk_lamp_arm_01", "snow_02", "oak_veneer_01"]
-      },
-      {
-        "query": "バナナ",
-        "rank": 0,
-        "top": ["oak_veneer_01", "metal_plate", "thatch_roof_angled"]
-      },
-      {
-        "query": "赤いリンゴ",
-        "rank": 0,
-        "top": ["broken_brick_wall", "terracotta_floor_tiles", "clay_roof_tiles"]
-      },
-      {
-        "query": "いちごのケーキ",
-        "rank": 0,
-        "top": ["pine_bark", "brick_wall_02", "castle_brick_02_white"]
-      },
-      {
-        "query": "クロワッサン",
-        "rank": 0,
-        "top": ["oak_veneer_01", "snow_02", "clay_roof_tiles"]
-      },
-      {
-        "query": "白い陶器のティーセット",
-        "rank": 8,
-        "top": ["snow_02", "gingham_check", "ceramic_vase_01"]
-      },
-      {
-        "query": "ワインのボトル",
-        "rank": 0,
-        "top": ["clay_roof_tiles", "snow_02", "brick_wall_02"]
-      },
-      {
-        "query": "青い模様の陶器の壺",
-        "rank": 0,
-        "top": ["snow_02", "blue_metal_plate", "clay_roof_tiles"]
-      },
-      {
-        "query": "素焼きの植木鉢",
-        "rank": 0,
-        "top": ["clay_roof_tiles", "asphalt_01", "wooden_candlestick"]
-      },
-      {
-        "query": "鉢植えの観葉植物",
-        "rank": 8,
-        "top": ["corrugated_iron", "oak_veneer_01", "thatch_roof_angled"]
-      },
-      {
-        "query": "ブラウン管のテレビ",
-        "rank": 3,
-        "top": ["clay_roof_tiles", "terrazzo_tiles", "Television_01"]
-      },
-      {
-        "query": "ラジカセ",
-        "rank": 0,
-        "top": ["wool_boucle", "oak_veneer_01", "Television_01"]
-      },
-      {
-        "query": "古いノートパソコン",
-        "rank": 8,
-        "top": ["blue_metal_plate", "handsaw_wood", "Television_01"]
-      },
-      {
-        "query": "丸い壁掛け時計",
-        "rank": 0,
-        "top": ["bamboo_wall", "snow_02", "bar_chair_round_01"]
-      },
-      {
-        "query": "大きな振り子の置き時計",
-        "rank": 9,
-        "top": ["desk_lamp_arm_01", "modern_coffee_table_01", "vintage_oil_lamp"]
-      },
-      {
-        "query": "ウクレレ",
-        "rank": 0,
-        "top": ["blue_metal_plate", "oak_veneer_01", "floral_jacquard"]
-      },
-      {
-        "query": "双眼鏡",
-        "rank": 8,
-        "top": ["wool_boucle", "gingham_check", "faux_fur_geometric"]
-      },
-      {
-        "query": "棚に並んだ百科事典",
-        "rank": 0,
-        "top": ["corrugated_iron", "hinoki_planks", "oak_veneer_01"]
-      },
-      {
-        "query": "ゴシック調の木のベッド",
-        "rank": 0,
-        "top": ["thatch_roof_angled", "industrial_coffee_table", "oak_veneer_01"]
-      },
-      {
-        "query": "赤いドラム缶",
-        "rank": 0,
-        "top": ["broken_brick_wall", "blue_metal_plate", "terracotta_floor_tiles"]
-      },
-      {
-        "query": "段ボール箱",
-        "rank": 0,
-        "top": ["oak_veneer_01", "blue_metal_plate", "asphalt_01"]
-      },
-      {
-        "query": "赤い携行缶",
-        "rank": 0,
-        "top": ["broken_brick_wall", "metal_plate", "terracotta_floor_tiles"]
-      },
-      {
-        "query": "赤いプラスチックのケース",
-        "rank": 7,
-        "top": ["broken_brick_wall", "clay_roof_tiles", "terracotta_floor_tiles"]
-      },
-      {
-        "query": "のこぎり",
-        "rank": 0,
-        "top": ["hinoki_planks", "faux_fur_geometric", "oak_veneer_01"]
-      },
-      {
-        "query": "ほうき",
-        "rank": 2,
-        "top": ["desk_lamp_arm_01", "plastic_broom", "food_kiwi_01"]
-      },
-      {
-        "query": "ダーツの的",
-        "rank": 0,
-        "top": ["asphalt_01", "wool_boucle", "thatch_roof_angled"]
-      },
-      {
-        "query": "金の額縁に入った風景画",
-        "rank": 0,
-        "top": ["corrugated_iron", "wool_boucle", "hessian_230"]
-      },
-      {
-        "query": "救命用の浮き輪",
-        "rank": 0,
-        "top": ["Ukulele_01", "hatchet", "lightbulb_01"]
-      },
-      {
-        "query": "黄色い注意看板",
-        "rank": 0,
-        "top": ["blue_metal_plate", "rusty_metal_grid", "wool_boucle"]
-      },
-      {
-        "query": "天井のファン",
-        "rank": 0,
-        "top": ["snow_02", "bamboo_wall", "lightbulb_01"]
-      },
-      {
-        "query": "古いカメラ",
-        "rank": 9,
-        "top": ["castle_brick_02_white", "blue_metal_plate", "brick_wall_02"]
-      },
-      {
-        "query": "ジーンズの生地",
-        "rank": 4,
-        "top": ["blue_metal_plate", "faux_fur_geometric", "wool_boucle"]
-      },
-      {
-        "query": "緑と白のギンガムチェック",
-        "rank": 2,
-        "top": ["wool_boucle", "gingham_check", "checkered_pavement_tiles"]
-      },
-      {
-        "query": "茶色い革",
-        "rank": 5,
-        "top": ["terrazzo_tiles", "clay_roof_tiles", "oak_veneer_01"]
-      },
-      {
-        "query": "ツイードのチェック柄の布",
-        "rank": 2,
-        "top": ["checkered_pavement_tiles", "wool_boucle", "floral_jacquard"]
-      },
-      {
-        "query": "目の粗い麻布",
-        "rank": 0,
-        "top": ["gingham_check", "dining_table", "bamboo_wall"]
-      },
-      {
-        "query": "錆びたトタン",
-        "rank": 6,
-        "top": ["metal_plate", "rusty_metal_grid", "blue_metal_plate"]
-      },
-      {
-        "query": "滑り止めの模様の金属の床",
-        "rank": 5,
-        "top": ["asphalt_01", "interior_tiles", "rusty_metal"]
-      },
-      {
-        "query": "赤茶色のレンガの壁",
-        "rank": 2,
-        "top": ["terracotta_floor_tiles", "castle_brick_02_white", "broken_brick_wall"]
-      },
-      {
-        "query": "テラコッタのタイルの床",
-        "rank": 1,
-        "top": ["terracotta_floor_tiles", "asphalt_01", "checkered_pavement_tiles"]
-      },
-      {
-        "query": "市松模様の床",
-        "rank": 7,
-        "top": ["gingham_check", "terracotta_floor_tiles", "asphalt_01"]
-      },
-      {
-        "query": "明るい色の木目",
-        "rank": 1,
-        "top": ["hinoki_planks", "oak_veneer_01", "sakura_bark"]
-      },
-      {
-        "query": "古びた濃い色の木の床板",
-        "rank": 7,
-        "top": ["blue_metal_plate", "sakura_bark", "hinoki_planks"]
-      },
-      {
-        "query": "竹の壁",
-        "rank": 0,
-        "top": ["thatch_roof_angled", "roof_slates_02", "oak_veneer_01"]
-      },
-      {
-        "query": "瓦屋根",
-        "rank": 1,
-        "top": ["clay_roof_tiles", "bamboo_wall", "roof_slates_02"]
-      },
-      {
-        "query": "茅葺き屋根",
-        "rank": 4,
-        "top": ["faux_fur_geometric", "bamboo_wall", "roof_slates_02"]
-      },
-      {
-        "query": "雪",
-        "rank": 1,
-        "top": ["snow_02", "wool_boucle", "curly_teddy_natural"]
-      },
-      {
-        "query": "砂浜の砂",
-        "rank": 1,
-        "top": ["coast_sand_01", "interior_tiles", "thatch_roof_angled"]
-      },
-      {
-        "query": "石畳",
-        "rank": 0,
-        "top": ["roof_slates_02", "bamboo_wall", "clay_roof_tiles"]
-      },
-      {
-        "query": "アスファルトの道路",
-        "rank": 3,
-        "top": ["coast_sand_01", "snow_02", "asphalt_01"]
-      },
-      {
-        "query": "木の幹の樹皮",
-        "rank": 5,
-        "top": ["thatch_roof_angled", "curly_teddy_natural", "oak_veneer_01"]
+        "top": ["pine_bark", "sakura_bark", "thatch_roof_angled"]
       }
     ]
   }
