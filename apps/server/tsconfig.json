@@ -15,8 +15,6 @@
           "effect/http/FetchHttpClient#layer",
           "effect/observability/OtlpSerialization#layerJson",
           "effect/observability/OtlpTracer#layerFromConfig",
-          "effect/rpc/Rpc",
-          "effect/rpc/RpcGroup",
           "effect/rpc/RpcSerialization",
           "effect/rpc/RpcServer"
         ]

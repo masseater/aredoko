@@ -1,12 +1,9 @@
 import { AutoConfig, AutoModel, AutoProcessor, RawImage, Tensor } from "@huggingface/transformers";
 import { Context, Effect, Layer, Schema } from "effect";
-
-import { EmbeddingFailed } from "./embedding-failed.ts";
+import { EmbeddingFailed, Vector } from "protocol";
 
 const MODEL_ID = "onnx-community/embeddinggemma-2-ONNX";
 const DTYPE = "q4";
-
-const Vector = Schema.Array(Schema.Finite);
 
 class Embedder extends Context.Service<
   Embedder,
@@ -62,4 +59,4 @@ const embedderLive = Layer.effect(
   }),
 );
 
-export { Embedder, Vector, embedderLive };
+export { Embedder, embedderLive };
