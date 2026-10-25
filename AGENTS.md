@@ -7,13 +7,11 @@
 
 ## aredoko の制約
 
-- エディタ拡張は、VRChat SDK の Unity 2022.3.22f1 で使える API と C# 9 だけで書く。Unity 6 にしかない API は使わない。
+- エディタ拡張は、VRChat SDK の Unity 2022.3.22f1 で使える API と C# 9 だけで書く。
 - 常駐サーバーは Windows 10・11 の x64 で動かす。開発とテストはクラウドの Linux でも完結させ、Windows でしか確かめられない処理を作らない。
 - アセットと検索語は PC の外へ送らない。外部への通信は BOOTH の商品ページの公開 JSON の取得だけにする。
 - BOOTH のログイン状態・Cookie・購入履歴は読まない。
-- BOOTH Library Manager のデータは読み取りだけにし、書き換えない。KonoAsset はデータもコードも使わない。
-- 管理用のデスクトップアプリに Electron は使わない。
-- 推論や処理に従量課金の API を使わない。
+- ほかのツールのデータは BOOTH Library Manager のものだけを読み取り、書き換えない。
 
 ## コマンド
 
