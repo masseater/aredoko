@@ -8,6 +8,7 @@ import { ServerError } from "./server-error.ts";
 
 const ENDPOINT = `ws://127.0.0.1:${PORT.toString()}`;
 const STATUS_TIMEOUT = Duration.fromInputUnsafe("3 seconds");
+const REQUEST_TIMEOUT = Duration.fromInputUnsafe("15 seconds");
 const UNREACHABLE = "サーバーに接続できません";
 
 class Client extends Context.Service<Client>()("desktop/shared/api/aredoko/Client", {
@@ -26,7 +27,15 @@ const runtime = ManagedRuntime.make(clientLayer);
 const run = <Value>(
   request: Effect.Effect<Value, { readonly message: string }, Client>,
 ): Promise<Value> =>
-  runtime.runPromise(request.pipe(Effect.mapError(({ message }) => ServerError.make({ message }))));
+  runtime.runPromise(
+    request.pipe(
+      Effect.timeoutOrElse({
+        duration: REQUEST_TIMEOUT,
+        orElse: () => Effect.fail({ message: UNREACHABLE }),
+      }),
+      Effect.mapError(({ message }) => ServerError.make({ message })),
+    ),
+  );
 
 const getStatus = (): Promise<typeof Status.Type> =>
   run(

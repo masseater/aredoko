@@ -39,6 +39,7 @@ const useSources = (): UseQueryResult<readonly (typeof Source.Type)[]> =>
       queryKey: SOURCES_KEY,
       queryFn: listSources,
       refetchInterval: LIBRARY_INTERVAL,
+      retry: false,
     }),
   );
 
@@ -48,6 +49,7 @@ const usePackages = (): UseQueryResult<readonly (typeof Package.Type)[]> =>
       queryKey: PACKAGES_KEY,
       queryFn: listPackages,
       refetchInterval: LIBRARY_INTERVAL,
+      retry: false,
     }),
   );
 
