@@ -115,7 +115,13 @@ export default defineConfig({
             {
               from: "package",
               package: "react",
-              name: ["ReactNode", "ButtonHTMLAttributes", "ClassAttributes"],
+              name: [
+                "ReactNode",
+                "ButtonHTMLAttributes",
+                "ClassAttributes",
+                "ChangeEvent",
+                "SubmitEvent",
+              ],
             },
             { from: "package", package: "clsx", name: "ClassValue" },
             {
@@ -192,7 +198,7 @@ export default defineConfig({
         },
       },
       {
-        files: ["**/shared/ui/**"],
+        files: ["**/shared/ui/**", "libs/ui/src/**"],
         rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
       },
       {

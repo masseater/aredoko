@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
+import { Button } from "ui/button";
 
 import type { TodoFilter } from "#/pages/home/model/filter";
 import { useSelectTodoFilter, useTodoFilter } from "#/pages/home/model/filter";
-import { Button } from "#/shared/ui/button";
 
 const variantOf = (selected: boolean): "default" | "outline" => {
   if (selected) {

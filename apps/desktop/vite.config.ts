@@ -1,3 +1,4 @@
+import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
 
@@ -5,7 +6,7 @@ const DEV_PORT = 1420;
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
-  plugins: [viteReact()],
+  plugins: [tailwindcss(), viteReact()],
   clearScreen: false,
   server: {
     port: DEV_PORT,
