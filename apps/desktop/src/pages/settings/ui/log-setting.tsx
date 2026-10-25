@@ -2,9 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import { FileText } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
+import { Button } from "ui/button";
 
 import { revealServerLog } from "#/pages/settings/api/server-log";
-import { Button } from "#/shared/ui/button";
 
 const TITLE = "サーバーのログ";
 const HINT = "うまく動かないときは、このファイルを添えて報告してください。";

@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import type { ChangeEvent, SubmitEvent, ReactNode } from "react";
+import { Button } from "ui/button";
 
 import { useBoothDraft, useSetBoothDraft } from "#/pages/library/model";
 import { useLinkBooth } from "#/shared/api";
-import { Button } from "#/shared/ui/button";
 import { Input } from "#/shared/ui/input";
 
 const PLACEHOLDER = "https://booth.pm/ja/items/…";

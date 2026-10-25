@@ -3,10 +3,10 @@ import { Option } from "effect";
 import { FolderPlus } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
+import { Button } from "ui/button";
 
 import { pickFolder } from "#/pages/sources/api/pick-folder";
 import { useAddSource } from "#/shared/api";
-import { Button } from "#/shared/ui/button";
 
 const LABEL = "フォルダを追加";
 

@@ -2,9 +2,9 @@ import { Option } from "effect";
 import type { Package } from "protocol";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
+import { cn } from "ui/cn";
 
 import { useSelectPackage, useSelectedPackage } from "#/pages/library/model";
-import { cn } from "#/shared/lib/utils";
 
 const PackageListItem = ({ item }: Readonly<{ item: typeof Package.Type }>): ReactNode => {
   const selected = useSelectedPackage();

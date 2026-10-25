@@ -1,9 +1,9 @@
 import { Search } from "lucide-react";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode, SubmitEvent } from "react";
+import { Button } from "ui/button";
 
 import { useDraft, useSetDraft, useSubmitQuery } from "#/pages/search/model";
-import { Button } from "#/shared/ui/button";
 import { Input } from "#/shared/ui/input";
 
 const PLACEHOLDER = "例: 黒い服、猫耳、ネイル";

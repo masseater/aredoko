@@ -1,9 +1,9 @@
 import { Trash2 } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
+import { Button } from "ui/button";
 
 import { useRemoveSource } from "#/shared/api";
-import { Button } from "#/shared/ui/button";
 
 const LABEL = "登録を外す";
 

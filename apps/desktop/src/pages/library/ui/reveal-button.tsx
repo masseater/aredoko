@@ -3,8 +3,7 @@ import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { FolderSearch } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
-
-import { Button } from "#/shared/ui/button";
+import { Button } from "ui/button";
 
 const LABEL = "フォルダで表示";
 

@@ -3,8 +3,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { ExternalLink } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
-
-import { Button } from "#/shared/ui/button";
+import { Button } from "ui/button";
 
 const LABEL = "BOOTH の商品ページを開く";
 

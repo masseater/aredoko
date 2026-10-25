@@ -2,10 +2,10 @@ import { FolderOpen, Library, Search, Settings } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
+import { Button } from "ui/button";
 
 import { useOpenPage, usePage } from "#/shared/model";
 import type { Page } from "#/shared/model";
-import { Button } from "#/shared/ui/button";
 
 const ICONS: Readonly<Record<Page, LucideIcon>> = {
   library: Library,

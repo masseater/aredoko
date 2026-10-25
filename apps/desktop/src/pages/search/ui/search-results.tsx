@@ -1,9 +1,9 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
+import { cn } from "ui/cn";
 
 import { searchViewOf, useKinds, useQueryText } from "#/pages/search/model";
 import { useSearch } from "#/shared/api";
-import { cn } from "#/shared/lib/utils";
 
 import { ResultGrid } from "./result-grid.tsx";
 

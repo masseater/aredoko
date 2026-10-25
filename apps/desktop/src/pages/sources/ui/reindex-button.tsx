@@ -1,9 +1,9 @@
 import { RefreshCw } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
+import { Button } from "ui/button";
 
 import { useReindex } from "#/shared/api";
-import { Button } from "#/shared/ui/button";
 
 const LABEL = "変更を読み直す";
 

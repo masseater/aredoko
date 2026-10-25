@@ -1,6 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
-
-import { cn } from "#/shared/lib/utils";
+import { cn } from "ui/cn";
 
 const Input = ({ className, type, ...props }: ComponentProps<"input">): ReactNode => (
   <input

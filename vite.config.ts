@@ -198,7 +198,7 @@ export default defineConfig({
         },
       },
       {
-        files: ["**/shared/ui/**"],
+        files: ["**/shared/ui/**", "libs/ui/src/**"],
         rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
       },
       {
