@@ -54,7 +54,7 @@ const queryPrompt = (query: string): string => `task: search result | query: ${q
 const documentPrompt = (text: string): string => `title: none | text: ${text}`;
 
 const preferLocalModels = (directory: string): void => {
-  Object.assign(env, { localModelPath: directory, allowRemoteModels: false });
+  Object.assign(env, { localModelPath: directory, allowRemoteModels: false, useFSCache: false });
 };
 
 const loadModel = (
