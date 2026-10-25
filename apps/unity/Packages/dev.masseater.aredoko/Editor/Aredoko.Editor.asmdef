@@ -1,5 +1,8 @@
 {
   "name": "Aredoko.Editor",
   "rootNamespace": "Aredoko",
-  "includePlatforms": ["Editor"]
+  "includePlatforms": ["Editor"],
+  "overrideReferences": true,
+  "precompiledReferences": ["Newtonsoft.Json.dll"],
+  "autoReferenced": false
 }

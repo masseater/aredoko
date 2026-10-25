@@ -23,7 +23,10 @@ const assetOf = ({ guid, pathname, preview, references }: PackageEntry): AssetIn
 /** @internal */
 const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(file: PackageFile) {
   const sql = yield* SqlClient.SqlClient;
-  const entries = yield* readPackage(file.path);
+  const entries = pipe(
+    yield* readPackage(file.path),
+    Array.filter(({ asset }) => Option.isSome(asset)),
+  );
   const name = nameOf(file.path);
   const summary = yield* encodeJson(summarize({ name, entries }));
   const booth = yield* boothOf(file.path);
