@@ -115,7 +115,13 @@ export default defineConfig({
             {
               from: "package",
               package: "react",
-              name: ["ReactNode", "ButtonHTMLAttributes", "ClassAttributes"],
+              name: [
+                "ReactNode",
+                "ButtonHTMLAttributes",
+                "ClassAttributes",
+                "ChangeEvent",
+                "SubmitEvent",
+              ],
             },
             { from: "package", package: "clsx", name: "ClassValue" },
             {
