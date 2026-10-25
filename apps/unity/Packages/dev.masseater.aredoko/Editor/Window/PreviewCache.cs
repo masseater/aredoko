@@ -11,7 +11,7 @@ namespace Aredoko.Window
 {
     sealed class PreviewCache : IDisposable
     {
-        readonly Dictionary<long, Texture2D?> textures = new Dictionary<long, Texture2D?>();
+        readonly Dictionary<string, Texture2D?> textures = new Dictionary<string, Texture2D?>();
         readonly Action repaint;
 
         public PreviewCache(Action repaint)
@@ -31,13 +31,14 @@ namespace Aredoko.Window
                 return Labels.Icon(result.Kind);
             }
 
-            if (textures.TryGetValue(result.AssetId, out var texture))
+            var key = KeyOf(result);
+            if (textures.TryGetValue(key, out var texture))
             {
                 return texture != null ? texture : Labels.Icon(result.Kind);
             }
 
-            textures[result.AssetId] = null;
-            Load(result.AssetId);
+            textures[key] = null;
+            Load(key, result.AssetId);
             return Labels.Icon(result.Kind);
         }
 
@@ -54,6 +55,8 @@ namespace Aredoko.Window
             textures.Clear();
         }
 
+        static string KeyOf(SearchResult result) => $"{result.AssetId}/{result.Guid}";
+
         static Texture ProjectPreview(SearchResult result)
         {
             var path = AssetDatabase.GUIDToAssetPath(result.Guid);
@@ -67,7 +70,7 @@ namespace Aredoko.Window
             return preview != null ? preview : AssetPreview.GetMiniThumbnail(asset);
         }
 
-        async void Load(long assetId)
+        async void Load(string key, long assetId)
         {
             try
             {
@@ -75,7 +78,7 @@ namespace Aredoko.Window
                 var texture = new Texture2D(2, 2) { hideFlags = HideFlags.HideAndDontSave };
                 if (texture.LoadImage(Convert.FromBase64String(preview.Png)))
                 {
-                    textures[assetId] = texture;
+                    textures[key] = texture;
                 }
                 else
                 {
