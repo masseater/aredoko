@@ -343,9 +343,9 @@ namespace Aredoko.Window
         void DrawActions(SearchResult[] chosen)
         {
             var external = chosen.Where(result => result.PackageKind == PackageKind.Unitypackage).ToArray();
-            using (new EditorGUI.DisabledScope(busy || external.Length == 0))
+            using (new EditorGUI.DisabledScope(busy))
             {
-                if (GUILayout.Button(external.Length > 1 ? $"選んだ {external.Length} 件をインポート" : "インポート", GUILayout.Height(28)))
+                if (external.Length > 0 && GUILayout.Button(external.Length > 1 ? $"選んだ {external.Length} 件をインポート" : "インポート", GUILayout.Height(28)))
                 {
                     Import();
                 }
