@@ -48,7 +48,7 @@ catalog:
   puppeteer-core: 25.14.0
 catalogs:
   stack:
-    "@distilled.cloud/cloudflare": 1.0.0-rc.13
+    "@distilled.cloud/cloudflare": 1.0.0-rc.15
     "@effect/atom-react": 4.0.6
     "@effect/tsgo": 0.56.0
     "@elysiajs/eden": 1.4.9
