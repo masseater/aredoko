@@ -1,4 +1,4 @@
-import { Effect, Layer } from "effect";
+import { Duration, Effect, Layer, Option, Schedule, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 import { runMain } from "runtime";
 
@@ -7,14 +7,39 @@ import { Settings } from "#shared/settings";
 import { VERSION } from "./rpc/handlers.ts";
 import { serverLayer } from "./rpc/server-layer.ts";
 
+const PARENT_CHECK_INTERVAL = Duration.fromInputUnsafe("2 seconds");
+const SIGNAL_PROBE = 0;
+
+const isAlive = (pid: number): boolean => {
+  try {
+    return globalThis.process.kill(pid, SIGNAL_PROBE);
+  } catch {
+    return false;
+  }
+};
+
+const untilExits = (pid: number): Effect.Effect<void> =>
+  Effect.sync(() => isAlive(pid)).pipe(
+    Effect.repeat({ schedule: Schedule.spaced(PARENT_CHECK_INTERVAL), while: (alive) => alive }),
+    Effect.asVoid,
+  );
+
 const command = Command.make(
   "aredoko-server",
   {
     dataDirectory: Flag.String("data-dir"),
     modelDirectory: Flag.String("model-dir").pipe(Flag.optional),
+    parentPid: Flag.String("parent-pid").pipe(Flag.optional),
   },
-  (settings) =>
-    Layer.launch(serverLayer).pipe(Effect.provideService(Settings, Settings.of(settings))),
+  ({ parentPid, ...settings }) => {
+    const server = Layer.launch(serverLayer).pipe(Effect.provideService(Settings, settings));
+    const parent = pipe(
+      parentPid,
+      Option.map((pid) => untilExits(globalThis.Number(pid))),
+      Option.getOrElse(() => Effect.never),
+    );
+    return Effect.raceFirst(server, parent);
+  },
 );
 
 runMain("aredoko-server")(Command.run(command, { version: VERSION }));
