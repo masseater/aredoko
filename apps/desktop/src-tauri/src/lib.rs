@@ -37,10 +37,10 @@ fn entry(_app: &AppHandle) -> Entry {
 
 #[cfg(not(debug_assertions))]
 fn entry(app: &AppHandle) -> Entry {
-    let resources = app
-        .path()
-        .resource_dir()
-        .unwrap_or_else(|_| PathBuf::from("."));
+    let resources = app.path().resource_dir().map_or_else(
+        |_| PathBuf::from("."),
+        |path| dunce::simplified(&path).to_path_buf(),
+    );
     Entry {
         node: resources.join("runtime/node.exe"),
         script: resources.join("server/main.mjs"),
