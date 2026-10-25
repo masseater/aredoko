@@ -3,7 +3,7 @@ import { Effect, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
-const runMain =
+const runWithTracing =
   (serviceName: string) =>
   <Success, Failure>(program: Effect.Effect<Success, Failure, NodeServices.NodeServices>): void => {
     const tracing = OtlpTracer.layerFromConfig({ resource: { serviceName } }).pipe(
@@ -17,5 +17,8 @@ const runMain =
       ),
     );
   };
+
+/** @internal */
+const runMain = runWithTracing;
 
 export { runMain };

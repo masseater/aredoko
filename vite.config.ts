@@ -101,7 +101,11 @@ export default defineConfig({
         {
           ignoreInferredTypes: true,
           allow: [
-            { from: "lib", name: "Request" },
+            {
+              from: "lib",
+              name: ["Request", "Uint8Array", "RegExp", "RegExpExecArray", "RegExpMatchArray"],
+            },
+            { from: "package", package: "modern-tar", name: "ParsedTarEntry" },
             {
               from: "package",
               package: "@cloudflare/workers-types",
@@ -114,13 +118,27 @@ export default defineConfig({
               name: ["ReactNode", "ButtonHTMLAttributes", "ClassAttributes"],
             },
             { from: "package", package: "clsx", name: "ClassValue" },
-            { from: "package", package: "@huggingface/transformers", name: "RawImage" },
+            {
+              from: "package",
+              package: "@huggingface/transformers",
+              name: ["RawImage", "PretrainedConfig", "PreTrainedModel", "Processor"],
+            },
             { from: "package", package: "lighthouse", name: ["FlowResult", "Step"] },
             { from: "package", package: "puppeteer-core", name: ["Browser", "Page"] },
             {
               from: "package",
               package: "effect",
-              name: ["Cause", "Context", "Effect", "Exit", "Layer", "Option"],
+              name: [
+                "Cause",
+                "Context",
+                "Effect",
+                "Exit",
+                "HashMap",
+                "HashSet",
+                "Layer",
+                "Option",
+                "Stream",
+              ],
             },
           ],
         },
