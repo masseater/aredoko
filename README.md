@@ -22,8 +22,48 @@ Unity の中で、プロジェクトや unitypackage に入っているモデル
 
 Unity の版は VRChat Creator Companion が入れるものと同じです。
 
+## 導入
+
+aredoko は、検索を受け持つ管理アプリと、Unity のエディタ拡張の 2 つでできています。
+
+1. [Releases][releases] の `aredoko_x.y.z_x64-setup.exe` を実行します。
+   入った管理アプリは、起動するとタスクトレイに常駐します。
+2. Unity の Window → Package Manager を開きます。
+   左上の「+」の「Add package from git URL...」に次の URL を入れます。
+
+```text
+https://github.com/masseater/aredoko.git?path=apps/unity/Packages/dev.masseater.aredoko
+```
+
+## 使い方
+
+| 手順           | 操作                                                      |
+| -------------- | --------------------------------------------------------- |
+| フォルダの登録 | 管理アプリの「探す場所」に unitypackage のフォルダを追加  |
+| 索引の作成     | 登録すると始まり、サイドバーに進み具合が出る              |
+| Unity で検索   | Window → aredoko → アセット検索（Ctrl+Shift+K）           |
+| 取り込み       | unitypackage の中身はインポート、ほかはシーンへドラッグ   |
+| BOOTH の情報   | 「ライブラリ」でパッケージを選び、商品ページの URL を登録 |
+
+管理アプリの窓を閉じても、タスクトレイに残って検索を受け付けます。
+止めるときは、トレイのメニューから「終了」を選びます。
+
 ## BOOTH・VRChat のアセット
 
 BOOTH の商品ページの URL を登録すると、商品名・ショップ名・タグでも検索できます。
 取得するのは誰でも見られる商品ページの公開情報だけで、ログイン情報や購入履歴には触れません。
 衣装・髪型・ワールド用の小物は、VRChat のアバター改変やワールド制作での探し方に合わせて検索の精度を調整しています。
+
+## 手元だけで動く仕組み
+
+埋め込みのモデルは管理アプリに同梱しており、推論と索引は PC の中で完結します。
+外部への通信は、登録した BOOTH の商品ページの公開情報の取得だけです。
+
+## 公開先
+
+| 対象                 | 入手先               |
+| -------------------- | -------------------- |
+| 管理アプリ           | [Releases][releases] |
+| Unity のエディタ拡張 | 「導入」の git URL   |
+
+[releases]: https://github.com/masseater/aredoko/releases
