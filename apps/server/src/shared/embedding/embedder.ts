@@ -9,8 +9,6 @@ import {
 } from "@huggingface/transformers";
 import { Array, Context, Effect, Layer, Option, Predicate, Schema, pipe } from "effect";
 
-import { Settings } from "#shared/settings";
-
 import { EmbeddingFailed } from "./embedding-failed.ts";
 
 const MODEL_ID = "onnx-community/embeddinggemma-2-ONNX";
@@ -143,20 +141,21 @@ const fetchModel = Effect.fn("fetchModel")(function* fetchModelFiles(directory: 
   );
 });
 
-/** @internal */
-const embedderLayer = Layer.effect(
-  Embedder,
-  Effect.gen(function* embedder() {
-    const { modelDirectory } = yield* Settings;
-    yield* Effect.sync(() => {
-      pipe(modelDirectory, Option.map(preferLocalModels));
-    });
-    const config = yield* loadConfig;
-    const { processor, imageToken } = yield* loadProcessor;
-    const { model, device } = yield* loadModel(config);
-    return Embedder.of({ device, ...make(embedWith(model), processor, imageToken) });
-  }),
-);
+const localEmbedderLayer = (
+  modelDirectory: Option.Option<string>,
+): Layer.Layer<Embedder, EmbeddingFailed> =>
+  Layer.effect(
+    Embedder,
+    Effect.gen(function* embedder() {
+      yield* Effect.sync(() => {
+        pipe(modelDirectory, Option.map(preferLocalModels));
+      });
+      const config = yield* loadConfig;
+      const { processor, imageToken } = yield* loadProcessor;
+      const { model, device } = yield* loadModel(config);
+      return Embedder.of({ device, ...make(embedWith(model), processor, imageToken) });
+    }),
+  );
 
-export { Embedder, embedderLayer, fetchModel };
+export { Embedder, fetchModel, localEmbedderLayer };
 export type { Vector };

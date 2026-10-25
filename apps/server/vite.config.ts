@@ -2,7 +2,7 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   pack: {
-    entry: { main: "src/app/main.ts" },
+    entry: { main: "src/app/main.ts", "embedder-worker": "src/app/embedder-worker.ts" },
     outDir: "dist",
     platform: "node",
     format: "esm",

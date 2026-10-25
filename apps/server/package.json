@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "src/app/main.ts",
   "imports": {
     "#entities/*": "./src/entities/*/index.ts",
     "#features/*": "./src/features/*/index.ts",
     "#shared/*": "./src/shared/*/index.ts"
+  },
+  "exports": {
+    ".": "./src/app/main.ts",
+    "./embedder-worker": "./src/app/embedder-worker.ts"
   },
   "scripts": {
     "bundle": "vp pack",

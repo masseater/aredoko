@@ -14,6 +14,8 @@
         "allowedUnstableApis": [
           "@effect/platform-node-shared/NodeSocketServer#layerWebSocket",
           "@effect/platform-node/NodeServices#layer",
+          "@effect/platform-node/NodeWorker#layer",
+          "@effect/platform-node/NodeWorkerRunner#layer",
           "@effect/sql-sqlite-node/SqliteClient",
           "@effect/sql-sqlite-node/SqliteMigrator",
           "@effect/vitest#it",
@@ -27,8 +29,13 @@
           "effect/http/FetchHttpClient#layer",
           "effect/http/HttpClient",
           "effect/http/HttpClientResponse",
+          "effect/rpc/RpcClient",
+          "effect/rpc/RpcClientError",
+          "effect/rpc/RpcGroup",
+          "effect/rpc/Rpc",
           "effect/rpc/RpcSerialization",
           "effect/rpc/RpcServer",
+          "effect/rpc/RpcWorker",
           "effect/sql/Migrator",
           "effect/sql/SqlClient"
         ]
