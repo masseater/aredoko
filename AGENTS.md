@@ -6,6 +6,8 @@
 - 管理アプリは Tauri 2 で `apps/desktop` に置き、画面は TypeScript と React で書く。Rust 側は常駐サーバーの起動と終了だけを受け持つ。
 - 埋め込みのモデルは EmbeddingGemma 2 である。3D モデルは複数の向きからレンダリングした画像を埋め込む。キャプションを生成してから埋め込む方式は取らない。
 - 検索の精度は、検索語と正解のアセットを組にした評価セットで測る。ランキングやモデルを変えるときは、変える前と後の結果を比べる。評価は日本語の検索語を主にする。
+- 型の正本は `libs/protocol` の Effect Schema である。管理アプリと常駐サーバーは RpcGroup をそのまま共有し、エディタ拡張の C# の型は `tools/protocol-codegen` で生成する。Rust に command を足すときは tauri-specta で TypeScript の型を出す。
+- インデックスは SQLite と sqlite-vec に置く。
 
 ## aredoko の制約
 
@@ -20,6 +22,7 @@
 - コマンドは `vp` から実行し、`pnpm`・`npx` は直接使わない。`vp run <name>` は `package.json` と `vite.config.ts` のタスクで、組み込みコマンドとは別物である。
 - `vp run verify` が検査をまとめて流す。pre-push フックと Stop フックも同じ verify を走らせる。
 - `vp check` は oxlint-plugin-decision の判定に `.env` の `OPENROUTER_API_KEY` を使う。
+- `libs/protocol` を変えたら、`tools/protocol-codegen` で `vp run codegen` を実行して C# の型を作り直す。生成物は手で書き換えない。
 - テストを 1 つだけ走らせるときは、`apps/web` で `vp test run <ファイル>` を実行する。
 - D1 のスキーマは `*.table.ts` に書き、`apps/web` で `vp run db:generate` を実行してマイグレーションを作る。better-auth のテーブルは `vp run auth:generate` で生成する。
 

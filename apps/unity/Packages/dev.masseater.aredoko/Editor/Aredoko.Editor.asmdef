@@ -1,0 +1,5 @@
+{
+  "name": "Aredoko.Editor",
+  "rootNamespace": "Aredoko",
+  "includePlatforms": ["Editor"]
+}
