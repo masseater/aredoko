@@ -71,6 +71,15 @@ namespace Aredoko.Indexing
                 return Array.Empty<string>();
             }
 
+            if (target is GameObject model)
+            {
+                var views = ModelViews.Render(model);
+                if (views.Length > 0)
+                {
+                    return views.Select(Convert.ToBase64String).ToArray();
+                }
+            }
+
             var preview = AssetPreview.GetAssetPreview(target);
             return preview == null ? Array.Empty<string>() : new[] { Convert.ToBase64String(EncodePng(preview)) };
         }
