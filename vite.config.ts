@@ -202,6 +202,10 @@ export default defineConfig({
         rules: { "shadcn/no-restyle": "off", "react/jsx-props-no-spreading": "off" },
       },
       {
+        files: ["apps/server/src/app/**"],
+        rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
+      },
+      {
         files: ["apps/web/src/**/*.{ts,tsx}"],
         rules: decisionRules,
       },

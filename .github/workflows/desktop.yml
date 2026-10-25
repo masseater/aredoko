@@ -33,7 +33,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force "$env:RESOURCES/runtime", "$env:RESOURCES/server" | Out-Null
           Copy-Item (Get-Command node).Source "$env:RESOURCES/runtime/node.exe"
-          Copy-Item apps/server/dist/main.mjs "$env:RESOURCES/server/main.mjs"
+          Copy-Item apps/server/dist/*.mjs "$env:RESOURCES/server/"
           $versions = @{}
           foreach ($name in '@huggingface/transformers', 'sqlite-vec') {
             $versions[$name] = (Get-Content "apps/server/node_modules/$name/package.json" | ConvertFrom-Json).version

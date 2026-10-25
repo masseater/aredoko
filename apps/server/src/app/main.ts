@@ -1,4 +1,4 @@
-import { Duration, Effect, Layer, Option, Schedule, pipe } from "effect";
+import { Duration, Effect, Layer, Option, Schedule, String, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 import { runMain } from "runtime";
 
@@ -7,6 +7,9 @@ import { Settings } from "#shared/settings";
 import { VERSION } from "./rpc/handlers.ts";
 import { serverLayer } from "./rpc/server-layer.ts";
 
+const EMBEDDER_WORKER = new URL(
+  pipe(import.meta.url, String.replace(/main(?<extension>\.\w+)$/u, "embedder-worker$<extension>")),
+);
 const PARENT_CHECK_INTERVAL = Duration.fromInputUnsafe("2 seconds");
 const SIGNAL_PROBE = 0;
 
@@ -32,7 +35,9 @@ const command = Command.make(
     parentPid: Flag.String("parent-pid").pipe(Flag.optional),
   },
   ({ parentPid, ...settings }) => {
-    const server = Layer.launch(serverLayer).pipe(Effect.provideService(Settings, settings));
+    const server = Layer.launch(serverLayer).pipe(
+      Effect.provideService(Settings, { ...settings, embedderWorker: EMBEDDER_WORKER }),
+    );
     const parent = pipe(
       parentPid,
       Option.map((pid) => untilExits(globalThis.Number(pid))),

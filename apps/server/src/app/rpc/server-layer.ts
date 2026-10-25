@@ -6,8 +6,8 @@ import { AredokoRpcs, PORT } from "protocol";
 
 import { libraryLayer } from "#features/library";
 import { databaseLayer } from "#shared/database";
-import { embedderLayer } from "#shared/embedding";
 
+import { embedderLayer } from "./embedder-layer.ts";
 import { handlersLayer } from "./handlers.ts";
 
 const HOST = "127.0.0.1";

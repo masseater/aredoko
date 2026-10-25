@@ -6,6 +6,7 @@ class Settings extends Context.Service<
   {
     readonly dataDirectory: string;
     readonly modelDirectory: Option.Option<string>;
+    readonly embedderWorker: URL;
   }
 >()("server/shared/settings/settings") {}
 
