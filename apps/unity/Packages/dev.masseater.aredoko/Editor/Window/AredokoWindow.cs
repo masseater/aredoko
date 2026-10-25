@@ -25,7 +25,8 @@ namespace Aredoko.Window
         PreviewCache? previews;
         string query = "";
         string searchedQuery = "";
-        int kindMask = ~0;
+        static readonly int AllKinds = (1 << Labels.Kinds.Length) - 1;
+        int kindMask = AllKinds;
         float tileSize = 112f;
         SearchResult[] results = Array.Empty<SearchResult>();
         Status? status;
@@ -107,12 +108,9 @@ namespace Aredoko.Window
                 Event.current.Use();
             }
 
-            var names = Labels.Kinds.Select(Labels.Kind).ToArray();
-            var mask = EditorGUILayout.MaskField(kindMask, names, EditorStyles.toolbarDropDown, GUILayout.Width(120));
-            if (mask != kindMask)
+            if (GUILayout.Button(KindFilterLabel(), EditorStyles.toolbarDropDown, GUILayout.Width(120)))
             {
-                kindMask = mask;
-                RunSearch();
+                ShowKindMenu();
             }
 
             tileSize = GUILayout.HorizontalSlider(tileSize, MinTile, MaxTile, GUILayout.Width(80));
@@ -254,7 +252,7 @@ namespace Aredoko.Window
             GUILayout.Label(preview, GUILayout.Width(size), GUILayout.Height(size));
             EditorGUILayout.LabelField(Labels.FileName(first.Pathname), EditorStyles.boldLabel);
             EditorGUILayout.LabelField(first.Pathname, EditorStyles.wordWrappedMiniLabel);
-            EditorGUILayout.LabelField("種類", Labels.Kind(first.Kind));
+            Field("種類", Labels.Kind(first.Kind));
             if (chosen.Length > 1)
             {
                 EditorGUILayout.LabelField($"ほか {chosen.Length - 1} 件を選択中", EditorStyles.miniLabel);
@@ -264,6 +262,44 @@ namespace Aredoko.Window
             DrawPackage(first);
             GUILayout.Space(8);
             DrawActions(chosen);
+        }
+
+        string KindFilterLabel()
+        {
+            var chosen = Labels.Kinds.Where((_, index) => (kindMask & (1 << index)) != 0).ToArray();
+            if ((kindMask & AllKinds) == AllKinds || chosen.Length == 0)
+            {
+                return "すべての種類";
+            }
+
+            return chosen.Length == 1 ? Labels.Kind(chosen[0]) : $"{chosen.Length} 種類";
+        }
+
+        void ShowKindMenu()
+        {
+            var menu = new GenericMenu();
+            menu.AddItem(new GUIContent("すべての種類"), (kindMask & AllKinds) == AllKinds, () => SetKindMask(AllKinds));
+            menu.AddSeparator(string.Empty);
+            for (var index = 0; index < Labels.Kinds.Length; index++)
+            {
+                var bit = 1 << index;
+                var only = (kindMask & AllKinds) == AllKinds;
+                menu.AddItem(new GUIContent(Labels.Kind(Labels.Kinds[index])), !only && (kindMask & bit) != 0, () => SetKindMask(only ? bit : kindMask ^ bit));
+            }
+
+            menu.ShowAsContext();
+        }
+
+        void SetKindMask(int mask)
+        {
+            kindMask = (mask & AllKinds) == 0 ? AllKinds : mask & AllKinds;
+            RunSearch();
+        }
+
+        static void Field(string label, string value)
+        {
+            EditorGUILayout.LabelField(label, EditorStyles.miniBoldLabel);
+            EditorGUILayout.LabelField(value, EditorStyles.wordWrappedLabel);
         }
 
         void DrawPackage(SearchResult result)
@@ -278,17 +314,17 @@ namespace Aredoko.Window
             var summary = package.Summary;
             if (summary.Avatars.Length > 0)
             {
-                EditorGUILayout.LabelField("対応アバター", string.Join("、", summary.Avatars));
+                Field("対応アバター", string.Join("、", summary.Avatars));
             }
 
             if (summary.Shaders.Length > 0)
             {
-                EditorGUILayout.LabelField("シェーダー", string.Join("、", summary.Shaders));
+                Field("シェーダー", string.Join("、", summary.Shaders));
             }
 
             if (summary.Colors.Length > 0)
             {
-                EditorGUILayout.LabelField("色", string.Join("、", summary.Colors));
+                Field("色", string.Join("、", summary.Colors));
             }
 
             var counts = summary.Counts.Where(count => count.Kind != AssetKind.Other).Select(count => $"{Labels.Kind(count.Kind)} {count.Count}");
@@ -350,7 +386,7 @@ namespace Aredoko.Window
             Repaint();
             try
             {
-                var kinds = kindMask == ~0 ? Array.Empty<AssetKind>() : Labels.Kinds.Where((_, index) => (kindMask & (1 << index)) != 0).ToArray();
+                var kinds = (kindMask & AllKinds) == AllKinds ? Array.Empty<AssetKind>() : Labels.Kinds.Where((_, index) => (kindMask & (1 << index)) != 0).ToArray();
                 var found = await AredokoClient.Shared.Call(AredokoRpcs.Search, new SearchPayload { Query = text, Limit = ResultLimit, Kinds = kinds });
                 if (text == searchedQuery)
                 {
