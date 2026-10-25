@@ -9,7 +9,6 @@ import { Input } from "#/shared/ui/input";
 const PLACEHOLDER = "https://booth.pm/ja/items/…";
 const LABEL = "BOOTH の商品ページの URL";
 const SUBMIT = "紐づける";
-const HINT = "商品ページの URL を入れると、商品名やショップ名でも探せるようになります。";
 
 const BoothLinkForm = ({ packageId }: Readonly<{ packageId: number }>): ReactNode => {
   const url = useBoothDraft(packageId);
@@ -31,7 +30,6 @@ const BoothLinkForm = ({ packageId }: Readonly<{ packageId: number }>): ReactNod
   );
   return (
     <form className="flex flex-col gap-2" onSubmit={onSubmit}>
-      <p className="text-muted-foreground text-xs">{HINT}</p>
       <div className="flex gap-2">
         <Input placeholder={PLACEHOLDER} aria-label={LABEL} value={url} onChange={onChange} />
         <Button type="submit" disabled={link.isPending}>

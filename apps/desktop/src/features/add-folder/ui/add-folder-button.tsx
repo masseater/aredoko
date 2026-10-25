@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
-import { pickFolder } from "#/pages/sources/api/pick-folder";
+import { pickFolder } from "#/features/add-folder/api/pick-folder";
 import { useAddSource } from "#/shared/api";
 
 const LABEL = "フォルダを追加";

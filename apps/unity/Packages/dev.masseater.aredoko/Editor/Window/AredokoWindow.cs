@@ -2,6 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Aredoko.Client;
 using Aredoko.Indexing;
@@ -20,6 +22,8 @@ namespace Aredoko.Window
         const float MinTile = 64f;
         const float MaxTile = 192f;
 
+        static readonly string DesktopApp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "aredoko", "aredoko-desktop.exe");
+
         readonly HashSet<long> selected = new HashSet<long>();
         readonly Dictionary<long, Package> packages = new Dictionary<long, Package>();
         PreviewCache? previews;
@@ -31,6 +35,7 @@ namespace Aredoko.Window
         SearchResult[] results = Array.Empty<SearchResult>();
         Status? status;
         string? notice;
+        bool unreachable;
         bool searching;
         bool busy;
         double searchAt = -1;
@@ -117,7 +122,7 @@ namespace Aredoko.Window
             GUILayout.Space(6);
             using (new EditorGUI.DisabledScope(busy))
             {
-                if (GUILayout.Button(new GUIContent("このプロジェクトを索引", "プロジェクト内のアセットも検索できるようにします"), EditorStyles.toolbarButton))
+                if (GUILayout.Button("このプロジェクトを索引に追加", EditorStyles.toolbarButton))
                 {
                     IndexProject();
                 }
@@ -126,6 +131,20 @@ namespace Aredoko.Window
 
         void DrawStatus()
         {
+            if (unreachable)
+            {
+                using (new EditorGUILayout.HorizontalScope(EditorStyles.helpBox))
+                {
+                    EditorGUILayout.LabelField("管理アプリが起動していません", EditorStyles.wordWrappedLabel);
+                    if (File.Exists(DesktopApp) && GUILayout.Button("管理アプリを起動", GUILayout.Width(120)))
+                    {
+                        Process.Start(DesktopApp);
+                    }
+                }
+
+                return;
+            }
+
             string line;
             if (status == null)
             {
@@ -133,11 +152,11 @@ namespace Aredoko.Window
             }
             else if (status.Indexing)
             {
-                line = $"索引を作成中: {status.Current ?? ""}　パッケージ {status.Packages.Done}/{status.Packages.Total}・画像 {status.Images.Done}/{status.Images.Total}";
+                line = $"索引を作成中　{status.Current ?? ""}　パッケージ {status.Packages.Done}/{status.Packages.Total}・画像 {status.Images.Done}/{status.Images.Total}";
             }
             else
             {
-                line = $"パッケージ {status.Packages.Total} 件・画像 {status.Images.Total} 枚を検索できます（{(status.Device == "cpu" ? "CPU" : "GPU")}）";
+                line = $"パッケージ {status.Packages.Total}・画像 {status.Images.Total}";
             }
 
             if (notice != null)
@@ -154,8 +173,11 @@ namespace Aredoko.Window
             gridScroll = scroll.scrollPosition;
             if (results.Length == 0)
             {
-                var message = searching ? "検索しています…" : string.IsNullOrWhiteSpace(searchedQuery) ? "探したいアセットを日本語で入力してください（例: 黒い猫耳、桔梗 用のワンピース）" : "見つかりませんでした。別の言い方でもお試しください。";
-                EditorGUILayout.LabelField(message, EditorStyles.centeredGreyMiniLabel, GUILayout.Height(60));
+                if (!unreachable && (searching || !string.IsNullOrWhiteSpace(searchedQuery)))
+                {
+                    EditorGUILayout.LabelField(searching ? "検索しています…" : "見つかりませんでした", EditorStyles.centeredGreyMiniLabel, GUILayout.Height(60));
+                }
+
                 return;
             }
 
@@ -242,7 +264,6 @@ namespace Aredoko.Window
             var chosen = results.Where(result => selected.Contains(result.AssetId)).ToArray();
             if (chosen.Length == 0)
             {
-                EditorGUILayout.LabelField("アセットを選ぶと詳細が表示されます。ダブルクリックでインポートします。", EditorStyles.wordWrappedMiniLabel);
                 return;
             }
 
@@ -398,7 +419,7 @@ namespace Aredoko.Window
             }
             catch (AredokoException exception)
             {
-                notice = exception.Message;
+                Fail(exception);
             }
             finally
             {
@@ -407,20 +428,28 @@ namespace Aredoko.Window
             }
         }
 
+        void Fail(AredokoException exception)
+        {
+            if (exception.Unreachable)
+            {
+                unreachable = true;
+                return;
+            }
+
+            notice = exception.Message;
+        }
+
         async void RefreshStatus()
         {
             try
             {
                 status = await AredokoClient.Shared.Call(AredokoRpcs.GetStatus);
-                if (notice != null && notice.StartsWith("aredoko の管理アプリ", StringComparison.Ordinal))
-                {
-                    notice = null;
-                }
+                unreachable = false;
             }
             catch (AredokoException exception)
             {
                 status = null;
-                notice = exception.Message;
+                Fail(exception);
             }
 
             Repaint();
@@ -440,7 +469,7 @@ namespace Aredoko.Window
             }
             catch (AredokoException exception)
             {
-                notice = exception.Message;
+                Fail(exception);
             }
         }
 
@@ -456,14 +485,12 @@ namespace Aredoko.Window
             try
             {
                 var extracted = await AredokoClient.Shared.Call(AredokoRpcs.Extract, new ExtractPayload { AssetIds = ids });
-                notice = extracted.Missing.Length > 0
-                    ? $"{extracted.Assets} 個のファイルを取り出しました。元のパッケージに無い参照が {extracted.Missing.Length} 件あります。シェーダーなど別のパッケージが必要かもしれません。"
-                    : $"{extracted.Assets} 個のファイルを取り出しました。";
+                notice = extracted.Missing.Length > 0 ? $"元のパッケージに無い参照が {extracted.Missing.Length} 件あります" : null;
                 AssetDatabase.ImportPackage(extracted.Path, true);
             }
             catch (AredokoException exception)
             {
-                notice = exception.Message;
+                Fail(exception);
             }
             finally
             {
@@ -478,11 +505,11 @@ namespace Aredoko.Window
             try
             {
                 var count = await ProjectIndexer.Run(progress => notice = progress);
-                notice = $"プロジェクトの {count} 個のアセットを索引に追加しました。";
+                notice = $"{count} 個のアセットを索引に追加しました";
             }
             catch (AredokoException exception)
             {
-                notice = exception.Message;
+                Fail(exception);
             }
             finally
             {

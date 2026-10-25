@@ -16,10 +16,10 @@ const ServerStatus = (): ReactNode => {
   if (status.isError) {
     return <Unreachable />;
   }
-  const { device, indexing, current, packages, images } = status.data;
+  const { indexing, current, packages, images } = status.data;
   return (
     <div className="flex flex-col gap-2">
-      <Running device={device} />
+      <Running />
       {indexing && <IndexingProgress current={current} packages={packages} images={images} />}
     </div>
   );

@@ -8,8 +8,6 @@ import { BoothSection } from "./booth-section.tsx";
 import { PackageHeader } from "./package-header.tsx";
 import { PackageSummary } from "./package-summary.tsx";
 
-const NOTHING_SELECTED = "左の一覧からパッケージを選ぶと、中身と BOOTH の情報が表示されます。";
-
 const PackageDetail = (): ReactNode => {
   const selected = useSelectedPackage();
   const packages = usePackages();
@@ -23,7 +21,7 @@ const PackageDetail = (): ReactNode => {
     ),
   );
   if (Option.isNone(item)) {
-    return <p className="text-muted-foreground text-sm">{NOTHING_SELECTED}</p>;
+    return false;
   }
   return (
     <article className="flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto">

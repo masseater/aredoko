@@ -6,7 +6,7 @@ import { Button } from "ui/button";
 import { useDraft, useSetDraft, useSubmitQuery } from "#/pages/search/model";
 import { Input } from "#/shared/ui/input";
 
-const PLACEHOLDER = "例: 黒い服、猫耳、ネイル";
+const PLACEHOLDER = "黒い服、猫耳、ネイル";
 const LABEL = "検索語";
 const SUBMIT = "検索";
 

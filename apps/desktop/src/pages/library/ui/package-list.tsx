@@ -1,13 +1,13 @@
 import { Array, String, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import { AddFolderButton } from "#/features/add-folder";
 import { usePackageFilter } from "#/pages/library/model";
 import { usePackages } from "#/shared/api";
 
 import { PackageListItem } from "./package-list-item.tsx";
 
 const LOADING = "読み込んでいます…";
-const EMPTY = "パッケージがありません。「探す場所」でフォルダを登録してください。";
 
 const PackageList = (): ReactNode => {
   const packages = usePackages();
@@ -19,7 +19,11 @@ const PackageList = (): ReactNode => {
     return <p className="text-destructive px-3 text-sm">{packages.error.message}</p>;
   }
   if (Array.isReadonlyArrayEmpty(packages.data)) {
-    return <p className="text-muted-foreground px-3 text-sm">{EMPTY}</p>;
+    return (
+      <div className="px-3">
+        <AddFolderButton />
+      </div>
+    );
   }
   return (
     <ul className="flex flex-col gap-0.5">

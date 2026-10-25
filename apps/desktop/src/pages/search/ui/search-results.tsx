@@ -7,6 +7,8 @@ import { useSearch } from "#/shared/api";
 
 import { ResultGrid } from "./result-grid.tsx";
 
+const TONE_CLASSES = { muted: "text-muted-foreground", error: "text-destructive" } as const;
+
 const phaseOf = ({
   isPending,
   fetchStatus,
@@ -32,20 +34,13 @@ const SearchResults = (): ReactNode => {
     ),
     results: Option.fromUndefinedOr(search.data),
   });
+  if (view.status === "idle") {
+    return false;
+  }
   if (view.status === "results") {
     return <ResultGrid results={view.results} />;
   }
-  return (
-    <p
-      className={cn(
-        "text-sm",
-        view.tone === "error" && "text-destructive",
-        view.tone === "muted" && "text-muted-foreground",
-      )}
-    >
-      {view.text}
-    </p>
-  );
+  return <p className={cn("text-sm", TONE_CLASSES[view.tone])}>{view.text}</p>;
 };
 
 export { SearchResults };

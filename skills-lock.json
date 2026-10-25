@@ -247,7 +247,7 @@
       "computedHash": "c42755e5c8d18e4d3b4a4c8470b3b12a27508bb3921dec40ed10a2b541ea90d9"
     },
     "stop-describing-ui": {
-      "source": "artouc/stop-describe-ui",
+      "source": "artouc/stop-describing-ui",
       "ref": "251a859f6e40645030e1ae69fa4b501c851eac9c",
       "sourceType": "github",
       "skillPath": "skills/stop-describing-ui/SKILL.md",
