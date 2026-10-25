@@ -1,71 +1,58 @@
-# typescript-template
+# aredoko
 
-Cloudflare で動く TypeScript の Web アプリを、検査・CI・デプロイ・AI エージェントとの作業の決まりが
-そろった状態から始めるための GitHub テンプレートである。
-新しいリポジトリを作るたびに、lint や CI やデプロイの仕組みを組み直さずに済む。
+「あれどこだっけ」を見た目の言葉で探せる、Unity エディタの拡張である。
 
-## 公開先
+BOOTH や Asset Store で買ったアセットが増えると、商品名やファイル名を覚えていない素材から順に見つからなくなる。
+aredoko は手元の unitypackage やフォルダの中身をモデル・テクスチャ・マテリアルの単位で読み込み、「白いフリルのスカート」「古びた木の机」のような日本語で探せるようにする。
+3D モデルはレンダリングした見た目そのものをベクトルにするので、ファイル名や商品説明に書かれていない特徴からでも見つかる。
 
-- テンプレートのままのアプリ: <https://typescript-template-web-production-ntesuocc46gilfjl.masseater.workers.dev>
+> [!NOTE]
+> 開発を始めたばかりで、まだ配布していない。
 
-## 始めたときに入っているもの
+## 特徴
 
-- TanStack Start と Effect で書く Web アプリ。D1 のデータベースと better-auth のログインを使える
-- 型検査・lint・テスト・依存の監査を 1 回で流す `vp run verify`
-- main に push すると、verify が通ったあとに Cloudflare へデプロイする GitHub Actions
-- Claude Code で作業するときのフックと作業の決まり
+| 特徴             | 内容                                     |
+| ---------------- | ---------------------------------------- |
+| 見た目で探す     | モデルとテクスチャを画像として埋め込む   |
+| 中身の単位で探す | 商品の中のモデルやテクスチャを結果に出す |
+| Unity の中で完結 | 結果からシーンへ置き、インポートできる   |
+| 手元だけで動く   | アセットや検索語を外へ送らない           |
+| BOOTH の商品情報 | 商品名・ショップ名・タグも検索に使う     |
 
-## 使い方
+アバター改変の衣装・髪型・アクセサリーにも、ワールド制作の小物・建物・テクスチャにも使える。
+VRChat SDK は要らない。
 
-### 前提
+## 機能
 
-- [Vite+](https://viteplus.dev/guide/) の `vp` コマンド
-- `gh`、uv、Go、Python 3、jq。verify の一部がこれらで動く
-- Workers Paid プランの Cloudflare アカウント
-- OpenRouter の API キー。verify の lint の一部が使う
+| 機能                                        | 状態   |
+| ------------------------------------------- | ------ |
+| フォルダと unitypackage の取り込み          | 未実装 |
+| 3D モデル・テクスチャ・マテリアルの埋め込み | 未実装 |
+| 日本語の言葉での検索                        | 未実装 |
+| 画像を渡して似たアセットを探す              | 未実装 |
+| BOOTH の商品 URL から商品情報を取得         | 未実装 |
+| KonoAsset・BLM の登録内容の読み込み         | 未実装 |
 
-### 1. テンプレートからリポジトリを作る
+## 動作環境
 
-```sh
-gh repo create <owner>/<name> --template masseater/typescript-template \
-  --private --clone
-cd <name>
-```
+Unity 2022.3 以降の Windows 版エディタで動かす。
 
-### 2. アプリ名を変える
+## BOOTH とのやり取り
 
-`apps/web/app-name.ts` の `APP_NAME` を、リポジトリの名前に変える。
-同じ Cloudflare アカウントにある別のリポジトリと名前が重なると、互いのリソースを置き換え合う。
+BOOTH から取得するのは、誰でも見られる商品ページの公開情報だけである。
+BOOTH のログイン情報や購入履歴には触れず、購入したアイテムを自動でダウンロードすることもない。
+KonoAsset や BOOTH Library Manager（BLM）を使っている場合は、その登録内容を読み取りだけで利用する。
 
-### 3. 手元で動かす
+## 開発
+
+開発の決まりは [AGENTS.md](AGENTS.md) にある。
+手元で検査を流すには、[Vite+](https://viteplus.dev/guide/) の `vp` を入れてから次を実行する。
 
 ```sh
 vp env on
 vp install
 cp .env.example .env
-vp exec --filter web alchemy profile edit --add Cloudflare
-```
-
-`vp env on` で、リポジトリが求める版の Node.js と pnpm を vp が用意する。
-`.env` の `OPENROUTER_API_KEY` にキーを書く。
-Cloudflare の認証情報は、最後のコマンドで作る Alchemy のプロファイルに入る。
-
-```sh
 vp run verify
-cd apps/web && vp run dev
 ```
 
-verify が通り、dev が表示した URL を開いてアプリが出れば準備はできている。
-
-### 4. GitHub の設定をそろえる
-
-Actions の secrets、Actions による PR 作成の許可、既定ブランチのルールセットは、テンプレートから引き継がれない。
-[masseater/skills](https://github.com/masseater/skills) の `setup-template` スキルの手順で設定する。
-
-設定が済めば、main への push のたびに本番へデプロイされる。
-手元からデプロイするときは `apps/web` で `vp run deploy` を実行する。
-
-## テンプレートの更新を取り込む
-
-作ったリポジトリで Claude Code のセッションを始めると、テンプレートの新しいリリースがあれば知らせが出る。
-取り込むと答えれば、前のリリースとの差分を当てて verify を通すところまで進む。
+`.env` の `OPENROUTER_API_KEY` には、lint の一部が使う OpenRouter の API キーを書く。
