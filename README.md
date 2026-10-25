@@ -67,3 +67,7 @@ BOOTH の商品ページの URL を登録すると、商品名・ショップ名
 | Unity のエディタ拡張 | 「導入」の git URL   |
 
 [releases]: https://github.com/masseater/aredoko/releases
+
+## ライセンス
+
+[AGPL-3.0](LICENSE)
