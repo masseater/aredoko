@@ -71,4 +71,4 @@ const score = (ranked: readonly Ranked[]): Scores => {
 };
 
 export { score };
-export type { Ranked, Scores };
+export type { QueryScore, Ranked, Scores };

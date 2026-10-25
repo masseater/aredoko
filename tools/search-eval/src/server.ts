@@ -1,7 +1,6 @@
 import { Duration, Effect, FileSystem, Schedule } from "effect";
 import { ChildProcess } from "effect/process";
-
-import { Client } from "./client.ts";
+import { AredokoClient } from "protocol";
 
 const SERVER_ENTRY = "../../apps/server/src/app/main.ts";
 const READY_INTERVAL = Duration.fromInputUnsafe("1 second");
@@ -16,7 +15,7 @@ const startServer = Effect.fn("startServer")(function* startServer() {
     [SERVER_ENTRY, "--data-dir", dataDirectory],
     { stdout: "ignore", stderr: "inherit" },
   );
-  const { GetStatus: getStatus } = yield* Client;
+  const { GetStatus: getStatus } = yield* AredokoClient;
   yield* getStatus().pipe(
     Effect.retry({ schedule: Schedule.spaced(READY_INTERVAL), times: READY_ATTEMPTS }),
   );

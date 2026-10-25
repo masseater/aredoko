@@ -1,21 +1,23 @@
 import { Context, Layer } from "effect";
 import { RpcClient, RpcSerialization } from "effect/rpc";
 import { Socket } from "effect/socket";
-import { AredokoRpcs, PORT } from "protocol";
+
+import { AredokoRpcs } from "./aredoko-rpcs.ts";
+import { PORT } from "./port.ts";
 
 const ENDPOINT = `ws://127.0.0.1:${PORT.toString()}`;
 
 /** @internal */
-class Client extends Context.Service<Client>()("search-eval/client", {
+class AredokoClient extends Context.Service<AredokoClient>()("protocol/client/AredokoClient", {
   make: RpcClient.make(AredokoRpcs),
 }) {}
 
 /** @internal */
-const clientLayer = Layer.effect(Client, Client.make).pipe(
+const aredokoClientLayer = Layer.effect(AredokoClient, AredokoClient.make).pipe(
   Layer.provide(RpcClient.layerProtocolSocket({ retryTransientErrors: true })),
   Layer.provide(RpcSerialization.layerJsonRpc()),
   Layer.provide(Socket.layerWebSocket(ENDPOINT)),
   Layer.provide(Socket.layerWebSocketConstructorGlobal),
 );
 
-export { Client, clientLayer };
+export { AredokoClient, aredokoClientLayer };

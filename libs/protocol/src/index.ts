@@ -1,5 +1,6 @@
 export { PORT } from "./port.ts";
 export { AredokoRpcs } from "./aredoko-rpcs.ts";
+export { AredokoClient, aredokoClientLayer } from "./client.ts";
 export {
   AssetKind,
   BoothItem,

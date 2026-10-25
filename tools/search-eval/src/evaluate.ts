@@ -1,6 +1,6 @@
 import { Array, Duration, Effect, HashMap, Layer, Schedule, pipe } from "effect";
+import { AredokoClient, aredokoClientLayer } from "protocol";
 
-import { Client, clientLayer } from "./client.ts";
 import { guidOf, pathnameOf } from "./conditions.ts";
 import type { Condition, LibraryAsset, Placed } from "./conditions.ts";
 import type { Query } from "./fixtures.ts";
@@ -35,7 +35,7 @@ const upload = Effect.fn("upload")(function* uploadLibrary(
   condition: Condition,
   placed: readonly Placed[],
 ) {
-  const { PutProjectAssets: putProjectAssets } = yield* Client;
+  const { PutProjectAssets: putProjectAssets } = yield* AredokoClient;
   const projectPath = `${PROJECT_ROOT}/${condition}`;
   yield* pipe(
     placed,
@@ -52,7 +52,7 @@ const upload = Effect.fn("upload")(function* uploadLibrary(
 });
 
 const waitUntilIndexed = Effect.fn("waitUntilIndexed")(function* waitUntilIndexed() {
-  const { GetStatus: getStatus } = yield* Client;
+  const { GetStatus: getStatus } = yield* AredokoClient;
   yield* getStatus().pipe(
     Effect.repeat({
       schedule: Schedule.spaced(IDLE_INTERVAL),
@@ -66,7 +66,7 @@ const searchAll = Effect.fn("searchAll")(function* searchAll(
   placed: readonly Placed[],
   queries: readonly Query[],
 ) {
-  const { Search: search } = yield* Client;
+  const { Search: search } = yield* AredokoClient;
   const idsByPathname = pipe(
     placed,
     Array.map((entry) => [pathnameOf(condition)(entry), entry.asset.id] as const),
@@ -107,7 +107,7 @@ const evaluate = Effect.fn("evaluate")(function* evaluateCondition(
   assets: readonly LibraryAsset[],
   queries: readonly Query[],
 ) {
-  const context = yield* Layer.build(clientLayer);
+  const context = yield* Layer.build(aredokoClientLayer);
   return yield* run(condition, placedOf(assets), queries).pipe(Effect.provideContext(context));
 }, Effect.scoped);
 

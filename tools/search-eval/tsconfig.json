@@ -16,10 +16,7 @@
           "effect/http/FetchHttpClient#layer",
           "effect/http/HttpClient",
           "effect/http/HttpClientResponse",
-          "effect/process/ChildProcess#make",
-          "effect/rpc/RpcClient",
-          "effect/rpc/RpcSerialization",
-          "effect/socket/Socket"
+          "effect/process/ChildProcess#make"
         ]
       }
     ]
