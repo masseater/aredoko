@@ -1,8 +1,6 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
-import { Array, Console, Effect, FileSystem, Layer, Path, Schema, String, pipe } from "effect";
+import { Array, Console, Effect, FileSystem, Path, Schema, String, pipe } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
-import { FetchHttpClient } from "effect/http";
-import { OtlpSerialization, OtlpTracer } from "effect/observability";
+import { runMain } from "runtime";
 
 import { measureFlow } from "./flow.ts";
 import { summarize } from "./metrics.ts";
@@ -16,12 +14,6 @@ class PoorVitals extends taggedError<PoorVitals, { readonly brand: unique symbol
   "PoorVitals",
   { failures: Schema.Array(Schema.String) },
 ) {}
-
-const tracing = OtlpTracer.layerFromConfig({
-  resource: { serviceName: "web-vitals" },
-}).pipe(Layer.provide(OtlpSerialization.layerJson), Layer.provide(FetchHttpClient.layer));
-
-const services = Layer.mergeAll(tracing, NodeServices.layer);
 
 const encodeJson = Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown));
 
@@ -52,11 +44,4 @@ const command = Command.make(
     }),
 );
 
-NodeRuntime.runMain(
-  Layer.build(services).pipe(
-    Effect.flatMap((context) =>
-      Effect.provideContext(Command.run(command, { version: "0.0.0" }), context),
-    ),
-    Effect.scoped,
-  ),
-);
+runMain("web-vitals")(Command.run(command, { version: "0.0.0" }));

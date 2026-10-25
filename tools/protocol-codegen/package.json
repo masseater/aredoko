@@ -1,0 +1,17 @@
+{
+  "name": "protocol-codegen",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/main.ts",
+  "dependencies": {
+    "effect": "catalog:stack",
+    "protocol": "workspace:*",
+    "quicktype-core": "26.0.0",
+    "runtime": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

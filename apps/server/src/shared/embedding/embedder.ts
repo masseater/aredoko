@@ -1,5 +1,6 @@
 import { AutoConfig, AutoModel, AutoProcessor, RawImage, Tensor } from "@huggingface/transformers";
 import { Context, Effect, Layer, Schema } from "effect";
+import type { Embedding } from "protocol";
 import { EmbeddingFailed, Vector } from "protocol";
 
 const MODEL_ID = "onnx-community/embeddinggemma-2-ONNX";
@@ -8,8 +9,8 @@ const DTYPE = "q4";
 class Embedder extends Context.Service<
   Embedder,
   {
-    readonly embedQuery: (query: string) => Effect.Effect<typeof Vector.Type, EmbeddingFailed>;
-    readonly embedImage: (path: string) => Effect.Effect<typeof Vector.Type, EmbeddingFailed>;
+    readonly embedQuery: (query: string) => Effect.Effect<typeof Embedding.Type, EmbeddingFailed>;
+    readonly embedImage: (path: string) => Effect.Effect<typeof Embedding.Type, EmbeddingFailed>;
   }
 >()("server/shared/embedding/embedder") {}
 
@@ -47,7 +48,7 @@ const embedderLive = Layer.effect(
         Effect.mapError(failed),
       );
       const [vector] = yield* decodeRows(embedding.tolist()).pipe(Effect.mapError(failed));
-      return vector;
+      return { vector };
     });
     return Embedder.of({
       embedQuery: (query) => embed(() => Promise.resolve<unknown>(processor([queryPrompt(query)]))),

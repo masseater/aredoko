@@ -7,8 +7,6 @@
       {
         "name": "@effect/language-service",
         "allowedUnstableApis": [
-          "@effect/platform-node/NodeRuntime#runMain",
-          "@effect/platform-node/NodeServices#layer",
           "effect/cli/Argument#String",
           "effect/cli/Argument#atLeast",
           "effect/cli/Command#make",
@@ -16,10 +14,7 @@
           "effect/cli/Flag#String",
           "effect/cli/Flag#withDefault",
           "effect/FileSystem#FileSystem",
-          "effect/Path#Path",
-          "effect/http/FetchHttpClient#layer",
-          "effect/observability/OtlpSerialization#layerJson",
-          "effect/observability/OtlpTracer#layerFromConfig"
+          "effect/Path#Path"
         ]
       }
     ]

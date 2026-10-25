@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@effect/platform-node": "catalog:",
     "chrome-launcher": "catalog:",
     "effect": "catalog:stack",
     "lighthouse": "catalog:",
-    "puppeteer-core": "catalog:"
+    "puppeteer-core": "catalog:",
+    "runtime": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",
