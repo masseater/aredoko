@@ -17,6 +17,11 @@ for chrome in /opt/pw-browsers/chromium-*/chrome-linux/chrome; do
   fi
 done
 
+if ! pkg-config --exists webkit2gtk-4.1; then
+  apt-get update -qq >&2
+  DEBIAN_FRONTEND=noninteractive apt-get install -y -qq libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev build-essential >&2
+fi
+
 cd "$CLAUDE_PROJECT_DIR"
 vp env on >&2
 vp install --frozen-lockfile >&2
