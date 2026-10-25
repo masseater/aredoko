@@ -111,6 +111,7 @@ export default defineConfig({
               name: ["ReactNode", "ButtonHTMLAttributes", "ClassAttributes"],
             },
             { from: "package", package: "clsx", name: "ClassValue" },
+            { from: "package", package: "@huggingface/transformers", name: "RawImage" },
             { from: "package", package: "lighthouse", name: ["FlowResult", "Step"] },
             { from: "package", package: "puppeteer-core", name: ["Browser", "Page"] },
             {

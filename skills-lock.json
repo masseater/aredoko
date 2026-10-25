@@ -34,7 +34,7 @@
       "ref": "86505e44f87d801aa1864a3c4109e9a8ae5c409f",
       "sourceType": "github",
       "skillPath": "skills/cloudflare/SKILL.md",
-      "computedHash": "4f0291c3924bb6cfec5311b23cc9798ee0292c055ce88543cf2d2cc3001174f6"
+      "computedHash": "f08c8c1be96dfad7f9d5418b1345477dd2e55af58c8da01326c9a2616c7ed721"
     },
     "commit-and-git": {
       "source": "philtzjp/skills",
@@ -97,7 +97,7 @@
       "ref": "1466d85aa4f2a0fec91f71311e65bbfa91aa7dc5",
       "sourceType": "github",
       "skillPath": "elysia/SKILL.md",
-      "computedHash": "55268e69a2c766ed67e56a0db57544f60cc52dba0c7f024a974baf965e525e1b"
+      "computedHash": "e0bc0ecce6cecc34f14cf445c72f7df0cec278e64dfd4ea99f26c503e98624d6"
     },
     "email-and-password-best-practices": {
       "source": "better-auth/skills",
@@ -300,14 +300,14 @@
       "ref": "86505e44f87d801aa1864a3c4109e9a8ae5c409f",
       "sourceType": "github",
       "skillPath": "skills/workers-best-practices/SKILL.md",
-      "computedHash": "e1c30e93854345114dfa6a0a077363119eb99c03e5c64a8f2109349802e1f2aa"
+      "computedHash": "e12970301753ed7eaa5ca375d4b98e0e36c9554e8f2809cb4b543c2ea7d9b4b8"
     },
     "yomiyasu": {
       "source": "nanaism/yomiyasu",
       "ref": "15244a1369c192d6b7e74963ee9709537fadf166",
       "sourceType": "github",
       "skillPath": "skills/yomiyasu/SKILL.md",
-      "computedHash": "a3d50b77af3cd0c9c2fdd796ed7a21f0f13d5da91709a5067d168a4a183638a4"
+      "computedHash": "f45a6586b47b539db151b18cab28687cc6541650b07e577976211a87919086c7"
     }
   }
 }

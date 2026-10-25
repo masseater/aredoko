@@ -1,0 +1,26 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app/main.ts",
+  "imports": {
+    "#shared/*": "./src/shared/*/index.ts"
+  },
+  "scripts": {
+    "test": "vp test run --passWithNoTests",
+    "steiger": "steiger ./src",
+    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@huggingface/transformers": "catalog:stack",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@feature-sliced/steiger-plugin": "0.8.0",
+    "@types/node": "catalog:",
+    "steiger": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}
