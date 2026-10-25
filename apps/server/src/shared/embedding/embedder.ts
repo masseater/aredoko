@@ -1,16 +1,38 @@
-import { AutoConfig, AutoModel, AutoProcessor, RawImage, Tensor } from "@huggingface/transformers";
-import { Context, Effect, Layer, Schema } from "effect";
-import type { Embedding } from "protocol";
-import { EmbeddingFailed, Vector } from "protocol";
+import type { PretrainedConfig } from "@huggingface/transformers";
+import {
+  AutoConfig,
+  AutoModel,
+  AutoProcessor,
+  RawImage,
+  Tensor,
+  env,
+} from "@huggingface/transformers";
+import { Array, Context, Effect, Layer, Option, Predicate, Schema, pipe } from "effect";
+
+import { Settings } from "#shared/settings";
+
+import { EmbeddingFailed } from "./embedding-failed.ts";
 
 const MODEL_ID = "onnx-community/embeddinggemma-2-ONNX";
 const DTYPE = "q4";
+const DEVICES = ["dml", "cpu"] as const;
+const IMAGE_SOFT_TOKENS = 70;
+
+type Vector = readonly number[];
+
+type Model = Awaited<ReturnType<typeof AutoModel.from_pretrained>>;
+
+type Processor = Awaited<ReturnType<typeof AutoProcessor.from_pretrained>>;
 
 class Embedder extends Context.Service<
   Embedder,
   {
-    readonly embedQuery: (query: string) => Effect.Effect<typeof Embedding.Type, EmbeddingFailed>;
-    readonly embedImage: (path: string) => Effect.Effect<typeof Embedding.Type, EmbeddingFailed>;
+    readonly device: string;
+    readonly embedQuery: (query: string) => Effect.Effect<Vector, EmbeddingFailed>;
+    readonly embedDocuments: (
+      texts: readonly string[],
+    ) => Effect.Effect<readonly Vector[], EmbeddingFailed>;
+    readonly embedImage: (png: Uint8Array) => Effect.Effect<Vector, EmbeddingFailed>;
   }
 >()("server/shared/embedding/embedder") {}
 
@@ -23,41 +45,99 @@ const decodeOutput = Schema.decodeUnknownEffect(
   Schema.Struct({ sentence_embedding: Schema.instanceOf(Tensor) }),
 );
 
-const decodeRows = Schema.decodeUnknownEffect(Schema.Tuple([Vector]));
+const decodeRows = Schema.decodeUnknownEffect(Schema.Array(Schema.Array(Schema.Finite)));
 
 const decodeImageToken = Schema.decodeUnknownEffect(Schema.String);
 
 const queryPrompt = (query: string): string => `task: search result | query: ${query}`;
 
-const embedderLive = Layer.effect(
-  Embedder,
-  Effect.gen(function* embedder() {
-    const config = yield* attempt(() => AutoConfig.from_pretrained(MODEL_ID));
-    Reflect.deleteProperty(config, "audio_config");
-    const processor = yield* attempt(() => AutoProcessor.from_pretrained(MODEL_ID));
-    const imageToken = yield* decodeImageToken(Reflect.get(processor, "image_token")).pipe(
-      Effect.mapError(failed),
-    );
-    const model = yield* attempt(() =>
-      AutoModel.from_pretrained(MODEL_ID, { config, device: "cpu", dtype: DTYPE }),
-    );
-    const embed = Effect.fn("embed")(function* embed(prepare: () => Promise<unknown>) {
+const documentPrompt = (text: string): string => `title: none | text: ${text}`;
+
+const preferLocalModels = (directory: string): void => {
+  Object.assign(env, { localModelPath: directory, allowRemoteModels: false });
+};
+
+const loadModel = (
+  config: PretrainedConfig,
+): Effect.Effect<{ readonly model: Model; readonly device: string }, EmbeddingFailed> =>
+  Effect.firstSuccessOf(
+    pipe(
+      DEVICES,
+      Array.map((device) =>
+        attempt(() => AutoModel.from_pretrained(MODEL_ID, { config, device, dtype: DTYPE })).pipe(
+          Effect.map((model) => ({ model, device })),
+        ),
+      ),
+    ),
+  );
+
+const loadProcessor = Effect.gen(function* loadProcessor() {
+  const processor = yield* attempt(() => AutoProcessor.from_pretrained(MODEL_ID));
+  const imageProcessor: unknown = Reflect.get(processor, "image_processor");
+  if (Predicate.isObject(imageProcessor)) {
+    Reflect.set(imageProcessor, "max_soft_tokens", IMAGE_SOFT_TOKENS);
+  }
+  const imageToken = yield* decodeImageToken(Reflect.get(processor, "image_token")).pipe(
+    Effect.mapError(failed),
+  );
+  return { processor, imageToken };
+});
+
+const embedWith =
+  (model: Model) =>
+  (prepare: () => Promise<unknown>): Effect.Effect<readonly Vector[], EmbeddingFailed> =>
+    Effect.gen(function* embed() {
       const inputs = yield* attempt(prepare);
       const output = yield* attempt(() => Promise.resolve<unknown>(model(inputs)));
       const { sentence_embedding: embedding } = yield* decodeOutput(output).pipe(
         Effect.mapError(failed),
       );
-      const [vector] = yield* decodeRows(embedding.tolist()).pipe(Effect.mapError(failed));
-      return { vector };
+      return yield* decodeRows(embedding.tolist()).pipe(Effect.mapError(failed));
+    }).pipe(Effect.withSpan("embed"));
+
+const first = (rows: readonly Vector[]): Effect.Effect<Vector, EmbeddingFailed> =>
+  pipe(Array.head(rows), Effect.fromOption, Effect.mapError(failed));
+
+const readImage = (png: Uint8Array): Effect.Effect<RawImage, EmbeddingFailed> =>
+  attempt(() => RawImage.fromBlob(new Blob([Uint8Array.from(png)])));
+
+const make = (
+  embed: ReturnType<typeof embedWith>,
+  processor: Processor,
+  imageToken: string,
+): Omit<Context.Service.Shape<typeof Embedder>, "device"> => ({
+  embedQuery: (query) =>
+    embed(() => Promise.resolve<unknown>(processor([queryPrompt(query)]))).pipe(
+      Effect.flatMap(first),
+    ),
+  embedDocuments: (texts) => {
+    const prompts = pipe(texts, Array.map(documentPrompt));
+    return embed(() => Promise.resolve<unknown>(processor(prompts)));
+  },
+  embedImage: (png) =>
+    readImage(png).pipe(
+      Effect.flatMap((image) =>
+        embed(() => Promise.resolve<unknown>(processor(imageToken, [[image]]))),
+      ),
+      Effect.flatMap(first),
+    ),
+});
+
+/** @internal */
+const embedderLayer = Layer.effect(
+  Embedder,
+  Effect.gen(function* embedder() {
+    const { modelDirectory } = yield* Settings;
+    yield* Effect.sync(() => {
+      pipe(modelDirectory, Option.map(preferLocalModels));
     });
-    return Embedder.of({
-      embedQuery: (query) => embed(() => Promise.resolve<unknown>(processor([queryPrompt(query)]))),
-      embedImage: Effect.fn("embedImage")(function* embedImage(path: string) {
-        const image = yield* attempt(() => RawImage.read(path));
-        return yield* embed(() => Promise.resolve<unknown>(processor(imageToken, [[image]])));
-      }),
-    });
+    const config = yield* attempt(() => AutoConfig.from_pretrained(MODEL_ID));
+    Reflect.deleteProperty(config, "audio_config");
+    const { processor, imageToken } = yield* loadProcessor;
+    const { model, device } = yield* loadModel(config);
+    return Embedder.of({ device, ...make(embedWith(model), processor, imageToken) });
   }),
 );
 
-export { Embedder, embedderLive };
+export { Embedder, embedderLayer };
+export type { Vector };

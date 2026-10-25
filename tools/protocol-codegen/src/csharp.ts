@@ -1,12 +1,24 @@
-import { Array, Effect, Option, Record, Schema, SchemaRepresentation, pipe } from "effect";
-import { EmbeddingRpcs } from "protocol";
+import {
+  Array,
+  Effect,
+  HashMap,
+  HashSet,
+  Option,
+  Record,
+  Schema,
+  SchemaAST,
+  SchemaRepresentation,
+  String,
+  pipe,
+} from "effect";
+import { AredokoRpcs, PORT } from "protocol";
 import { FetchingJSONSchemaStore, InputData, JSONSchemaInput, quicktype } from "quicktype-core";
 
 import { NotAnObject } from "./not-an-object.ts";
 
 const NAMESPACE = "Aredoko.Protocol";
 const JSON_SCHEMA_DIALECT = "https://json-schema.org/draft/2020-12/schema";
-const GROUPS = { EmbeddingRpcs };
+const GROUPS = { AredokoRpcs };
 
 const ObjectSchema = Schema.Union([
   Schema.Struct({ type: Schema.Literal("object") }),
@@ -17,14 +29,34 @@ const isObjectSchema = Schema.is(ObjectSchema);
 
 const encodeJson = Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown));
 
-const roots = pipe(
+const EMPTY = "Empty";
+const ROOT = "ProtocolRoots";
+
+const rpcs = pipe(
   Record.values(GROUPS),
   Array.flatMap(({ requests }) => Array.fromIterable(requests)),
+);
+
+const voidRoots = HashSet.fromIterable(
+  pipe(
+    rpcs,
+    Array.flatMap(([tag, rpc]) => [
+      [`${tag}Payload`, rpc.payloadSchema.ast] as const,
+      [`${tag}Success`, rpc.successSchema.ast] as const,
+    ]),
+    Array.filter(([, ast]) => SchemaAST.isVoid(ast)),
+    Array.map(([name]) => name),
+  ),
+);
+
+const roots = pipe(
+  rpcs,
   Array.flatMap(([tag, rpc]) => [
     { name: `${tag}Payload`, object: true, ast: rpc.payloadSchema.ast },
     { name: `${tag}Success`, object: true, ast: rpc.successSchema.ast },
     { name: `${tag}Error`, object: false, ast: rpc.errorSchema.ast },
   ]),
+  Array.filter(({ ast }) => !SchemaAST.isVoid(ast)),
 );
 
 const definitions = Effect.fn("definitions")(function* definitions() {
@@ -46,23 +78,56 @@ const definitions = Effect.fn("definitions")(function* definitions() {
       onSome: ([{ name }]) => Effect.fail(NotAnObject.make({ root: name })),
     }),
   );
-  return {
-    ...document.definitions,
-    ...Record.fromIterableWith(named, ([{ name }, schema]) => [name, schema]),
-  };
+  const rootSchemas = Record.fromIterableWith(named, ([{ name }, schema]) => [name, schema]);
+  return pipe(
+    { ...document.definitions, ...rootSchemas },
+    Record.map((schema, title) => ({ ...schema, title })),
+  );
 });
 
-const types = Effect.fn("types")(function* types() {
-  const $defs = yield* definitions();
-  const input = new JSONSchemaInput(new FetchingJSONSchemaStore());
-  yield* pipe(
-    roots,
-    Effect.forEach(({ name }) =>
-      encodeJson({ $schema: JSON_SCHEMA_DIALECT, $ref: `#/$defs/${name}`, $defs }).pipe(
-        Effect.flatMap((schema) => Effect.promise(() => input.addSource({ name, schema }))),
+const RefSchema = Schema.Struct({ $ref: Schema.String });
+
+const isRefSchema = Schema.is(RefSchema);
+
+const DEFINITION_PREFIX = "#/$defs/";
+
+const resolvedNames = ($defs: Readonly<Record<string, unknown>>): HashMap.HashMap<string, string> =>
+  HashMap.fromIterable(
+    pipe(
+      roots,
+      Array.map(({ name }) =>
+        pipe(
+          Record.get($defs, name),
+          Option.filter(isRefSchema),
+          Option.map(
+            ({ $ref }) => [name, pipe($ref, String.replace(DEFINITION_PREFIX, ""))] as const,
+          ),
+          Option.getOrElse(() => [name, name] as const),
+        ),
       ),
     ),
   );
+
+const rootDocument = ($defs: Readonly<Record<string, unknown>>): Record<string, unknown> => ({
+  $schema: JSON_SCHEMA_DIALECT,
+  title: ROOT,
+  type: "object",
+  properties: Record.fromIterableWith(roots, ({ name }) => [
+    name,
+    { $ref: `${DEFINITION_PREFIX}${name}` },
+  ]),
+  required: pipe(
+    roots,
+    Array.map(({ name }) => name),
+  ),
+  additionalProperties: false,
+  $defs,
+});
+
+const types = Effect.fn("types")(function* types($defs: Readonly<Record<string, unknown>>) {
+  const input = new JSONSchemaInput(new FetchingJSONSchemaStore());
+  const schema = yield* encodeJson(rootDocument($defs));
+  yield* Effect.promise(() => input.addSource({ name: ROOT, schema }));
   const inputData = new InputData();
   inputData.addInput(input);
   const { lines } = yield* Effect.promise(() =>
@@ -80,23 +145,39 @@ const types = Effect.fn("types")(function* types() {
   return lines;
 });
 
-const descriptor = (tag: string): string => {
-  const type = `Rpc<${tag}Payload, ${tag}Success, ${tag}Error>`;
-  return `        public static readonly ${type} ${tag} = new ${type}("${tag}");`;
-};
+const typeOf =
+  (names: HashMap.HashMap<string, string>) =>
+  (name: string): string =>
+    pipe(
+      Option.liftPredicate(name, (candidate) => HashSet.has(voidRoots, candidate)),
+      Option.as(EMPTY),
+      Option.orElse(() => HashMap.get(names, name)),
+      Option.getOrElse(() => name),
+    );
 
-const group = (name: string, tags: readonly string[]): readonly string[] => [
-  "",
-  `    public static class ${name}`,
-  "    {",
-  ...pipe(tags, Array.map(descriptor)),
-  "    }",
-];
+const descriptor =
+  (names: HashMap.HashMap<string, string>) =>
+  (tag: string): string => {
+    const resolve = typeOf(names);
+    const type = `Rpc<${resolve(`${tag}Payload`)}, ${resolve(`${tag}Success`)}, ${resolve(`${tag}Error`)}>`;
+    return `        public static readonly ${type} ${tag} = new ${type}("${tag}");`;
+  };
 
-const descriptors = (): readonly string[] => {
+const group =
+  (names: HashMap.HashMap<string, string>) =>
+  ([name, tags]: readonly [string, readonly string[]]): readonly string[] => [
+    "",
+    `    public static class ${name}`,
+    "    {",
+    ...pipe(tags, Array.map(descriptor(names))),
+    "    }",
+  ];
+
+const descriptors = (names: HashMap.HashMap<string, string>): readonly string[] => {
   const groups = pipe(
     Record.toEntries(GROUPS),
-    Array.flatMap(([name, { requests }]) => group(name, Array.fromIterable(requests.keys()))),
+    Array.map(([name, { requests }]) => [name, Array.fromIterable(requests.keys())] as const),
+    Array.flatMap(group(names)),
   );
   return [
     `namespace ${NAMESPACE}`,
@@ -110,14 +191,24 @@ const descriptors = (): readonly string[] => {
     "",
     "        public string Method { get; }",
     "    }",
+    "",
+    `    public sealed class ${EMPTY}`,
+    "    {",
+    "    }",
+    "",
+    "    public static class Endpoint",
+    "    {",
+    `        public const int Port = ${PORT.toString()};`,
+    "    }",
     ...groups,
     "}",
   ];
 };
 
 const csharp = Effect.fn("csharp")(function* csharp() {
-  const lines = yield* types();
-  return Array.join([...lines, "", ...descriptors(), ""], "\n");
+  const $defs = yield* definitions();
+  const lines = yield* types($defs);
+  return Array.join([...lines, "", ...descriptors(resolvedNames($defs)), ""], "\n");
 });
 
 export { csharp };

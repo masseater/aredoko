@@ -5,20 +5,27 @@
   "type": "module",
   "main": "src/app/main.ts",
   "imports": {
+    "#entities/*": "./src/entities/*/index.ts",
+    "#features/*": "./src/features/*/index.ts",
     "#shared/*": "./src/shared/*/index.ts"
   },
   "scripts": {
-    "test": "vp test run --passWithNoTests",
+    "test": "vp test run",
     "steiger": "steiger ./src",
     "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet"
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
+    "@effect/sql-sqlite-node": "catalog:",
     "@huggingface/transformers": "catalog:stack",
     "effect": "catalog:stack",
-    "protocol": "workspace:*"
+    "modern-tar": "catalog:",
+    "protocol": "workspace:*",
+    "runtime": "workspace:*",
+    "sqlite-vec": "catalog:"
   },
   "devDependencies": {
+    "@effect/vitest": "catalog:",
     "@feature-sliced/steiger-plugin": "0.8.0",
     "@types/node": "catalog:",
     "steiger": "catalog:stack",
