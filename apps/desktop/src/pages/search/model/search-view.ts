@@ -1,4 +1,4 @@
-import { Array, Option } from "effect";
+import { Array, Option, pipe } from "effect";
 import type { SearchResult } from "protocol";
 
 type Results = readonly (typeof SearchResult.Type)[];
@@ -10,6 +10,13 @@ type SearchView =
 const IDLE = "検索語を入れて Enter を押してください。";
 const SEARCHING = "探しています…";
 const EMPTY = "見つかりませんでした。";
+
+const viewOfResults = (results: Results): SearchView => {
+  if (Array.isReadonlyArrayEmpty(results)) {
+    return { status: "message", text: EMPTY, tone: "muted" };
+  }
+  return { status: "results", results };
+};
 
 const searchViewOf = ({
   phase,
@@ -26,14 +33,14 @@ const searchViewOf = ({
   if (Option.isSome(failure)) {
     return { status: "message", text: failure.value, tone: "error" };
   }
-  if (phase === "searching" || Option.isNone(results)) {
-    return { status: "message", text: SEARCHING, tone: "muted" };
-  }
-  if (Array.isReadonlyArrayEmpty(results.value)) {
-    return { status: "message", text: EMPTY, tone: "muted" };
-  }
-  return { status: "results", results: results.value };
+  return pipe(
+    results,
+    Option.filter(() => phase === "settled"),
+    Option.match({
+      onNone: (): SearchView => ({ status: "message", text: SEARCHING, tone: "muted" }),
+      onSome: viewOfResults,
+    }),
+  );
 };
 
 export { searchViewOf };
-export type { SearchView };

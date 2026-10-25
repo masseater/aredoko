@@ -13,6 +13,7 @@
         "name": "@effect/language-service",
         "allowedUnstableApis": [
           "@effect/atom-react",
+          "@effect/vitest#it",
           "effect/reactivity/Atom",
           "effect/rpc/RpcClient",
           "effect/rpc/RpcSerialization",

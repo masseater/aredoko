@@ -1,8 +1,6 @@
 import type { AssetKind } from "protocol";
 
-type Kind = typeof AssetKind.Type;
-
-const KIND_LABELS: Readonly<Record<Kind, string>> = {
+const KIND_LABELS: Readonly<Record<typeof AssetKind.Type, string>> = {
   texture: "テクスチャ",
   model: "3D モデル",
   material: "マテリアル",
@@ -15,7 +13,7 @@ const KIND_LABELS: Readonly<Record<Kind, string>> = {
   other: "その他",
 };
 
-const SEARCHABLE_KINDS: readonly Kind[] = [
+const SEARCHABLE_KINDS: readonly (typeof AssetKind.Type)[] = [
   "texture",
   "model",
   "material",

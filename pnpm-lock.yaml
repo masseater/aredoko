@@ -554,6 +554,9 @@ importers:
         specifier: 1.4.0
         version: 1.4.0
     devDependencies:
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.0.6(effect@4.0.6)(vitest@5.0.5)
       '@feature-sliced/steiger-plugin':
         specifier: 0.8.0
         version: 0.8.0(typescript@5.9.3)(vitest@5.0.5)
