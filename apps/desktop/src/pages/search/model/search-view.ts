@@ -4,10 +4,10 @@ import type { SearchResult } from "protocol";
 type Results = readonly (typeof SearchResult.Type)[];
 
 type SearchView =
+  | Readonly<{ status: "idle" }>
   | Readonly<{ status: "message"; text: string; tone: "muted" | "error" }>
   | Readonly<{ status: "results"; results: Results }>;
 
-const IDLE = "検索語を入れて Enter を押してください。";
 const SEARCHING = "探しています…";
 const EMPTY = "見つかりませんでした。";
 
@@ -28,7 +28,7 @@ const searchViewOf = ({
   results: Option.Option<Results>;
 }>): SearchView => {
   if (phase === "idle") {
-    return { status: "message", text: IDLE, tone: "muted" };
+    return { status: "idle" };
   }
   if (Option.isSome(failure)) {
     return { status: "message", text: failure.value, tone: "error" };

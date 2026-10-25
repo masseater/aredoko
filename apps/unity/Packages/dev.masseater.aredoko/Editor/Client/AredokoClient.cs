@@ -15,7 +15,7 @@ namespace Aredoko.Client
 {
     public sealed class AredokoClient : IDisposable
     {
-        const string Unreachable = "aredoko の管理アプリが起動していません。管理アプリを起動してから、もう一度お試しください。";
+        const string Unreachable = "管理アプリが起動していません";
         const int BufferSize = 64 * 1024;
 
         static readonly Uri Endpoint = new Uri($"ws://127.0.0.1:{Protocol.Endpoint.Port}");

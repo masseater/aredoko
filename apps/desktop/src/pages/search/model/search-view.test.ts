@@ -16,9 +16,9 @@ const RESULT = {
 } as const;
 
 describe("searchViewOf", () => {
-  it("asks for a query before anything is searched", () => {
+  it("shows nothing before anything is searched", () => {
     const view = searchViewOf({ phase: "idle", failure: Option.none(), results: Option.none() });
-    expect(view).toMatchObject({ status: "message", tone: "muted" });
+    expect(view).toStrictEqual({ status: "idle" });
   });
 
   it("shows the failure message", () => {

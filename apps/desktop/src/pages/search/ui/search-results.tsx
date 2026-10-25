@@ -32,6 +32,9 @@ const SearchResults = (): ReactNode => {
     ),
     results: Option.fromUndefinedOr(search.data),
   });
+  if (view.status === "idle") {
+    return false;
+  }
   if (view.status === "results") {
     return <ResultGrid results={view.results} />;
   }
