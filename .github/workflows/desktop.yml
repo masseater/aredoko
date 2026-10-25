@@ -32,7 +32,7 @@ jobs:
       - name: Copy the server and the Node runtime
         run: |
           New-Item -ItemType Directory -Force "$env:RESOURCES/runtime", "$env:RESOURCES/server" | Out-Null
-          Copy-Item (Get-Command node).Source "$env:RESOURCES/runtime/node.exe"
+          Copy-Item (node -p "process.execPath") "$env:RESOURCES/runtime/node.exe"
           Copy-Item apps/server/dist/main.mjs "$env:RESOURCES/server/main.mjs"
           $versions = @{}
           foreach ($name in '@huggingface/transformers', 'sqlite-vec') {
