@@ -2,19 +2,20 @@ import { NodeSocketServer } from "@effect/platform-node";
 import { Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { RpcSerialization, RpcServer } from "effect/rpc";
-import { AredokoRpcs, PORT } from "protocol";
+import { AredokoRpcs, HOST } from "protocol";
 
 import { libraryLayer } from "#features/library";
 import { databaseLayer } from "#shared/database";
 
 import { embedderLayer } from "./embedder-layer.ts";
+import { endpointFileLayer } from "./endpoint-file-layer.ts";
 import { handlersLayer } from "./handlers.ts";
 
-const HOST = "127.0.0.1";
+const ANY_PORT = 0;
 
-const transport = RpcServer.layerProtocolSocketServer.pipe(
+const transport = Layer.mergeAll(RpcServer.layerProtocolSocketServer, endpointFileLayer).pipe(
   Layer.provide(RpcSerialization.layerJsonRpc()),
-  Layer.provide(NodeSocketServer.layerWebSocket({ host: HOST, port: PORT })),
+  Layer.provide(NodeSocketServer.layerWebSocket({ host: HOST, port: ANY_PORT })),
 );
 
 /** @internal */

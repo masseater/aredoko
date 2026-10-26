@@ -1,5 +1,11 @@
-import { Array, Duration, Effect, HashMap, Layer, Schedule, pipe } from "effect";
-import { AredokoClient, aredokoClientLayer } from "protocol";
+import { Array, Duration, Effect, FileSystem, HashMap, Layer, Path, Schedule, pipe } from "effect";
+import {
+  AredokoClient,
+  ENDPOINT_FILE,
+  ServerUrl,
+  aredokoClientLayer,
+  awaitEndpoint,
+} from "protocol";
 
 import { guidOf, pathnameOf } from "./conditions.ts";
 import type { Condition, LibraryAsset, Placed } from "./conditions.ts";
@@ -95,7 +101,6 @@ const run = Effect.fn("run")(function* runCondition(
   placed: readonly Placed[],
   queries: readonly Query[],
 ) {
-  yield* startServer();
   yield* upload(condition, placed);
   yield* waitUntilIndexed();
   return score(yield* searchAll(condition, placed, queries));
@@ -107,8 +112,19 @@ const evaluate = Effect.fn("evaluate")(function* evaluateCondition(
   assets: readonly LibraryAsset[],
   queries: readonly Query[],
 ) {
-  const context = yield* Layer.build(aredokoClientLayer);
-  return yield* run(condition, placedOf(assets), queries).pipe(Effect.provideContext(context));
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const dataDirectory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "aredoko-eval-" });
+  const endpointFile = path.join(dataDirectory, ENDPOINT_FILE);
+  const serverUrlLayer = Layer.succeed(ServerUrl, {
+    url: awaitEndpoint(fileSystem.readFileString(endpointFile)),
+  });
+  const context = yield* Layer.build(aredokoClientLayer.pipe(Layer.provide(serverUrlLayer)));
+  const evaluation = run(condition, placedOf(assets), queries);
+  return yield* startServer(dataDirectory).pipe(
+    Effect.andThen(evaluation),
+    Effect.provideContext(context),
+  );
 }, Effect.scoped);
 
 export { evaluate };

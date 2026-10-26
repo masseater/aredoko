@@ -18,7 +18,10 @@ namespace Aredoko.Client
         const string Unreachable = "管理アプリが起動していません";
         const int BufferSize = 64 * 1024;
 
-        static readonly Uri Endpoint = new Uri($"ws://127.0.0.1:{Protocol.Endpoint.Port}");
+        static readonly string EndpointPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            EndpointFile.Directory,
+            EndpointFile.Name);
 
         readonly JsonSerializer serializer = JsonSerializer.Create(Converter.Settings);
         readonly Dictionary<long, TaskCompletionSource<JToken>> pending = new Dictionary<long, TaskCompletionSource<JToken>>();
@@ -81,7 +84,7 @@ namespace Aredoko.Client
                 var created = new ClientWebSocket();
                 try
                 {
-                    await created.ConnectAsync(Endpoint, CancellationToken.None);
+                    await created.ConnectAsync(ReadEndpoint(), CancellationToken.None);
                 }
                 catch (Exception)
                 {
@@ -98,6 +101,12 @@ namespace Aredoko.Client
             {
                 connecting.Release();
             }
+        }
+
+        static Uri ReadEndpoint()
+        {
+            var endpoint = JsonConvert.DeserializeObject<ServerEndpoint>(File.ReadAllText(EndpointPath), Converter.Settings)!;
+            return new Uri($"ws://{EndpointFile.Host}:{endpoint.Port}");
         }
 
         async Task Send(ClientWebSocket target, string text)

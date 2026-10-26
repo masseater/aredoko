@@ -11,7 +11,14 @@
     "plugins": [
       {
         "name": "@effect/language-service",
-        "allowedUnstableApis": ["@effect/atom-react", "@effect/vitest#it", "effect/reactivity/Atom"]
+        "allowedUnstableApis": [
+          "@effect/atom-react",
+          "@effect/vitest#it",
+          "effect/http/FetchHttpClient",
+          "effect/http/HttpClient",
+          "effect/http/HttpClientResponse",
+          "effect/reactivity/Atom"
+        ]
       }
     ]
   }

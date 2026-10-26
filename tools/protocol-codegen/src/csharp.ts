@@ -11,7 +11,7 @@ import {
   String,
   pipe,
 } from "effect";
-import { AredokoRpcs, PORT } from "protocol";
+import { AredokoRpcs, ENDPOINT_FILE, HOST, ServerEndpoint } from "protocol";
 import { FetchingJSONSchemaStore, InputData, JSONSchemaInput, quicktype } from "quicktype-core";
 
 import { NotAnObject } from "./not-an-object.ts";
@@ -56,6 +56,7 @@ const roots = pipe(
     { name: `${tag}Success`, object: true, ast: rpc.successSchema.ast },
     { name: `${tag}Error`, object: false, ast: rpc.errorSchema.ast },
   ]),
+  Array.append({ name: "EndpointFileContent", object: true, ast: ServerEndpoint.ast }),
   Array.filter(({ ast }) => !SchemaAST.isVoid(ast)),
 );
 
@@ -173,7 +174,10 @@ const group =
     "    }",
   ];
 
-const descriptors = (names: HashMap.HashMap<string, string>): readonly string[] => {
+const descriptors = (
+  names: HashMap.HashMap<string, string>,
+  identifier: string,
+): readonly string[] => {
   const groups = pipe(
     Record.toEntries(GROUPS),
     Array.map(([name, { requests }]) => [name, Array.fromIterable(requests.keys())] as const),
@@ -196,19 +200,21 @@ const descriptors = (names: HashMap.HashMap<string, string>): readonly string[] 
     "    {",
     "    }",
     "",
-    "    public static class Endpoint",
+    "    public static class EndpointFile",
     "    {",
-    `        public const int Port = ${PORT.toString()};`,
+    `        public const string Directory = "${identifier}";`,
+    `        public const string Name = "${ENDPOINT_FILE}";`,
+    `        public const string Host = "${HOST}";`,
     "    }",
     ...groups,
     "}",
   ];
 };
 
-const csharp = Effect.fn("csharp")(function* csharp() {
+const csharp = Effect.fn("csharp")(function* csharp(identifier: string) {
   const $defs = yield* definitions();
   const lines = yield* types($defs);
-  return Array.join([...lines, "", ...descriptors(resolvedNames($defs)), ""], "\n");
+  return Array.join([...lines, "", ...descriptors(resolvedNames($defs), identifier), ""], "\n");
 });
 
 export { csharp };

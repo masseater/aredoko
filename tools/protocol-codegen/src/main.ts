@@ -5,6 +5,11 @@ import { runMain } from "runtime";
 import { csharp } from "./csharp.ts";
 
 const OUTPUT = "../../apps/unity/Packages/dev.masseater.aredoko/Editor/Protocol/Protocol.g.cs";
+const TAURI_CONFIG = new URL("../../../apps/desktop/src-tauri/tauri.conf.json", import.meta.url);
+
+const decodeTauriConfig = Schema.decodeUnknownEffect(
+  Schema.fromJsonString(Schema.Struct({ identifier: Schema.String })),
+);
 
 const taggedError = Schema.TaggedError;
 
@@ -12,6 +17,14 @@ class StaleProtocol extends taggedError<StaleProtocol, { readonly brand: unique 
   "StaleProtocol",
   { path: Schema.String },
 ) {}
+
+const appIdentifier = Effect.fn("appIdentifier")(function* appIdentifier() {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const config = yield* fileSystem.readFileString(yield* path.fromFileUrl(TAURI_CONFIG));
+  const { identifier } = yield* decodeTauriConfig(config);
+  return identifier;
+});
 
 const write = Effect.fn("write")(function* write(source: string) {
   const fileSystem = yield* FileSystem.FileSystem;
@@ -34,7 +47,7 @@ const command = Command.make(
   { check: Flag.Boolean("check").pipe(Flag.withDefault(false)) },
   ({ check }) =>
     Effect.gen(function* codegen() {
-      const source = yield* csharp();
+      const source = yield* csharp(yield* appIdentifier());
       if (check) {
         return yield* verify(source);
       }
