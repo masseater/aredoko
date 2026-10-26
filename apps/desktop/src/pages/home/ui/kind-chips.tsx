@@ -1,7 +1,7 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SEARCHABLE_KINDS } from "#/shared/config";
+import { SEARCHABLE_KINDS } from "#/pages/home/config";
 
 import { KindChip } from "./kind-chip.tsx";
 

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { Progress } from "#/shared/ui/progress";
 
-import type { Counter } from "./counter.ts";
+type Counter = Readonly<{ done: number; total: number }>;
 
 const ProgressStep = ({
   label,
@@ -14,4 +14,5 @@ const ProgressStep = ({
   </div>
 );
 
+export type { Counter };
 export { ProgressStep };

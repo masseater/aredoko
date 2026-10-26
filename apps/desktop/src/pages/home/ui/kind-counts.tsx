@@ -2,7 +2,7 @@ import { Array, pipe } from "effect";
 import type { Summary } from "protocol";
 import type { ReactNode } from "react";
 
-import { KIND_LABELS } from "#/shared/config";
+import { KIND_LABELS } from "#/pages/home/config";
 import { Badge } from "#/shared/ui/badge";
 
 const KindCounts = ({

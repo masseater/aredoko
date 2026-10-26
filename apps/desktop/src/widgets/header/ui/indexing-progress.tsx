@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { Counter } from "./counter.ts";
 import { ProgressStep } from "./progress-step.tsx";
+import type { Counter } from "./progress-step.tsx";
 
 const PACKAGES = "パッケージ";
 const IMAGES = "画像";

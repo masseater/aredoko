@@ -2,7 +2,7 @@ import { Array, Option, String, pipe } from "effect";
 import type { SearchResult } from "protocol";
 import type { ReactNode } from "react";
 
-import { KIND_LABELS } from "#/shared/config";
+import { KIND_LABELS } from "#/pages/home/config";
 
 import { ResultPreview } from "./result-preview.tsx";
 

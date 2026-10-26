@@ -4,8 +4,8 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
+import { KIND_LABELS } from "#/pages/home/config";
 import { useKinds, useToggleKind } from "#/pages/home/model";
-import { KIND_LABELS } from "#/shared/config";
 
 const variantOf = (selected: boolean): "secondary" | "outline" => {
   if (selected) {
