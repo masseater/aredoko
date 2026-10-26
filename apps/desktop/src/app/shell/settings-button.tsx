@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
-import { useOpenPage, usePage } from "#/shared/model";
+import { useOpenPage, usePage } from "./navigation.ts";
 
 const LABEL = "設定";
 

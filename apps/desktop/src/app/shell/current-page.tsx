@@ -2,8 +2,9 @@ import type { ComponentType, ReactNode } from "react";
 
 import { HomePage } from "#/pages/home";
 import { SettingsPage } from "#/pages/settings";
-import { usePage } from "#/shared/model";
-import type { Page } from "#/shared/model";
+
+import { usePage } from "./navigation.ts";
+import type { Page } from "./navigation.ts";
 
 const PAGES: Readonly<Record<Page, ComponentType>> = {
   home: HomePage,
