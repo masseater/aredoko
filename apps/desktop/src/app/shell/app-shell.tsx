@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 
-import { Header } from "#/widgets/header";
-
 import { CurrentPage } from "./current-page.tsx";
+import { Header } from "./header.tsx";
 
 const AppShell = (): ReactNode => (
   <div className="flex h-screen flex-col overflow-hidden">
