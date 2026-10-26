@@ -26,7 +26,10 @@ const serverUrlLayer = Layer.effect(
       const file = yield* Effect.tryPromise(() => join(directory, ENDPOINT_FILE));
       const response = yield* client.get(convertFileSrc(file));
       return yield* response.text;
-    }).pipe(Effect.provideService(FetchHttpClient.RequestInit, { cache: "no-store" }));
+    }).pipe(
+      Effect.provideService(FetchHttpClient.RequestInit, { cache: "no-store" }),
+      Effect.provideService(HttpClient.TracerPropagationEnabled, false),
+    );
     return { url: awaitEndpoint(endpointFile) };
   }),
 );
