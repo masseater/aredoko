@@ -2,7 +2,7 @@ import { ImageOff } from "lucide-react";
 import type { SearchResult } from "protocol";
 import type { ReactNode } from "react";
 
-import { usePreview } from "#/shared/api";
+import { usePreview } from "#/pages/home/api/queries";
 
 import { PreviewImage } from "./preview-image.tsx";
 

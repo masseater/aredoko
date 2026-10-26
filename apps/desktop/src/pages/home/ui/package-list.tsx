@@ -1,8 +1,8 @@
 import { Array, String, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import { usePackages } from "#/pages/home/api/queries";
 import { usePackageFilter } from "#/pages/home/model";
-import { usePackages } from "#/shared/api";
 
 import { PackageListItem } from "./package-list-item.tsx";
 

@@ -1,8 +1,8 @@
 import { Array, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import { usePackages } from "#/pages/home/api/queries";
 import { useSelectedPackage } from "#/pages/home/model";
-import { usePackages } from "#/shared/api";
 
 import { BoothSection } from "./booth-section.tsx";
 import { PackageHeader } from "./package-header.tsx";

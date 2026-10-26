@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
-import { useReindex } from "#/shared/api";
+import { useReindex } from "#/pages/home/api/queries";
 
 const LABEL = "変更を読み直す";
 
