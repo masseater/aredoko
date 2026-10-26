@@ -1,9 +1,9 @@
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Atom } from "effect/reactivity";
 
-type Page = "library" | "sources" | "search" | "settings";
+type Page = "home" | "settings";
 
-const pageAtom = Atom.make<Page>("library");
+const pageAtom = Atom.make<Page>("home");
 
 const usePage = (): Page => useAtomValue(pageAtom);
 
