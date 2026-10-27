@@ -1,8 +1,11 @@
 export { useBoothDraft, useSetBoothDraft } from "./booth-draft.ts";
 export {
+  useClearSearch,
   useDraft,
   useKinds,
   useQueryText,
+  useSelectResult,
+  useSelectedResult,
   useSetDraft,
   useSubmitQuery,
   useToggleKind,
@@ -13,4 +16,5 @@ export {
   useSelectPackage,
   useSelectedPackage,
   useSetPackageFilter,
+  useShowPackage,
 } from "./selection.ts";

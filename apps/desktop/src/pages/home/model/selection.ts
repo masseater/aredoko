@@ -2,6 +2,8 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
+import { useClearSearch } from "./search-state.ts";
+
 const selectedAtom = Atom.make<Option.Option<number>>(Option.none());
 
 const filterAtom = Atom.make("");
@@ -14,4 +16,19 @@ const usePackageFilter = (): string => useAtomValue(filterAtom);
 
 const useSetPackageFilter = (): ((filter: string) => void) => useAtomSet(filterAtom);
 
-export { usePackageFilter, useSelectPackage, useSelectedPackage, useSetPackageFilter };
+const useShowPackage = (): ((id: number) => void) => {
+  const select = useAtomSet(selectedAtom);
+  const clearSearch = useClearSearch();
+  return (id) => {
+    clearSearch();
+    select(Option.some(id));
+  };
+};
+
+export {
+  usePackageFilter,
+  useSelectPackage,
+  useSelectedPackage,
+  useSetPackageFilter,
+  useShowPackage,
+};

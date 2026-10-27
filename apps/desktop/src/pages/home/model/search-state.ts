@@ -1,9 +1,11 @@
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
-import { Array, pipe } from "effect";
+import { Array, Option, pipe } from "effect";
 import { Atom } from "effect/reactivity";
-import type { AssetKind } from "protocol";
+import type { AssetKind, SearchResult } from "protocol";
 
 type Kind = typeof AssetKind.Type;
+
+type Result = typeof SearchResult.Type;
 
 const draftAtom = Atom.make("");
 
@@ -11,13 +13,36 @@ const queryAtom = Atom.make("");
 
 const kindsAtom = Atom.make<readonly Kind[]>([]);
 
+const selectedResultAtom = Atom.make<Option.Option<Result>>(Option.none());
+
 const useDraft = (): string => useAtomValue(draftAtom);
 
 const useSetDraft = (): ((draft: string) => void) => useAtomSet(draftAtom);
 
 const useQueryText = (): string => useAtomValue(queryAtom);
 
-const useSubmitQuery = (): ((query: string) => void) => useAtomSet(queryAtom);
+const useSubmitQuery = (): ((query: string) => void) => {
+  const setQuery = useAtomSet(queryAtom);
+  const setSelected = useAtomSet(selectedResultAtom);
+  return (query) => {
+    setSelected(Option.none());
+    setQuery(query);
+  };
+};
+
+const useClearSearch = (): (() => void) => {
+  const setDraft = useAtomSet(draftAtom);
+  const submit = useSubmitQuery();
+  return () => {
+    setDraft("");
+    submit("");
+  };
+};
+
+const useSelectedResult = (): Option.Option<Result> => useAtomValue(selectedResultAtom);
+
+const useSelectResult = (): ((result: Option.Option<Result>) => void) =>
+  useAtomSet(selectedResultAtom);
 
 const useKinds = (): readonly Kind[] => useAtomValue(kindsAtom);
 
@@ -38,4 +63,14 @@ const useToggleKind = (): ((kind: Kind) => void) => {
   };
 };
 
-export { useDraft, useKinds, useQueryText, useSetDraft, useSubmitQuery, useToggleKind };
+export {
+  useClearSearch,
+  useDraft,
+  useKinds,
+  useQueryText,
+  useSelectResult,
+  useSelectedResult,
+  useSetDraft,
+  useSubmitQuery,
+  useToggleKind,
+};

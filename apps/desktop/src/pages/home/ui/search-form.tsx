@@ -6,6 +6,8 @@ import { Button } from "ui/button";
 import { useDraft, useSetDraft, useSubmitQuery } from "#/pages/home/model";
 import { Input } from "#/shared/ui/input";
 
+import { ClearSearchButton } from "./clear-search-button.tsx";
+
 const PLACEHOLDER = "黒い服、猫耳、ネイル";
 const LABEL = "検索語";
 const SUBMIT = "検索する";
@@ -36,6 +38,7 @@ const SearchForm = (): ReactNode => {
         value={draft}
         onChange={onChange}
       />
+      <ClearSearchButton />
       <Button type="submit">
         <Search />
         {SUBMIT}
