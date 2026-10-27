@@ -17,6 +17,7 @@ namespace Aredoko.Client
     {
         const string Unreachable = "管理アプリが起動していません";
         const int BufferSize = 64 * 1024;
+        const int SpanIdLength = 16;
 
         static readonly string EndpointPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -35,6 +36,21 @@ namespace Aredoko.Client
 
         public async Task<TSuccess> Call<TPayload, TSuccess, TError>(Rpc<TPayload, TSuccess, TError> rpc, TPayload payload)
         {
+            var traceId = Guid.NewGuid().ToString("N");
+            try
+            {
+                return await Request(rpc, payload, traceId);
+            }
+            catch (AredokoException exception) when (exception.TraceId == null)
+            {
+                throw new AredokoException(exception.Message, exception.Unreachable, traceId);
+            }
+        }
+
+        public Task<TSuccess> Call<TSuccess, TError>(Rpc<Empty, TSuccess, TError> rpc) => Call(rpc, new Empty());
+
+        async Task<TSuccess> Request<TPayload, TSuccess, TError>(Rpc<TPayload, TSuccess, TError> rpc, TPayload payload, string traceId)
+        {
             var connected = await Connect();
             var id = Interlocked.Increment(ref nextId);
             var completion = new TaskCompletionSource<JToken>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -49,6 +65,9 @@ namespace Aredoko.Client
                 ["id"] = id,
                 ["method"] = rpc.Method,
                 ["params"] = payload is Empty ? JValue.CreateNull() : JToken.FromObject(payload!, serializer),
+                ["traceId"] = traceId,
+                ["spanId"] = Guid.NewGuid().ToString("N").Substring(0, SpanIdLength),
+                ["sampled"] = true,
             };
             await Send(connected, request.ToString(Formatting.None));
             var result = await completion.Task;
@@ -59,8 +78,6 @@ namespace Aredoko.Client
 
             return result.ToObject<TSuccess>(serializer)!;
         }
-
-        public Task<TSuccess> Call<TSuccess, TError>(Rpc<Empty, TSuccess, TError> rpc) => Call(rpc, new Empty());
 
         public void Dispose()
         {

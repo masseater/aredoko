@@ -1,7 +1,18 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appLocalDataDir, join } from "@tauri-apps/api/path";
-import { Duration, Effect, Layer, ManagedRuntime, Schema } from "effect";
+import {
+  ConfigProvider,
+  Duration,
+  Effect,
+  Layer,
+  ManagedRuntime,
+  Predicate,
+  Record,
+  Schema,
+  pipe,
+} from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
+import { OtlpSerialization, OtlpTracer } from "effect/observability";
 import {
   AredokoClient,
   ENDPOINT_FILE,
@@ -34,8 +45,21 @@ const serverUrlLayer = Layer.effect(
   }),
 );
 
+const SERVICE_NAME = "aredoko-desktop";
+
+const viteEnv = pipe(import.meta.env, Record.filter(Predicate.isString));
+
+const configLayer = ConfigProvider.layer(ConfigProvider.fromEnv({ env: viteEnv }));
+
+const tracingLayer = OtlpTracer.layerFromConfig({ resource: { serviceName: SERVICE_NAME } }).pipe(
+  Layer.provide(OtlpSerialization.layerJson),
+  Layer.provide(configLayer),
+);
+
+const clientLayer = aredokoClientLayer.pipe(Layer.provide(serverUrlLayer));
+
 const runtime = ManagedRuntime.make(
-  aredokoClientLayer.pipe(Layer.provide(serverUrlLayer), Layer.provide(FetchHttpClient.layer)),
+  Layer.mergeAll(clientLayer, tracingLayer).pipe(Layer.provide(FetchHttpClient.layer)),
 );
 
 const run = <Value>(

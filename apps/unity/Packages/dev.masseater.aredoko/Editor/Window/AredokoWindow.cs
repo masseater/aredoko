@@ -437,6 +437,7 @@ namespace Aredoko.Window
             }
 
             notice = exception.Message;
+            UnityEngine.Debug.LogWarning($"aredoko: {exception.Message} (trace {exception.TraceId})");
         }
 
         async void RefreshStatus()
