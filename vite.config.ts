@@ -266,6 +266,7 @@ export default defineConfig({
           "actions-lint",
           "steiger-all",
           "codegen-check-all",
+          "cs-check-all",
           "db-check-all",
           "fallow-all",
           "audit",
@@ -281,6 +282,7 @@ export default defineConfig({
       syncpack: "syncpack lint",
       "steiger-all": "vp run -r steiger",
       "codegen-check-all": "vp run -r codegen:check",
+      "cs-check-all": "vp run -r cs:check",
       "db-check-all": "vp run -r db:check",
       "fallow-all": "vp run -r fallow",
       audit: {

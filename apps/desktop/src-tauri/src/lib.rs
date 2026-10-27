@@ -8,6 +8,8 @@ use tauri::tray::TrayIconBuilder;
 use tauri::{App, AppHandle, Manager, RunEvent, WindowEvent};
 use tauri_plugin_autostart::MacosLauncher;
 
+mod protocol;
+
 const MAIN_WINDOW: &str = "main";
 const HIDDEN_FLAG: &str = "--hidden";
 const SERVER_LOG: &str = "server.log";
@@ -61,15 +63,15 @@ fn spawn_server(app: &AppHandle) -> tauri::Result<Child> {
     let mut command = Command::new(node);
     command
         .arg(script)
-        .arg("--data-dir")
+        .arg(protocol::DATA_DIRECTORY_FLAG)
         .arg(data)
-        .arg("--parent-pid")
+        .arg(protocol::PARENT_PID_FLAG)
         .arg(std::process::id().to_string())
         .stdin(Stdio::null())
         .stdout(log.try_clone()?)
         .stderr(log);
     if let Some(models) = models {
-        command.arg("--model-dir").arg(models);
+        command.arg(protocol::MODEL_DIRECTORY_FLAG).arg(models);
     }
     #[cfg(windows)]
     {

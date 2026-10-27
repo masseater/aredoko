@@ -1,11 +1,11 @@
 export {
-  useAddSource,
-  useLinkBooth,
-  usePackages,
-  usePreview,
-  useReindex,
-  useRemoveSource,
-  useSearch,
-  useSources,
-  useStatus,
-} from "./queries.ts";
+  addSource,
+  getPreview,
+  linkBooth,
+  listPackages,
+  listSources,
+  reindex,
+  removeSource,
+  search,
+} from "./aredoko.ts";
+export { STATUS_KEY, useStatus } from "./queries.ts";

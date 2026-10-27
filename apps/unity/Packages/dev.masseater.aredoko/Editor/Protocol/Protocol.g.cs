@@ -34,6 +34,9 @@ namespace Aredoko.Protocol
         [JsonProperty("AddSourceSuccess")]
         public Source AddSourceSuccess { get; set; }
 
+        [JsonProperty("EndpointFileContent")]
+        public ServerEndpoint EndpointFileContent { get; set; }
+
         [JsonProperty("ExtractError")]
         public RequestFailedEncoded ExtractError { get; set; }
 
@@ -147,6 +150,12 @@ namespace Aredoko.Protocol
 
         [JsonProperty("path")]
         public string Path { get; set; }
+    }
+
+    public partial class ServerEndpoint
+    {
+        [JsonProperty("port")]
+        public long Port { get; set; }
     }
 
     public partial class ExtractPayload
@@ -689,9 +698,11 @@ namespace Aredoko.Protocol
     {
     }
 
-    public static class Endpoint
+    public static class EndpointFile
     {
-        public const int Port = 52810;
+        public const string Directory = "dev.masseater.aredoko";
+        public const string Name = "endpoint.json";
+        public const string Host = "127.0.0.1";
     }
 
     public static class AredokoRpcs

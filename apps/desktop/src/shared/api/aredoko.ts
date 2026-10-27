@@ -1,5 +1,25 @@
-import { Duration, Effect, ManagedRuntime, Schema } from "effect";
-import { AredokoClient, aredokoClientLayer } from "protocol";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { appLocalDataDir, join } from "@tauri-apps/api/path";
+import {
+  ConfigProvider,
+  Duration,
+  Effect,
+  Layer,
+  ManagedRuntime,
+  Predicate,
+  Record,
+  Schema,
+  pipe,
+} from "effect";
+import { FetchHttpClient, HttpClient } from "effect/http";
+import { OtlpSerialization, OtlpTracer } from "effect/observability";
+import {
+  AredokoClient,
+  ENDPOINT_FILE,
+  ServerUrl,
+  aredokoClientLayer,
+  awaitEndpoint,
+} from "protocol";
 import type { AssetKind, Package, SearchResult, Source, SourceKind, Status } from "protocol";
 
 import { ServerError } from "./server-error.ts";
@@ -8,7 +28,39 @@ const STATUS_TIMEOUT = Duration.fromInputUnsafe("3 seconds");
 const REQUEST_TIMEOUT = Duration.fromInputUnsafe("15 seconds");
 const UNREACHABLE = "サーバーに接続できません";
 
-const runtime = ManagedRuntime.make(aredokoClientLayer);
+const serverUrlLayer = Layer.effect(
+  ServerUrl,
+  Effect.gen(function* serverUrl() {
+    const client = HttpClient.filterStatusOk(yield* HttpClient.HttpClient);
+    const endpointFile = Effect.gen(function* endpointFile() {
+      const directory = yield* Effect.tryPromise(appLocalDataDir);
+      const file = yield* Effect.tryPromise(() => join(directory, ENDPOINT_FILE));
+      const response = yield* client.get(convertFileSrc(file));
+      return yield* response.text;
+    }).pipe(
+      Effect.provideService(FetchHttpClient.RequestInit, { cache: "no-store" }),
+      Effect.provideService(HttpClient.TracerPropagationEnabled, false),
+    );
+    return { url: awaitEndpoint(endpointFile) };
+  }),
+);
+
+const SERVICE_NAME = "aredoko-desktop";
+
+const viteEnv = pipe(import.meta.env, Record.filter(Predicate.isString));
+
+const configLayer = ConfigProvider.layer(ConfigProvider.fromEnv({ env: viteEnv }));
+
+const tracingLayer = OtlpTracer.layerFromConfig({ resource: { serviceName: SERVICE_NAME } }).pipe(
+  Layer.provide(OtlpSerialization.layerJson),
+  Layer.provide(configLayer),
+);
+
+const clientLayer = aredokoClientLayer.pipe(Layer.provide(serverUrlLayer));
+
+const runtime = ManagedRuntime.make(
+  Layer.mergeAll(clientLayer, tracingLayer).pipe(Layer.provide(FetchHttpClient.layer)),
+);
 
 const run = <Value>(
   request: Effect.Effect<Value, { readonly message: string }, AredokoClient>,

@@ -1,5 +1,6 @@
 import { Duration, Effect, Layer, Option, Schedule, String, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
+import { SERVER_FLAGS } from "protocol";
 import { runMain } from "runtime";
 
 import { Settings } from "#shared/settings";
@@ -30,9 +31,9 @@ const untilExits = (pid: number): Effect.Effect<void> =>
 const command = Command.make(
   "aredoko-server",
   {
-    dataDirectory: Flag.String("data-dir"),
-    modelDirectory: Flag.String("model-dir").pipe(Flag.optional),
-    parentPid: Flag.String("parent-pid").pipe(Flag.optional),
+    dataDirectory: Flag.String(SERVER_FLAGS.dataDirectory),
+    modelDirectory: Flag.String(SERVER_FLAGS.modelDirectory).pipe(Flag.optional),
+    parentPid: Flag.String(SERVER_FLAGS.parentPid).pipe(Flag.optional),
   },
   ({ parentPid, ...settings }) => {
     const server = Layer.launch(serverLayer).pipe(

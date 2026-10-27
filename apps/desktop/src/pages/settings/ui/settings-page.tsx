@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
 
-import { PageHeader } from "#/shared/ui/page-header";
-
 import { AutostartSetting } from "./autostart-setting.tsx";
 import { LogSetting } from "./log-setting.tsx";
+import { PageHeader } from "./page-header.tsx";
 import { VersionInfo } from "./version-info.tsx";
 
 const TITLE = "設定";

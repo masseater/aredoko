@@ -17,8 +17,12 @@ namespace Aredoko.Client
     {
         const string Unreachable = "管理アプリが起動していません";
         const int BufferSize = 64 * 1024;
+        const int SpanIdLength = 16;
 
-        static readonly Uri Endpoint = new Uri($"ws://127.0.0.1:{Protocol.Endpoint.Port}");
+        static readonly string EndpointPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            EndpointFile.Directory,
+            EndpointFile.Name);
 
         readonly JsonSerializer serializer = JsonSerializer.Create(Converter.Settings);
         readonly Dictionary<long, TaskCompletionSource<JToken>> pending = new Dictionary<long, TaskCompletionSource<JToken>>();
@@ -31,6 +35,21 @@ namespace Aredoko.Client
         public static AredokoClient Shared { get; } = new AredokoClient();
 
         public async Task<TSuccess> Call<TPayload, TSuccess, TError>(Rpc<TPayload, TSuccess, TError> rpc, TPayload payload)
+        {
+            var traceId = Guid.NewGuid().ToString("N");
+            try
+            {
+                return await Request(rpc, payload, traceId);
+            }
+            catch (AredokoException exception) when (exception.TraceId == null)
+            {
+                throw new AredokoException(exception.Message, exception.Unreachable, traceId);
+            }
+        }
+
+        public Task<TSuccess> Call<TSuccess, TError>(Rpc<Empty, TSuccess, TError> rpc) => Call(rpc, new Empty());
+
+        async Task<TSuccess> Request<TPayload, TSuccess, TError>(Rpc<TPayload, TSuccess, TError> rpc, TPayload payload, string traceId)
         {
             var connected = await Connect();
             var id = Interlocked.Increment(ref nextId);
@@ -46,6 +65,9 @@ namespace Aredoko.Client
                 ["id"] = id,
                 ["method"] = rpc.Method,
                 ["params"] = payload is Empty ? JValue.CreateNull() : JToken.FromObject(payload!, serializer),
+                ["traceId"] = traceId,
+                ["spanId"] = Guid.NewGuid().ToString("N").Substring(0, SpanIdLength),
+                ["sampled"] = true,
             };
             await Send(connected, request.ToString(Formatting.None));
             var result = await completion.Task;
@@ -56,8 +78,6 @@ namespace Aredoko.Client
 
             return result.ToObject<TSuccess>(serializer)!;
         }
-
-        public Task<TSuccess> Call<TSuccess, TError>(Rpc<Empty, TSuccess, TError> rpc) => Call(rpc, new Empty());
 
         public void Dispose()
         {
@@ -81,7 +101,7 @@ namespace Aredoko.Client
                 var created = new ClientWebSocket();
                 try
                 {
-                    await created.ConnectAsync(Endpoint, CancellationToken.None);
+                    await created.ConnectAsync(ReadEndpoint(), CancellationToken.None);
                 }
                 catch (Exception)
                 {
@@ -98,6 +118,12 @@ namespace Aredoko.Client
             {
                 connecting.Release();
             }
+        }
+
+        static Uri ReadEndpoint()
+        {
+            var endpoint = JsonConvert.DeserializeObject<ServerEndpoint>(File.ReadAllText(EndpointPath), Converter.Settings)!;
+            return new Uri($"ws://{EndpointFile.Host}:{endpoint.Port}");
         }
 
         async Task Send(ClientWebSocket target, string text)

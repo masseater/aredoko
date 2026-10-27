@@ -22,6 +22,8 @@
 - コマンドは `vp` から実行し、`pnpm`・`npx` は直接使わない。`vp run <name>` は `package.json` と `vite.config.ts` のタスクで、組み込みコマンドとは別物である。
 - `vp run verify` が検査をまとめて流す。pre-push フックと Stop フックも同じ verify を走らせる。
 - `vp check` は oxlint-plugin-decision の判定に `.env` の `OPENROUTER_API_KEY` を使う。
+- 管理アプリの画面は、`apps/desktop` で `vp run dev:app` を実行して開発版を起動し、`agent-browser connect 9222` でつないで `snapshot`・`screenshot`・`eval` で調べる。WebView2 のデバッグポートを開くのは開発版だけである。
+- トレースは、`tools/telemetry` で `vp run jaeger` を実行して Jaeger を立ててから `vp run dev:app` で開発版を起動すると、管理アプリ・常駐サーバー・埋め込みのワーカーから届く。`http://127.0.0.1:16686/api/v3/traces` で検索するか、`/api/ai/mcp/` の MCP で読む。エディタ拡張の呼び出しは Unity のコンソールに出るトレース ID で引く。
 - `libs/protocol` を変えたら、`tools/protocol-codegen` で `vp run codegen` を実行して C# の型を作り直す。生成物は手で書き換えない。
 - テストを 1 つだけ走らせるときは、`apps/web` で `vp test run <ファイル>` を実行する。
 - D1 のスキーマは `*.table.ts` に書き、`apps/web` で `vp run db:generate` を実行してマイグレーションを作る。better-auth のテーブルは `vp run auth:generate` で生成する。

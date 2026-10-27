@@ -6,7 +6,7 @@ import { Button } from "ui/button";
 
 import { revealServerLog } from "#/features/reveal-server-log/api/server-log";
 
-const LABEL = "ログを表示";
+const LABEL = "サーバーのログを表示";
 
 const RevealLogButton = (): ReactNode => {
   const { mutate } = useMutation({ mutationFn: revealServerLog });

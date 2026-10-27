@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [tailwindcss(), viteReact()],
   clearScreen: false,
+  envPrefix: ["VITE_", "OTEL_"],
   server: {
     port: DEV_PORT,
     strictPort: true,

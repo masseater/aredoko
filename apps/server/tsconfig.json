@@ -29,6 +29,7 @@
           "effect/http/FetchHttpClient#layer",
           "effect/http/HttpClient",
           "effect/http/HttpClientResponse",
+          "effect/net/NetAddress#SocketAddress",
           "effect/rpc/RpcClient",
           "effect/rpc/RpcClientError",
           "effect/rpc/RpcGroup",
@@ -36,6 +37,7 @@
           "effect/rpc/RpcSerialization",
           "effect/rpc/RpcServer",
           "effect/rpc/RpcWorker",
+          "effect/socket/SocketServer#SocketServer",
           "effect/sql/Migrator",
           "effect/sql/SqlClient"
         ]
