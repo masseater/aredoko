@@ -68,5 +68,6 @@ export default Stack(
     });
     yield* ciTelemetry;
     yield* requireAppPrefix;
+    return {};
   }),
 );
