@@ -58,7 +58,6 @@ export default Stack(
   APP_NAME,
   { providers: providers(), state: state() },
   Effect.gen(function* stack() {
-    const { url } = yield* web;
     yield* Option.match(OWNED_ZONE, {
       onNone: () => Effect.void,
       onSome: (zone) =>
@@ -69,6 +68,6 @@ export default Stack(
     });
     yield* ciTelemetry;
     yield* requireAppPrefix;
-    return { url };
+    return {};
   }),
 );
