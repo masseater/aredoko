@@ -46,6 +46,8 @@
     "ui": "workspace:*"
   },
   "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@alchemy.run/fly": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@feature-sliced/steiger-plugin": "0.8.0",
