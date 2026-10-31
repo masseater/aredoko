@@ -48,7 +48,7 @@
       "ref": "acbcf941cae90b101dfb83598e3322504eeda64f",
       "sourceType": "github",
       "skillPath": ".agents/skills/conventions/SKILL.md",
-      "computedHash": "c13fac7b91a4e1fc09331edee1a93199d42173fae73004d3ebd9ecff8f96f286"
+      "computedHash": "61d0938e6d32bb52b8b31e71c6183e47dd2543762a8ab4ca0c61abfc9dd75528"
     },
     "cursor-hook-authoring": {
       "source": "philtzjp/skills",
