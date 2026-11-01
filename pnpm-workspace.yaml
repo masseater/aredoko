@@ -113,7 +113,7 @@ allowBuilds:
   "@openrouter/sdk": false
   onnxruntime-node: false
 packageExtensions:
-  "@feature-sliced/steiger-plugin@0.8.0":
+  "@feature-sliced/steiger-plugin":
     dependencies:
       "@steiger/toolkit": 0.2.3
 patchedDependencies:
