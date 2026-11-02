@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
-    "@feature-sliced/steiger-plugin": "0.8.0",
+    "@feature-sliced/steiger-plugin": "0.8.1",
     "@types/node": "catalog:",
     "steiger": "catalog:stack",
     "vite-plus": "catalog:stack"

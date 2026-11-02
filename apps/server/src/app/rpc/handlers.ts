@@ -47,8 +47,10 @@ const handlersLayer = AredokoRpcs.toLayer(
       Search: (request) => failed(search(request)).pipe(Effect.map((results) => ({ results }))),
       GetPreview: ({ assetId }) =>
         preview(assetId).pipe(
-          Effect.map((png) => ({ png })),
-          Effect.mapError(() => RequestFailed.make({ reason: "NotFound", message: NO_PREVIEW })),
+          Effect.mapBoth({
+            onFailure: () => RequestFailed.make({ reason: "NotFound", message: NO_PREVIEW }),
+            onSuccess: (png) => ({ png }),
+          }),
         ),
       Extract: extractAssets,
       LinkBooth: linkBoothItem,
