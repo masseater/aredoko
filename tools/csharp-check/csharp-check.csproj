@@ -11,6 +11,6 @@
     <Compile Include="../../apps/unity/Packages/dev.masseater.aredoko/Editor/Protocol/**/*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 </Project>
