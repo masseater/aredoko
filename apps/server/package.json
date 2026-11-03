@@ -34,6 +34,7 @@
     "@feature-sliced/steiger-plugin": "0.8.1",
     "@types/node": "catalog:",
     "steiger": "catalog:stack",
+    "typescript": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

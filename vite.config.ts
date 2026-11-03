@@ -12,8 +12,7 @@ import {
   reactHooksRules,
   restrictedImports,
   shadcnRules,
-  tanstackQueryRules,
-  tanstackRouterRules,
+  tanstackRules,
   turnedOff,
 } from "./lint.config.ts";
 
@@ -57,6 +56,7 @@ export default defineConfig({
       { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
       { name: "tanstack-query", specifier: "@tanstack/eslint-plugin-query" },
       { name: "tanstack-router", specifier: "@tanstack/eslint-plugin-router" },
+      { name: "tanstack-start", specifier: "@r_masseater/oxlint-typed-rules/tanstack-start" },
       { name: "drizzle", specifier: "eslint-plugin-drizzle" },
       { name: "react-hooks-js", specifier: "eslint-plugin-react-hooks" },
       { name: "@eslint-react", specifier: "@eslint-react/eslint-plugin" },
@@ -73,8 +73,7 @@ export default defineConfig({
         "error",
         { allow: ["oxlint-disable", "eslint-disable", String.raw`\* @internal \*?$`] },
       ],
-      ...tanstackQueryRules,
-      ...tanstackRouterRules,
+      ...tanstackRules,
       "drizzle/enforce-delete-with-where": "error",
       "drizzle/enforce-update-with-where": "error",
       ...shadcnRules,
@@ -259,7 +258,6 @@ export default defineConfig({
         },
         dependsOn: [
           "test-all",
-          "eslint",
           "syncpack",
           "markdown-lint",
           "renovate",
@@ -278,7 +276,6 @@ export default defineConfig({
       rustfmt: "cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check",
       clippy:
         "cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml --all-targets --locked",
-      eslint: "NODE_OPTIONS=--max-old-space-size=4096 eslint --max-warnings 0 .",
       syncpack: "syncpack lint",
       "steiger-all": "vp run -r steiger",
       "codegen-check-all": "vp run -r codegen:check",

@@ -41,6 +41,7 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "catalog:",
     "steiger": "catalog:stack",
+    "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
   }
