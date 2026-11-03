@@ -227,9 +227,14 @@ const turnedOff = (rules: Rules): Record.ReadonlyRecord<string, "off"> =>
 
 const decisionRules = prefixed(decisionPluginName, decisionPlugin);
 
-const tanstackQueryRules = prefixed("tanstack-query", tanstackQuery);
-
-const tanstackRouterRules = prefixed("tanstack-router", tanstackRouter);
+const tanstackRules: Rules = {
+  ...prefixed("tanstack-query", tanstackQuery),
+  ...prefixed("tanstack-router", tanstackRouter),
+  ...asErrors([
+    "tanstack-start/no-async-client-component",
+    "tanstack-start/no-client-code-in-server-component",
+  ]),
+};
 
 const shadcnRules = prefixed("shadcn", shadcn);
 
@@ -273,7 +278,6 @@ export {
   requiredStack,
   restrictedImports,
   shadcnRules,
-  tanstackQueryRules,
-  tanstackRouterRules,
+  tanstackRules,
   turnedOff,
 };
