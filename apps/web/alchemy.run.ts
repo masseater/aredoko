@@ -1,17 +1,13 @@
-import { D1, Website, Workers, providers, state } from "@alchemy.run/cloudflare";
+import { D1, Website, providers, state } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { Stack, makeRandom } from "alchemy";
-import { Config, Effect, Option, Schema } from "effect";
+import { Effect } from "effect";
 
-import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./app-name.ts";
-import { edgeGuard } from "./edge-guard.ts";
-import { logArchive } from "./log-archive.ts";
+import { APP_NAME, requireAppPrefix } from "./app-name.ts";
 
 const TRACE_SAMPLING_RATE = 0.1;
 
 const COMPATIBILITY = { date: "2026-08-25" } as const;
-
-const OWNED_ZONE = Option.none<string>();
 
 const web = Effect.gen(function* web() {
   const DB = yield* D1.Database("DB", { migrations: "./drizzle" });
@@ -33,40 +29,13 @@ const web = Effect.gen(function* web() {
   });
 });
 
-const ciTelemetry = Effect.gen(function* ciTelemetry() {
-  const GITHUB_REPOSITORY = yield* Config.schema(Schema.String, "GITHUB_REPOSITORY").pipe(
-    Config.withDefault(""),
-  );
-  return yield* Workers.Worker("CiTelemetry", {
-    name: CI_TELEMETRY_AUDIENCE,
-    main: "./ci-telemetry.worker.ts",
-    compatibility: COMPATIBILITY,
-    logpush: true,
-    env: { GITHUB_REPOSITORY },
-    observability: {
-      enabled: true,
-      logs: { enabled: true, invocationLogs: false, persist: true },
-    },
-  });
-});
-
 type WebEnv = InferEnv<typeof web>;
-type CiTelemetryEnv = InferEnv<typeof ciTelemetry>;
 
-export type { CiTelemetryEnv, WebEnv };
+export type { WebEnv };
 export default Stack(
   APP_NAME,
   { providers: providers(), state: state() },
   Effect.gen(function* stack() {
-    yield* Option.match(OWNED_ZONE, {
-      onNone: () => Effect.void,
-      onSome: (zone) =>
-        Effect.gen(function* accountWide() {
-          yield* edgeGuard(zone, COMPATIBILITY);
-          yield* logArchive;
-        }),
-    });
-    yield* ciTelemetry;
     yield* requireAppPrefix;
     return {};
   }),

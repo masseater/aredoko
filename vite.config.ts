@@ -105,11 +105,6 @@ export default defineConfig({
               name: ["Request", "Uint8Array", "RegExp", "RegExpExecArray", "RegExpMatchArray"],
             },
             { from: "package", package: "modern-tar", name: "ParsedTarEntry" },
-            {
-              from: "package",
-              package: "@cloudflare/workers-types",
-              name: "AnalyticsEngineDataset",
-            },
             { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
             {
               from: "package",
@@ -128,8 +123,6 @@ export default defineConfig({
               package: "@huggingface/transformers",
               name: ["RawImage", "PretrainedConfig", "PreTrainedModel", "Processor"],
             },
-            { from: "package", package: "lighthouse", name: ["FlowResult", "Step"] },
-            { from: "package", package: "puppeteer-core", name: ["Browser", "Page"] },
             {
               from: "package",
               package: "effect",
