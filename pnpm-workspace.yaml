@@ -14,7 +14,7 @@ catalog:
   "@effect/platform-node": 4.1.2
   "@effect/sql-sqlite-node": 4.0.7
   "@effect/vitest": 4.1.2
-  typescript: 6.0.3
+  typescript: 7.0.2
   modern-tar: 0.8.6
   sqlite-vec: 0.1.9
   "@eslint-react/eslint-plugin": 5.28.8
