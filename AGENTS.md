@@ -25,14 +25,7 @@
 - 管理アプリの画面は、`apps/desktop` で `vp run dev:app` を実行して開発版を起動し、`agent-browser connect 9222` でつないで `snapshot`・`screenshot`・`eval` で調べる。WebView2 のデバッグポートを開くのは開発版だけである。
 - トレースは、`tools/telemetry` で `vp run jaeger` を実行して Jaeger を立ててから `vp run dev:app` で開発版を起動すると、管理アプリ・常駐サーバー・埋め込みのワーカーから届く。`http://127.0.0.1:16686/api/v3/traces` で検索するか、`/api/ai/mcp/` の MCP で読む。エディタ拡張の呼び出しは Unity のコンソールに出るトレース ID で引く。
 - `libs/protocol` を変えたら、`tools/protocol-codegen` で `vp run codegen` を実行して C# の型を作り直す。生成物は手で書き換えない。
-- テストを 1 つだけ走らせるときは、`apps/web` で `vp test run <ファイル>` を実行する。
-- D1 のスキーマは `*.table.ts` に書き、`apps/web` で `vp run db:generate` を実行してマイグレーションを作る。better-auth のテーブルは `vp run auth:generate` で生成する。
-
-## 構成
-
-- `apps/web` は TanStack Start のアプリである。`alchemy.run.ts` が D1 と Worker を定義し、Cloudflare にデプロイする。
-- API は Elysia で書く。`src/app/routes/api.$.ts` が `/api/*` を `src/app/server/api.server.ts` のルーターへ渡し、各スライスのルートは `index.server.ts` からそこへ足す。
-- クライアントは `shared/api` で Eden の型から TanStack Query のクエリを作る。SSR 中は `createIsomorphicFn` がルートの `handle` を直接呼ぶ。
+- テストを 1 つだけ走らせるときは、そのパッケージで `vp test run <ファイル>` を実行する。
 
 ## 環境変数
 

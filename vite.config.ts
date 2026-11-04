@@ -198,10 +198,6 @@ export default defineConfig({
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:worker_threads"] }] },
       },
       {
-        files: ["apps/web/src/**/*.{ts,tsx}"],
-        rules: decisionRules,
-      },
-      {
         files: ["**/*.test.ts"],
         rules: turnedOff(decisionRules),
       },
@@ -258,7 +254,6 @@ export default defineConfig({
           "steiger-all",
           "codegen-check-all",
           "cs-check-all",
-          "db-check-all",
           "fallow-all",
           "audit",
           "rustfmt",
@@ -273,7 +268,6 @@ export default defineConfig({
       "steiger-all": "vp run -r steiger",
       "codegen-check-all": "vp run -r codegen:check",
       "cs-check-all": "vp run -r cs:check",
-      "db-check-all": "vp run -r db:check",
       "fallow-all": "vp run -r fallow",
       audit: {
         command:
