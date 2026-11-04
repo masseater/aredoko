@@ -12,7 +12,7 @@ catalog:
   "@ast-grep/cli": 0.51.0
   "@cloudflare/workers-types": 5.20261101.1
   "@effect/platform-node": 4.1.2
-  "@effect/sql-sqlite-node": 4.0.7
+  "@effect/sql-sqlite-node": 4.1.1
   "@effect/vitest": 4.1.2
   typescript: 6.0.3
   modern-tar: 0.8.6
