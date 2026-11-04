@@ -76,14 +76,12 @@ overrides:
   "@effect/platform-node@4.0.0>@effect/platform-node-shared": 4.0.0
   "@effect/platform-node-shared": 4.1.2
   "@effect/sql-d1": 4.1.2
-  "@effect/sql-sqlite-do": 4.1.2
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2
   katex@>=0.11.0 <0.18.2: ^0.19.0
   minimatch@<11.0.1: ^11.0.1
   re2js@>=2.2.0 <2.8.7: ^2.8.7
-  seroval@<1.6.11: ^1.6.11
 peerDependencyRules:
   allowAny:
     - vite
