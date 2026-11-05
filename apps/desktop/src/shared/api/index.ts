@@ -1,10 +1,10 @@
 export {
   addSource,
+  extract,
   getPreview,
   linkBooth,
   listPackages,
   listSources,
-  reindex,
   removeSource,
   search,
 } from "./aredoko.ts";

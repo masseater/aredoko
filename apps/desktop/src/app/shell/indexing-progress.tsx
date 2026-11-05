@@ -3,8 +3,14 @@ import type { ReactNode } from "react";
 import { ProgressStep } from "./progress-step.tsx";
 import type { Counter } from "./progress-step.tsx";
 
-const PACKAGES = "パッケージ";
-const IMAGES = "画像";
+const IMPORTING = "取り込み中";
+
+const stepOf = (packages: Counter, images: Counter): Counter => {
+  if (packages.done < packages.total) {
+    return packages;
+  }
+  return images;
+};
 
 const IndexingProgress = ({
   current,
@@ -12,8 +18,7 @@ const IndexingProgress = ({
   images,
 }: Readonly<{ current: string | null; packages: Counter; images: Counter }>): ReactNode => (
   <div className="flex items-center gap-4 text-xs">
-    <ProgressStep label={PACKAGES} counter={packages} />
-    <ProgressStep label={IMAGES} counter={images} />
+    <ProgressStep label={IMPORTING} counter={stepOf(packages, images)} />
     {current !== null && <p className="text-muted-foreground max-w-48 truncate">{current}</p>}
   </div>
 );

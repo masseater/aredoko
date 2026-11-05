@@ -11,7 +11,7 @@ const RESULT = {
   packageId: 1,
   packageName: "Cats",
   packageKind: "unitypackage",
-  score: 1,
+  score: 0.8,
   hasPreview: true,
 } as const;
 
@@ -51,13 +51,26 @@ describe("searchViewOf", () => {
     });
     expect(view).toMatchObject({ status: "message", tone: "muted" });
   });
+});
 
-  it("returns the results", () => {
+describe("searchViewOf with results", () => {
+  it("separates close matches from weak candidates", () => {
+    const weak = { ...RESULT, assetId: 2, score: 0.65 };
     const view = searchViewOf({
       phase: "settled",
       failure: Option.none(),
-      results: Option.some([RESULT]),
+      results: Option.some([RESULT, weak]),
     });
-    expect(view).toStrictEqual({ status: "results", results: [RESULT] });
+    expect(view).toStrictEqual({ status: "results", matches: [RESULT], others: [weak] });
+  });
+
+  it("keeps only weak candidates when nothing is close", () => {
+    const weak = { ...RESULT, score: 0.65 };
+    const view = searchViewOf({
+      phase: "settled",
+      failure: Option.none(),
+      results: Option.some([weak]),
+    });
+    expect(view).toStrictEqual({ status: "results", matches: [], others: [weak] });
   });
 });

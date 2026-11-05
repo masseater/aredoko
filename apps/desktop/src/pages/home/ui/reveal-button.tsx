@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
-const LABEL = "フォルダで表示";
+const LABEL = "エクスプローラーで表示";
 
 const RevealButton = ({ path }: Readonly<{ path: string }>): ReactNode => {
   const { mutate } = useMutation({ mutationFn: revealItemInDir });

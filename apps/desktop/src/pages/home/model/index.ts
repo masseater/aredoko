@@ -3,10 +3,12 @@ export {
   useClearSearch,
   useDraft,
   useKinds,
+  useOthersShown,
   useQueryText,
   useSelectResult,
   useSelectedResult,
   useSetDraft,
+  useShowOthers,
   useSubmitQuery,
   useToggleKind,
 } from "./search-state.ts";

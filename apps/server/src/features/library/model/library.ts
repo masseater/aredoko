@@ -4,7 +4,6 @@ import { embedImages } from "./embed-images.ts";
 import { scanFolders } from "./scan-folders.ts";
 import { watchSources } from "./watch-folders.ts";
 
-const EMBEDDING_IMAGES = "画像の埋め込み";
 const PENDING_REQUESTS = 1;
 
 interface Activity {
@@ -20,6 +19,8 @@ interface ProjectGuids {
 type Seen = HashMap.HashMap<string, HashSet.HashSet<string>>;
 
 const IDLE: Activity = { indexing: false, current: Option.none() };
+
+const EMBEDDING: Activity = { indexing: true, current: Option.none() };
 
 const working = (current: string): Activity => ({ indexing: true, current: Option.some(current) });
 
@@ -57,7 +58,7 @@ const libraryLayer = Layer.effect(
     const report = (current: string): Effect.Effect<void> => Ref.set(activity, working(current));
     const scan = Effect.gen(function* scan() {
       yield* scanFolders(report);
-      yield* report(EMBEDDING_IMAGES);
+      yield* Ref.set(activity, EMBEDDING);
       yield* embedImages;
     }).pipe(
       Effect.catchCause((cause) => Effect.logError("scan failed", cause)),
