@@ -6,16 +6,25 @@ type Results = readonly (typeof SearchResult.Type)[];
 type SearchView =
   | Readonly<{ status: "idle" }>
   | Readonly<{ status: "message"; text: string; tone: "muted" | "error" }>
-  | Readonly<{ status: "results"; results: Results }>;
+  | Readonly<{ status: "results"; matches: Results; others: Results }>;
 
 const SEARCHING = "探しています…";
 const EMPTY = "見つかりませんでした。";
+const MATCH_FLOOR = 0.72;
 
 const viewOfResults = (results: Results): SearchView => {
   if (Array.isReadonlyArrayEmpty(results)) {
     return { status: "message", text: EMPTY, tone: "muted" };
   }
-  return { status: "results", results };
+  const isMatch = ({ score }: (typeof results)[number]): boolean => score >= MATCH_FLOOR;
+  return {
+    status: "results",
+    matches: pipe(results, Array.filter(isMatch)),
+    others: pipe(
+      results,
+      Array.filter((result) => !isMatch(result)),
+    ),
+  };
 };
 
 const searchViewOf = ({
@@ -44,3 +53,4 @@ const searchViewOf = ({
 };
 
 export { searchViewOf };
+export type { SearchView };

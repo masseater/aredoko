@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { usePackages } from "#/pages/home/api/queries";
 
+import { ImportToUnityButton } from "./import-to-unity-button.tsx";
 import { PackageLinks } from "./package-links.tsx";
 import { ShowPackageButton } from "./show-package-button.tsx";
 
@@ -15,6 +16,7 @@ const ResultActions = ({ result }: Readonly<{ result: typeof SearchResult.Type }
   );
   return (
     <div className="flex flex-col gap-2">
+      <ImportToUnityButton assetId={result.assetId} />
       <ShowPackageButton id={result.packageId} />
       {Option.isSome(owner) && <PackageLinks item={owner.value} />}
     </div>

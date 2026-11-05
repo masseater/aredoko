@@ -7,6 +7,14 @@
     "core:default",
     "dialog:allow-open",
     "opener:allow-open-url",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "$APPLOCALDATA/**"
+        }
+      ]
+    },
     "opener:allow-reveal-item-in-dir",
     "autostart:allow-enable",
     "autostart:allow-disable",
