@@ -2,6 +2,7 @@ import { Context, Effect, HashMap, HashSet, Layer, Option, Queue, Ref, pipe } fr
 
 import { embedImages } from "./embed-images.ts";
 import { scanFolders } from "./scan-folders.ts";
+import { watchSources } from "./watch-folders.ts";
 
 const EMBEDDING_IMAGES = "画像の埋め込み";
 const PENDING_REQUESTS = 1;
@@ -27,6 +28,7 @@ class Library extends Context.Service<
   {
     readonly activity: Effect.Effect<Activity>;
     readonly requestScan: Effect.Effect<void>;
+    readonly sourcesChanged: Effect.Effect<void>;
     readonly remember: (project: ProjectGuids) => Effect.Effect<HashSet.HashSet<string>>;
     readonly forget: (projectPath: string) => Effect.Effect<void>;
   }
@@ -63,10 +65,12 @@ const libraryLayer = Layer.effect(
     );
     yield* Queue.take(requests).pipe(Effect.andThen(scan), Effect.forever, Effect.forkScoped);
     const requestScan = Queue.offer(requests, true).pipe(Effect.asVoid);
+    const { sourcesChanged } = yield* watchSources(requestScan);
     yield* requestScan;
     return Library.of({
       activity: Ref.get(activity),
       requestScan,
+      sourcesChanged,
       remember: (project) => Ref.modify(seen, remember(project)),
       forget: (projectPath) => Ref.update(seen, HashMap.remove(projectPath)),
     });

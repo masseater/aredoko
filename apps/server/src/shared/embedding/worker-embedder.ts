@@ -33,14 +33,14 @@ const workerEmbedderLayer = Layer.effect(
       Device: deviceRpc,
       EmbedQuery: embedQueryRpc,
       EmbedDocuments: embedDocumentsRpc,
-      EmbedImage: embedImageRpc,
+      EmbedImages: embedImagesRpc,
     } = yield* RpcClient.make(EmbedderRpcs);
     const device = yield* deviceRpc().pipe(Effect.mapError(failed));
     return Embedder.of({
       device,
       embedQuery: (query) => throughWorker(embedQueryRpc({ query })),
       embedDocuments: (texts) => throughWorker(embedDocumentsRpc({ texts })),
-      embedImage: (png) => throughWorker(embedImageRpc({ png })),
+      embedImages: (pngs) => throughWorker(embedImagesRpc({ pngs })),
     });
   }),
 ).pipe(
