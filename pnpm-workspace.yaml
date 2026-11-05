@@ -123,6 +123,12 @@ minimumReleaseAgeExclude:
   - "@r_masseater/oxlint-typed-rules@0.1.0"
   - "@r_masseater/oxlint-plugin-decision@0.1.0"
   - "@r_masseater/web-vitals-flow@0.0.0"
+  - "@sentry/bundler-plugins@11.11.0"
+  - "@sentry/core@11.11.0"
+  - "@sentry/node@11.11.0"
+  - "@sentry/opentelemetry@11.11.0"
+  - "@sentry/server-runtime-injection@11.11.0"
+  - "@sentry/server-utils@11.11.0"
 audit:
   ignorePrune: true
   ignore:
