@@ -22,6 +22,11 @@ if ! pkg-config --exists webkit2gtk-4.1; then
   DEBIAN_FRONTEND=noninteractive apt-get install -y -qq libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev build-essential >&2
 fi
 
+if ! command -v dotnet >/dev/null 2>&1; then
+  curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 10.0 --install-dir "$HOME/.dotnet" >&2
+  echo "export PATH=\"\$HOME/.dotnet:\$PATH\" DOTNET_ROOT=\"\$HOME/.dotnet\"" >>"$CLAUDE_ENV_FILE"
+fi
+
 cd "$CLAUDE_PROJECT_DIR"
 vp env on >&2
 vp install --frozen-lockfile >&2

@@ -30,7 +30,9 @@ class Embedder extends Context.Service<
     readonly embedDocuments: (
       texts: readonly string[],
     ) => Effect.Effect<readonly Vector[], EmbeddingFailed>;
-    readonly embedImage: (png: Uint8Array) => Effect.Effect<Vector, EmbeddingFailed>;
+    readonly embedImages: (
+      pngs: readonly Uint8Array[],
+    ) => Effect.Effect<readonly Vector[], EmbeddingFailed>;
   }
 >()("server/shared/embedding/embedder") {}
 
@@ -74,7 +76,7 @@ const loadModel = (
 const loadProcessor = Effect.gen(function* loadProcessor() {
   const processor = yield* attempt(() => AutoProcessor.from_pretrained(MODEL_ID));
   const imageProcessor: unknown = Reflect.get(processor, "image_processor");
-  if (Predicate.isObject(imageProcessor)) {
+  if (Predicate.isObjectKeyword(imageProcessor)) {
     Reflect.set(imageProcessor, "max_soft_tokens", IMAGE_SOFT_TOKENS);
   }
   const imageToken = yield* decodeImageToken(Reflect.get(processor, "image_token")).pipe(
@@ -114,12 +116,15 @@ const make = (
     const prompts = pipe(texts, Array.map(documentPrompt));
     return embed(() => Promise.resolve<unknown>(processor(prompts)));
   },
-  embedImage: (png) =>
-    readImage(png).pipe(
-      Effect.flatMap((image) =>
-        embed(() => Promise.resolve<unknown>(processor(imageToken, [[image]]))),
-      ),
-      Effect.flatMap(first),
+  embedImages: (pngs) =>
+    pipe(
+      pngs,
+      Effect.forEach(readImage),
+      Effect.flatMap((images) => {
+        const tokens = Array.replicate(imageToken, images.length);
+        const batch = pipe(images, Array.map(Array.of));
+        return embed(() => Promise.resolve<unknown>(processor(tokens, batch)));
+      }),
     ),
 });
 
