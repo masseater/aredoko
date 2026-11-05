@@ -15,6 +15,8 @@ const kindsAtom = Atom.make<readonly Kind[]>([]);
 
 const selectedResultAtom = Atom.make<Option.Option<Result>>(Option.none());
 
+const othersShownAtom = Atom.make(false);
+
 const useDraft = (): string => useAtomValue(draftAtom);
 
 const useSetDraft = (): ((draft: string) => void) => useAtomSet(draftAtom);
@@ -24,8 +26,10 @@ const useQueryText = (): string => useAtomValue(queryAtom);
 const useSubmitQuery = (): ((query: string) => void) => {
   const setQuery = useAtomSet(queryAtom);
   const setSelected = useAtomSet(selectedResultAtom);
+  const setOthersShown = useAtomSet(othersShownAtom);
   return (query) => {
     setSelected(Option.none());
+    setOthersShown(false);
     setQuery(query);
   };
 };
@@ -43,6 +47,15 @@ const useSelectedResult = (): Option.Option<Result> => useAtomValue(selectedResu
 
 const useSelectResult = (): ((result: Option.Option<Result>) => void) =>
   useAtomSet(selectedResultAtom);
+
+const useOthersShown = (): boolean => useAtomValue(othersShownAtom);
+
+const useShowOthers = (): (() => void) => {
+  const setOthersShown = useAtomSet(othersShownAtom);
+  return () => {
+    setOthersShown(true);
+  };
+};
 
 const useKinds = (): readonly Kind[] => useAtomValue(kindsAtom);
 
@@ -67,10 +80,12 @@ export {
   useClearSearch,
   useDraft,
   useKinds,
+  useOthersShown,
   useQueryText,
   useSelectResult,
   useSelectedResult,
   useSetDraft,
+  useShowOthers,
   useSubmitQuery,
   useToggleKind,
 };

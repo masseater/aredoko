@@ -36,8 +36,11 @@ const handlersLayer = AredokoRpcs.toLayer(
       GetStatus: getStatus,
       ListSources: () => failed(listSources).pipe(Effect.map((sources) => ({ sources }))),
       AddSource: ({ path, kind }) =>
-        failed(addSource(path, kind)).pipe(Effect.tap(() => library.requestScan)),
-      RemoveSource: ({ id }) => failed(removeSource(id)),
+        failed(addSource(path, kind)).pipe(
+          Effect.tap(() => Effect.andThen(library.sourcesChanged, library.requestScan)),
+        ),
+      RemoveSource: ({ id }) =>
+        failed(removeSource(id)).pipe(Effect.tap(() => library.sourcesChanged)),
       Reindex: () => library.requestScan,
       ListPackages: () =>
         failed(Option.none<number>().pipe(packagesWhere)).pipe(

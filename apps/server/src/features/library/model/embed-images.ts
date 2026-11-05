@@ -1,4 +1,4 @@
-import { Effect, pipe } from "effect";
+import { Array, Effect, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { vectorBytes } from "#shared/database";
@@ -12,13 +12,41 @@ const NO_IMAGES = 0;
 
 type Image = typeof ImageRow.Type;
 
-const embedImage = Effect.fn("embedImage")(function* embedOneImage({ id, png }: Image) {
+const save = Effect.fn("saveImageVector")(function* saveImageVector(
+  { id }: Image,
+  vector: readonly number[],
+) {
   const sql = yield* SqlClient.SqlClient;
-  const embedder = yield* Embedder;
-  const vector = yield* embedder.embedImage(png);
   const embedding = vectorBytes(vector);
   yield* sql`insert into image_vectors(rowid, embedding) values (cast(${id} as integer), ${embedding})`;
   yield* sql`update images set embedded = 1 where id = ${id}`;
+});
+
+const markFailed = Effect.fn("markImageFailed")(function* markImageFailed({ id }: Image) {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`update images set embedded = -1 where id = ${id}`;
+});
+
+const embedBatch = Effect.fn("embedBatch")(function* embedImageBatch(images: readonly Image[]) {
+  const embedder = yield* Embedder;
+  const vectors = yield* embedder.embedImages(
+    pipe(
+      images,
+      Array.map(({ png }) => png),
+    ),
+  );
+  yield* pipe(
+    images,
+    Array.zip(vectors),
+    Effect.forEach(([image, vector]) => save(image, vector)),
+  );
+});
+
+const embedOneByOne = Effect.fn("embedOneByOne")(function* embedOneByOne(images: readonly Image[]) {
+  yield* pipe(
+    images,
+    Effect.forEach((image) => embedBatch([image]).pipe(Effect.catchCause(() => markFailed(image)))),
+  );
 });
 
 const embedPending = Effect.fn("embedPending")(function* embedPendingImages() {
@@ -26,14 +54,7 @@ const embedPending = Effect.fn("embedPending")(function* embedPendingImages() {
   const pending = yield* decodeRows(ImageRow)(
     sql`select id, png from images where embedded = 0 limit ${IMAGE_BATCH}`,
   );
-  yield* pipe(
-    pending,
-    Effect.forEach((image) =>
-      embedImage(image).pipe(
-        Effect.catchCause(() => sql`update images set embedded = -1 where id = ${image.id}`),
-      ),
-    ),
-  );
+  yield* embedBatch(pending).pipe(Effect.catchCause(() => embedOneByOne(pending)));
   return pending.length;
 });
 

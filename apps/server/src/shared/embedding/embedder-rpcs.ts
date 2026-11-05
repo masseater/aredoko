@@ -21,9 +21,9 @@ class EmbedderRpcs extends RpcGroup.make(
     success: Schema.Array(VectorSchema),
     error: EmbeddingFailed,
   }),
-  Rpc.make("EmbedImage", {
-    payload: { png: Schema.Uint8Array },
-    success: VectorSchema,
+  Rpc.make("EmbedImages", {
+    payload: { pngs: Schema.Array(Schema.Uint8Array) },
+    success: Schema.Array(VectorSchema),
     error: EmbeddingFailed,
   }),
 ) {}

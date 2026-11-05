@@ -10,7 +10,6 @@ import {
   linkBooth,
   listPackages,
   listSources,
-  reindex,
   removeSource,
   search,
 } from "#/shared/api";
@@ -91,11 +90,6 @@ const useRemoveSource = (): UseMutationResult<void, Error, number> => {
   return useMutation({ mutationFn: removeSource, onSuccess: refresh });
 };
 
-const useReindex = (): UseMutationResult<void, Error, void> => {
-  const refresh = useRefreshLibrary();
-  return useMutation({ mutationFn: reindex, onSuccess: refresh });
-};
-
 const useLinkBooth = (): UseMutationResult<
   typeof Package.Type,
   Error,
@@ -110,7 +104,6 @@ export {
   useLinkBooth,
   usePackages,
   usePreview,
-  useReindex,
   useRemoveSource,
   useSearch,
   useSources,

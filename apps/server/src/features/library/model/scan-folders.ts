@@ -50,11 +50,14 @@ const filesOf = Effect.fn("filesOf")(function* listPackageFiles(source: Source) 
   );
 });
 
-const currentFiles = Effect.fn("currentFiles")(function* listCurrentFiles() {
+/** @internal */
+const folderSources = Effect.fn("folderSources")(function* listFolderSources() {
   const sql = yield* SqlClient.SqlClient;
-  const sources = yield* decodeRows(SourcePathRow)(
-    sql`select id, path from sources where kind = 'folder'`,
-  );
+  return yield* decodeRows(SourcePathRow)(sql`select id, path from sources where kind = 'folder'`);
+});
+
+const currentFiles = Effect.fn("currentFiles")(function* listCurrentFiles() {
+  const sources = yield* folderSources();
   const files = yield* pipe(
     sources,
     Effect.forEach((source) =>
@@ -111,4 +114,4 @@ const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
   );
 });
 
-export { scanFolders };
+export { folderSources, isPackage, scanFolders };

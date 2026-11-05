@@ -116,14 +116,6 @@ const removeSource = (id: number): Promise<void> =>
     }),
   );
 
-const reindex = (): Promise<void> =>
-  run(
-    Effect.gen(function* reindexRequest() {
-      const { Reindex: reindexRpc } = yield* AredokoClient;
-      yield* reindexRpc();
-    }),
-  );
-
 const listPackages = (): Promise<readonly (typeof Package.Type)[]> =>
   run(
     Effect.gen(function* listPackagesRequest() {
@@ -157,6 +149,17 @@ const search = (query: {
     }),
   );
 
+const extract = (
+  assetIds: readonly number[],
+): Promise<Readonly<{ path: string; assets: number }>> =>
+  run(
+    Effect.gen(function* extractRequest() {
+      const { Extract: extractRpc } = yield* AredokoClient;
+      const { path, assets } = yield* extractRpc({ assetIds });
+      return { path, assets };
+    }),
+  );
+
 const encodeBase64 = Schema.encodeEffect(Schema.Uint8ArrayFromBase64);
 
 const getPreview = (assetId: number): Promise<string> =>
@@ -171,12 +174,12 @@ const getPreview = (assetId: number): Promise<string> =>
 
 export {
   addSource,
+  extract,
   getPreview,
   getStatus,
   linkBooth,
   listPackages,
   listSources,
-  reindex,
   removeSource,
   search,
 };

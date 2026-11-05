@@ -12,7 +12,7 @@ const handlersLayer = EmbedderRpcs.toLayer(
       Device: () => Effect.succeed(embedder.device),
       EmbedQuery: ({ query }) => embedder.embedQuery(query),
       EmbedDocuments: ({ texts }) => embedder.embedDocuments(texts),
-      EmbedImage: ({ png }) => embedder.embedImage(png),
+      EmbedImages: ({ pngs }) => embedder.embedImages(pngs),
     });
   }),
 );

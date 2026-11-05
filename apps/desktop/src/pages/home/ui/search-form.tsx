@@ -32,7 +32,8 @@ const SearchForm = (): ReactNode => {
   return (
     <form className="flex gap-2" onSubmit={onSubmit}>
       <Input
-        type="search"
+        type="text"
+        enterKeyHint="search"
         placeholder={PLACEHOLDER}
         aria-label={LABEL}
         value={draft}

@@ -2,8 +2,8 @@ import { Context, Effect, HashMap, HashSet, Layer, Option, Queue, Ref, pipe } fr
 
 import { embedImages } from "./embed-images.ts";
 import { scanFolders } from "./scan-folders.ts";
+import { watchSources } from "./watch-folders.ts";
 
-const EMBEDDING_IMAGES = "画像の埋め込み";
 const PENDING_REQUESTS = 1;
 
 interface Activity {
@@ -20,6 +20,8 @@ type Seen = HashMap.HashMap<string, HashSet.HashSet<string>>;
 
 const IDLE: Activity = { indexing: false, current: Option.none() };
 
+const EMBEDDING: Activity = { indexing: true, current: Option.none() };
+
 const working = (current: string): Activity => ({ indexing: true, current: Option.some(current) });
 
 class Library extends Context.Service<
@@ -27,6 +29,7 @@ class Library extends Context.Service<
   {
     readonly activity: Effect.Effect<Activity>;
     readonly requestScan: Effect.Effect<void>;
+    readonly sourcesChanged: Effect.Effect<void>;
     readonly remember: (project: ProjectGuids) => Effect.Effect<HashSet.HashSet<string>>;
     readonly forget: (projectPath: string) => Effect.Effect<void>;
   }
@@ -55,7 +58,7 @@ const libraryLayer = Layer.effect(
     const report = (current: string): Effect.Effect<void> => Ref.set(activity, working(current));
     const scan = Effect.gen(function* scan() {
       yield* scanFolders(report);
-      yield* report(EMBEDDING_IMAGES);
+      yield* Ref.set(activity, EMBEDDING);
       yield* embedImages;
     }).pipe(
       Effect.catchCause((cause) => Effect.logError("scan failed", cause)),
@@ -63,10 +66,12 @@ const libraryLayer = Layer.effect(
     );
     yield* Queue.take(requests).pipe(Effect.andThen(scan), Effect.forever, Effect.forkScoped);
     const requestScan = Queue.offer(requests, true).pipe(Effect.asVoid);
+    const { sourcesChanged } = yield* watchSources(requestScan);
     yield* requestScan;
     return Library.of({
       activity: Ref.get(activity),
       requestScan,
+      sourcesChanged,
       remember: (project) => Ref.modify(seen, remember(project)),
       forget: (projectPath) => Ref.update(seen, HashMap.remove(projectPath)),
     });
