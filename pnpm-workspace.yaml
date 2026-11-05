@@ -18,7 +18,7 @@ catalog:
   modern-tar: 0.8.6
   sqlite-vec: 0.1.9
   "@eslint-react/eslint-plugin": 5.28.8
-  "@shadcn/lint": 0.2.3
+  "@shadcn/lint": 0.2.4
   "@tanstack/eslint-plugin-query": 5.105.1
   "@tanstack/eslint-plugin-router": 1.162.0
   "@types/node": 26.6.6
