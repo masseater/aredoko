@@ -76,7 +76,7 @@ const loadModel = (
 const loadProcessor = Effect.gen(function* loadProcessor() {
   const processor = yield* attempt(() => AutoProcessor.from_pretrained(MODEL_ID));
   const imageProcessor: unknown = Reflect.get(processor, "image_processor");
-  if (Predicate.isObject(imageProcessor)) {
+  if (Predicate.isObjectKeyword(imageProcessor)) {
     Reflect.set(imageProcessor, "max_soft_tokens", IMAGE_SOFT_TOKENS);
   }
   const imageToken = yield* decodeImageToken(Reflect.get(processor, "image_token")).pipe(
