@@ -24,7 +24,8 @@ class StaleProtocol extends taggedError<StaleProtocol, { readonly brand: unique 
 const appIdentifier = Effect.fn("appIdentifier")(function* appIdentifier() {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const config = yield* fileSystem.readFileString(yield* path.fromFileUrl(TAURI_CONFIG));
+  const configPath = yield* path.fromFileUrl(TAURI_CONFIG);
+  const config = yield* fileSystem.readFileString(configPath);
   const { identifier } = yield* decodeTauriConfig(config);
   return identifier;
 });
@@ -52,8 +53,10 @@ const command = Command.make(
   { check: Flag.Boolean("check").pipe(Flag.withDefault(false)) },
   ({ check }) =>
     Effect.gen(function* codegen() {
+      const identifier = yield* appIdentifier();
+      const csharpSource = yield* csharp(identifier);
       const outputs: readonly Output[] = [
-        { path: CSHARP_OUTPUT, source: yield* csharp(yield* appIdentifier()) },
+        { path: CSHARP_OUTPUT, source: csharpSource },
         { path: RUST_OUTPUT, source: rust() },
       ];
       if (check) {

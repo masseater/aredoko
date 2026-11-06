@@ -103,7 +103,8 @@ const run = Effect.fn("run")(function* runCondition(
 ) {
   yield* upload(condition, placed);
   yield* waitUntilIndexed();
-  return score(yield* searchAll(condition, placed, queries));
+  const found = yield* searchAll(condition, placed, queries);
+  return score(found);
 });
 
 /** @internal */

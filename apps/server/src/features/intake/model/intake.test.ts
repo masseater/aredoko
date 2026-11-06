@@ -51,12 +51,14 @@ layer(NodeServices.layer, { excludeTestServices: true })("intake", (it) => {
       const cabin = path.join(downloads, "Cabin.unitypackage");
       const zip = path.join(downloads, "Dress.zip");
       yield* fileSystem.writeFileString(cabin, "cabin");
-      yield* fileSystem.writeFile(zip, yield* makeZip);
+      const zipBytes = yield* makeZip;
+      yield* fileSystem.writeFile(zip, zipBytes);
       yield* withSettings((library) =>
         Effect.gen(function* inLibrary() {
           const placed = yield* intake([cabin, zip]);
           expect(placed).toBe(BOTH);
-          expect(yield* listed(library)).toStrictEqual([
+          const names = yield* listed(library);
+          expect(names).toStrictEqual([
             "Cabin.unitypackage",
             "Dress",
             path.join("Dress", "Dress.unitypackage"),
@@ -80,10 +82,8 @@ layer(NodeServices.layer, { excludeTestServices: true })("intake", (it) => {
         Effect.gen(function* inLibrary() {
           const placed = yield* intake([first, second]);
           expect(placed).toBe(BOTH);
-          expect(yield* listed(library)).toStrictEqual([
-            "Cabin (2).unitypackage",
-            "Cabin.unitypackage",
-          ]);
+          const names = yield* listed(library);
+          expect(names).toStrictEqual(["Cabin (2).unitypackage", "Cabin.unitypackage"]);
         }),
       );
     }),

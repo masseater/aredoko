@@ -64,7 +64,8 @@ const hitsOf = (rows: readonly (typeof HitRow.Type)[]): readonly Hit[] =>
 const vectorRankings = Effect.fn("vectorRankings")(function* rankByVector(query: string) {
   const sql = yield* SqlClient.SqlClient;
   const embedder = yield* Embedder;
-  const vector = vectorBytes(yield* embedder.embedQuery(query));
+  const embedded = yield* embedder.embedQuery(query);
+  const vector = vectorBytes(embedded);
   const candidates = sql.literal(CANDIDATES.toString());
   const images = yield* decodeRows(HitRow)(
     sql`select i.asset_id as id, v.distance from image_vectors v join images i on i.id = v.rowid

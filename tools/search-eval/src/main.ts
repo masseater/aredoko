@@ -9,7 +9,8 @@ import { readLibrary, readQueries } from "./fixtures.ts";
 import { printComparison, writeReport } from "./report.ts";
 
 const evaluateAll = Effect.gen(function* evaluateAll() {
-  const assets = libraryAssets(yield* readLibrary);
+  const library = yield* readLibrary;
+  const assets = libraryAssets(library);
   const queries = yield* readQueries;
   const entries = yield* pipe(
     CONDITIONS,

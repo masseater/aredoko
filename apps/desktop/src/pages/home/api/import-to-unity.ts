@@ -11,9 +11,11 @@ const importToUnity = (assetId: number): Promise<number> =>
   Effect.runPromise(
     Effect.promise(() => extract([assetId])).pipe(
       Effect.flatMap(({ path, assets }) =>
-        Effect.tryPromise(() => openPath(path)).pipe(
-          Effect.tapError((cause) => Effect.logWarning("open failed", path, cause)),
-          Effect.mapError(() => OpenFailed.make({ message: CANNOT_OPEN })),
+        Effect.tryPromise({
+          try: () => openPath(path),
+          catch: (cause) => OpenFailed.make({ message: CANNOT_OPEN, cause }),
+        }).pipe(
+          Effect.tapError(({ cause }) => Effect.logWarning("open failed", path, cause)),
           Effect.as(assets),
         ),
       ),
