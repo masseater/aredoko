@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
 
 import { KIND_LABELS } from "#/pages/home/config";
 import { useSelectResult, useSelectedResult } from "#/pages/home/model";
+import { fileNameOf } from "#/shared/lib";
 
-import { fileNameOf } from "./file-name.ts";
 import { TileThumbnail } from "./tile-thumbnail.tsx";
 
 const ResultTile = ({ result }: Readonly<{ result: typeof SearchResult.Type }>): ReactNode => {
