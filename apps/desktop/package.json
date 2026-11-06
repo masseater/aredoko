@@ -6,13 +6,6 @@
   "imports": {
     "#/*": "./src/*"
   },
-  "scripts": {
-    "test": "vp test run",
-    "tauri": "tauri",
-    "dev:app": "set WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222&& set OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318&& set OTEL_TRACES_EXPORTER=otlp&& tauri dev",
-    "steiger": "steiger ./src",
-    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet"
-  },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
     "@tanstack/react-query": "catalog:stack",
@@ -35,14 +28,12 @@
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
-    "@feature-sliced/steiger-plugin": "0.8.2",
     "@tailwindcss/vite": "4.3.4",
     "@tauri-apps/cli": "2.12.4",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@types/three": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "steiger": "catalog:stack",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
