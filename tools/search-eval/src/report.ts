@@ -66,7 +66,8 @@ const readBaseline = Effect.gen(function* readBaseline() {
     return Option.none<typeof Report.Type>();
   }
   const text = yield* fileSystem.readFileString(BASELINE_FILE);
-  return Option.some(yield* Schema.decodeEffect(ReportJson)(text));
+  const report = yield* Schema.decodeEffect(ReportJson)(text);
+  return Option.some(report);
 });
 
 const encodeReport = Schema.encodeEffect(Schema.fromJsonString(Report, { space: INDENT }));

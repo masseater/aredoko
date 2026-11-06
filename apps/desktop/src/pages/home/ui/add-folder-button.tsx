@@ -4,12 +4,14 @@ import { Button } from "ui/button";
 
 import { usePickAndAdd } from "#/pages/home/api/pick-and-add";
 
-const LABEL = "フォルダを追加";
+const LABEL = "フォルダを登録";
 
-const AddFolderButton = (): ReactNode => {
+const AddFolderButton = ({
+  size = "default",
+}: Readonly<{ size?: "default" | "lg" }>): ReactNode => {
   const { onClick, busy } = usePickAndAdd();
   return (
-    <Button className="self-start" onClick={onClick} disabled={busy}>
+    <Button variant="outline" size={size} onClick={onClick} disabled={busy}>
       <FolderPlus />
       {LABEL}
     </Button>

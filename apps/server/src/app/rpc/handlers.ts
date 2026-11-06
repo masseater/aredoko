@@ -3,6 +3,7 @@ import { AredokoRpcs, RequestFailed } from "protocol";
 
 import { packagesWhere } from "#entities/package";
 import { addSource, listSources, preview, progress, removeSource } from "#features/catalog";
+import { ensureLibraryFolder, findAssetStore, intake } from "#features/intake";
 import { Library } from "#features/library";
 import { search } from "#features/search";
 import { Embedder } from "#shared/embedding";
@@ -32,6 +33,9 @@ const getStatus = Effect.fn("GetStatus")(function* status() {
 const handlersLayer = AredokoRpcs.toLayer(
   Effect.gen(function* handlers() {
     const library = yield* Library;
+    const libraryPath = yield* ensureLibraryFolder;
+    yield* library.sourcesChanged;
+    yield* library.requestScan;
     return AredokoRpcs.of({
       GetStatus: getStatus,
       ListSources: () => failed(listSources).pipe(Effect.map((sources) => ({ sources }))),
@@ -41,6 +45,18 @@ const handlersLayer = AredokoRpcs.toLayer(
         ),
       RemoveSource: ({ id }) =>
         failed(removeSource(id)).pipe(Effect.tap(() => library.sourcesChanged)),
+      GetLibrary: () =>
+        failed(findAssetStore()).pipe(
+          Effect.map((assetStore) => ({
+            path: libraryPath,
+            assetStore: Option.getOrNull(assetStore),
+          })),
+        ),
+      ImportFiles: ({ paths }) =>
+        failed(intake(paths)).pipe(
+          Effect.tap(() => library.requestScan),
+          Effect.map((packages) => ({ packages })),
+        ),
       Reindex: () => library.requestScan,
       ListPackages: () =>
         failed(Option.none<number>().pipe(packagesWhere)).pipe(

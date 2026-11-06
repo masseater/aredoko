@@ -46,6 +46,12 @@ namespace Aredoko.Protocol
         [JsonProperty("ExtractSuccess")]
         public ExtractSuccess ExtractSuccess { get; set; }
 
+        [JsonProperty("GetLibraryError")]
+        public RequestFailedEncoded GetLibraryError { get; set; }
+
+        [JsonProperty("GetLibrarySuccess")]
+        public GetLibrarySuccess GetLibrarySuccess { get; set; }
+
         [JsonProperty("GetPackageError")]
         public RequestFailedEncoded GetPackageError { get; set; }
 
@@ -69,6 +75,15 @@ namespace Aredoko.Protocol
 
         [JsonProperty("GetStatusSuccess")]
         public Status GetStatusSuccess { get; set; }
+
+        [JsonProperty("ImportFilesError")]
+        public RequestFailedEncoded ImportFilesError { get; set; }
+
+        [JsonProperty("ImportFilesPayload")]
+        public ImportFilesPayload ImportFilesPayload { get; set; }
+
+        [JsonProperty("ImportFilesSuccess")]
+        public ImportFilesSuccess ImportFilesSuccess { get; set; }
 
         [JsonProperty("LinkBoothError")]
         public RequestFailedEncoded LinkBoothError { get; set; }
@@ -171,6 +186,15 @@ namespace Aredoko.Protocol
 
         [JsonProperty("missing")]
         public string[] Missing { get; set; }
+
+        [JsonProperty("path")]
+        public string Path { get; set; }
+    }
+
+    public partial class GetLibrarySuccess
+    {
+        [JsonProperty("assetStore")]
+        public string? AssetStore { get; set; }
 
         [JsonProperty("path")]
         public string Path { get; set; }
@@ -291,6 +315,18 @@ namespace Aredoko.Protocol
 
         [JsonProperty("total")]
         public long Total { get; set; }
+    }
+
+    public partial class ImportFilesPayload
+    {
+        [JsonProperty("paths")]
+        public string[] Paths { get; set; }
+    }
+
+    public partial class ImportFilesSuccess
+    {
+        [JsonProperty("packages")]
+        public long Packages { get; set; }
     }
 
     public partial class LinkBoothPayload
@@ -711,6 +747,8 @@ namespace Aredoko.Protocol
         public static readonly Rpc<Empty, ListSourcesSuccess, RequestFailedEncoded> ListSources = new Rpc<Empty, ListSourcesSuccess, RequestFailedEncoded>("ListSources");
         public static readonly Rpc<AddSourcePayload, Source, RequestFailedEncoded> AddSource = new Rpc<AddSourcePayload, Source, RequestFailedEncoded>("AddSource");
         public static readonly Rpc<RemoveSourcePayload, Empty, RequestFailedEncoded> RemoveSource = new Rpc<RemoveSourcePayload, Empty, RequestFailedEncoded>("RemoveSource");
+        public static readonly Rpc<Empty, GetLibrarySuccess, RequestFailedEncoded> GetLibrary = new Rpc<Empty, GetLibrarySuccess, RequestFailedEncoded>("GetLibrary");
+        public static readonly Rpc<ImportFilesPayload, ImportFilesSuccess, RequestFailedEncoded> ImportFiles = new Rpc<ImportFilesPayload, ImportFilesSuccess, RequestFailedEncoded>("ImportFiles");
         public static readonly Rpc<Empty, Empty, RequestFailedEncoded> Reindex = new Rpc<Empty, Empty, RequestFailedEncoded>("Reindex");
         public static readonly Rpc<Empty, ListPackagesSuccess, RequestFailedEncoded> ListPackages = new Rpc<Empty, ListPackagesSuccess, RequestFailedEncoded>("ListPackages");
         public static readonly Rpc<GetPackagePayload, Package, RequestFailedEncoded> GetPackage = new Rpc<GetPackagePayload, Package, RequestFailedEncoded>("GetPackage");

@@ -1,7 +1,7 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSources } from "#/pages/home/api/queries";
+import { useFolderName, useSources } from "#/pages/home/api/queries";
 
 import { SourceRow } from "./source-row.tsx";
 
@@ -9,6 +9,7 @@ const LOADING = "読み込んでいます…";
 
 const SourceList = (): ReactNode => {
   const sources = useSources();
+  const nameOf = useFolderName();
   if (sources.isPending) {
     return <p className="text-muted-foreground text-sm">{LOADING}</p>;
   }
@@ -19,7 +20,9 @@ const SourceList = (): ReactNode => {
     <ul className="flex flex-col gap-1">
       {pipe(
         sources.data,
-        Array.map((source) => <SourceRow key={source.id} source={source} />),
+        Array.map((source) => (
+          <SourceRow key={source.id} source={source} named={nameOf(source.path)} />
+        )),
       )}
     </ul>
   );

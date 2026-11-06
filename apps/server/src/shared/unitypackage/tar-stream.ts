@@ -2,6 +2,7 @@ import { Array, Effect, FileSystem, HashSet, Stream, String, pipe } from "effect
 import { createTarDecoder } from "modern-tar";
 import type { ParsedTarEntry } from "modern-tar";
 
+import { collectBytes } from "#shared/bytes";
 import { captureAll } from "#shared/text";
 
 import { UnityPackageUnreadable } from "./unity-package-unreadable.ts";
@@ -26,16 +27,8 @@ const tarEntries = Effect.fn("tarEntries")(function* openTar(path: string) {
 
 /** @internal */
 const bodyOf = Effect.fn("bodyOf")(function* readBody(path: string, entry: ParsedTarEntry) {
-  const chunks = yield* Stream.runCollect(
+  return yield* collectBytes(
     Stream.fromReadableStream({ evaluate: () => entry.body, onError: unreadable(path) }),
-  );
-  return yield* Effect.promise(() =>
-    new Blob(
-      pipe(
-        chunks,
-        Array.map((chunk) => Uint8Array.from(chunk)),
-      ),
-    ).bytes(),
   );
 });
 

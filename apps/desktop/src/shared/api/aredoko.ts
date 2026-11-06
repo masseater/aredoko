@@ -6,6 +6,7 @@ import {
   Effect,
   Layer,
   ManagedRuntime,
+  Option,
   Predicate,
   Record,
   Schema,
@@ -28,13 +29,19 @@ const STATUS_TIMEOUT = Duration.fromInputUnsafe("3 seconds");
 const REQUEST_TIMEOUT = Duration.fromInputUnsafe("15 seconds");
 const UNREACHABLE = "サーバーに接続できません";
 
+const unreachable = (): ServerError => ServerError.make({ message: UNREACHABLE });
+
 const serverUrlLayer = Layer.effect(
   ServerUrl,
   Effect.gen(function* serverUrl() {
-    const client = HttpClient.filterStatusOk(yield* HttpClient.HttpClient);
+    const httpClient = yield* HttpClient.HttpClient;
+    const client = HttpClient.filterStatusOk(httpClient);
     const endpointFile = Effect.gen(function* endpointFile() {
-      const directory = yield* Effect.tryPromise(appLocalDataDir);
-      const file = yield* Effect.tryPromise(() => join(directory, ENDPOINT_FILE));
+      const directory = yield* Effect.tryPromise({ try: appLocalDataDir, catch: unreachable });
+      const file = yield* Effect.tryPromise({
+        try: () => join(directory, ENDPOINT_FILE),
+        catch: unreachable,
+      });
       const response = yield* client.get(convertFileSrc(file));
       return yield* response.text;
     }).pipe(
@@ -116,6 +123,24 @@ const removeSource = (id: number): Promise<void> =>
     }),
   );
 
+const getLibrary = (): Promise<Readonly<{ path: string; assetStore: Option.Option<string> }>> =>
+  run(
+    Effect.gen(function* getLibraryRequest() {
+      const { GetLibrary: getLibraryRpc } = yield* AredokoClient;
+      const { path, assetStore } = yield* getLibraryRpc();
+      return { path, assetStore: Option.fromNullOr(assetStore) };
+    }),
+  );
+
+const importFiles = (paths: readonly string[]): Promise<number> =>
+  run(
+    Effect.gen(function* importFilesRequest() {
+      const { ImportFiles: importFilesRpc } = yield* AredokoClient;
+      const { packages } = yield* importFilesRpc({ paths });
+      return packages;
+    }),
+  );
+
 const listPackages = (): Promise<readonly (typeof Package.Type)[]> =>
   run(
     Effect.gen(function* listPackagesRequest() {
@@ -176,7 +201,9 @@ export {
   addSource,
   extract,
   getPreview,
+  getLibrary,
   getStatus,
+  importFiles,
   linkBooth,
   listPackages,
   listSources,

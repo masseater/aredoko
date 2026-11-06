@@ -1,16 +1,16 @@
 import { Array } from "effect";
 import type { ReactNode } from "react";
 
-import { useSources } from "#/pages/home/api/queries";
+import { usePackages } from "#/pages/home/api/queries";
 
-import { FirstFolder } from "./first-folder.tsx";
+import { FirstImport } from "./first-import.tsx";
 import { LibraryColumn } from "./library-column.tsx";
 import { PackageDetail } from "./package-detail.tsx";
 
 const LibraryView = (): ReactNode => {
-  const sources = useSources();
-  if (sources.isSuccess && Array.isReadonlyArrayEmpty(sources.data)) {
-    return <FirstFolder />;
+  const packages = usePackages();
+  if (packages.isSuccess && Array.isReadonlyArrayEmpty(packages.data)) {
+    return <FirstImport />;
   }
   return (
     <div className="flex min-h-0 flex-1 gap-6">

@@ -102,7 +102,8 @@ const entryOf =
 layer(NodeServices.layer)("readPackage", (it) => {
   it.effect("reads the first line of pathname and the preview", () =>
     Effect.gen(function* test() {
-      const texture = entryOf(TEXTURE)(yield* fixture);
+      const entries = yield* fixture;
+      const texture = entryOf(TEXTURE)(entries);
       expect(
         pipe(
           texture,
@@ -120,7 +121,8 @@ layer(NodeServices.layer)("readPackage", (it) => {
 
   it.effect("collects the guids an asset refers to", () =>
     Effect.gen(function* test() {
-      const material = entryOf(MATERIAL)(yield* fixture);
+      const entries = yield* fixture;
+      const material = entryOf(MATERIAL)(entries);
       expect(
         pipe(
           material,

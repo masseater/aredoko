@@ -52,7 +52,8 @@ const writePackage = Effect.fn("writePackage")(function* writeUnityPackage(
   destination: string,
 ) {
   const fileSystem = yield* FileSystem.FileSystem;
-  const files = Array.flatten(yield* pipe(selections, Effect.forEach(filesOf)));
+  const perSelection = yield* pipe(selections, Effect.forEach(filesOf));
+  const files = Array.flatten(perSelection);
   const failed = (cause: unknown): UnityPackageUnreadable =>
     UnityPackageUnreadable.make({ path: destination, cause });
   const tar = yield* Effect.tryPromise({ try: () => packTar(files), catch: failed });
