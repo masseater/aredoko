@@ -53,11 +53,18 @@ const Library = Schema.Struct({
   assetStore: Schema.NullOr(Schema.String),
 });
 
-const RenderJob = Schema.Struct({ assetId: Id, pathname: Schema.String });
+const RenderJob = Schema.Struct({ assetId: Id, pathname: Schema.String }).annotate({
+  identifier: "RenderJob",
+});
 
 const RenderJobs = Schema.Struct({ jobs: Schema.Array(RenderJob) });
 
-const ModelFile = Schema.Struct({ name: Schema.String, data: Schema.Uint8ArrayFromBase64 });
+const ModelFile = Schema.Struct({
+  name: Schema.String,
+  data: Schema.Uint8ArrayFromBase64,
+}).annotate({
+  identifier: "ModelFile",
+});
 
 const ModelFiles = Schema.Struct({
   model: Schema.Uint8ArrayFromBase64,

@@ -440,10 +440,10 @@ namespace Aredoko.Protocol
     public partial class ListRenderJobsSuccess
     {
         [JsonProperty("jobs")]
-        public Job[] Jobs { get; set; }
+        public RenderJob[] Jobs { get; set; }
     }
 
-    public partial class Job
+    public partial class RenderJob
     {
         [JsonProperty("assetId")]
         public long AssetId { get; set; }
@@ -506,13 +506,13 @@ namespace Aredoko.Protocol
     public partial class ReadModelSuccess
     {
         [JsonProperty("files")]
-        public File[] Files { get; set; }
+        public ModelFile[] Files { get; set; }
 
         [JsonProperty("model")]
         public string Model { get; set; }
     }
 
-    public partial class File
+    public partial class ModelFile
     {
         [JsonProperty("data")]
         public string Data { get; set; }
