@@ -2,10 +2,11 @@ import { Array, Effect, Option, Path, pipe } from "effect";
 import { RequestFailed } from "protocol";
 import type { ProjectAsset } from "protocol";
 
+import { fetchItem } from "#entities/booth";
 import { packagesWhere } from "#entities/package";
-import { fetchItem } from "#features/booth";
 import { extract } from "#features/extract";
-import { Library, linkBooth, pruneProject, putProjectAssets } from "#features/library";
+import { findAssetStore } from "#features/intake";
+import { Blm, Library, linkBooth, pruneProject, putProjectAssets } from "#features/library";
 import { Settings } from "#shared/settings";
 
 import { failed, firstOr } from "./request-failed.ts";
@@ -78,4 +79,19 @@ const putAssets = Effect.fn("PutProjectAssets")(function* putRequest({
   }
 });
 
-export { extractAssets, linkBoothItem, listPackages, packageById, putAssets };
+/** @internal */
+const libraryInfo = Effect.fn("GetLibrary")(function* libraryInfo(libraryPath: string) {
+  const blm = yield* Blm;
+  const [assetStore, blmLibrary] = yield* failed(Effect.all([findAssetStore(), blm.library]));
+  return {
+    path: libraryPath,
+    assetStore: Option.getOrNull(assetStore),
+    blm: pipe(
+      blmLibrary,
+      Option.map(({ itemDirectory }) => itemDirectory),
+      Option.getOrNull,
+    ),
+  };
+});
+
+export { extractAssets, libraryInfo, linkBoothItem, listPackages, packageById, putAssets };

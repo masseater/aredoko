@@ -232,6 +232,9 @@ namespace Aredoko.Protocol
         [JsonProperty("assetStore")]
         public string? AssetStore { get; set; }
 
+        [JsonProperty("blm")]
+        public string? Blm { get; set; }
+
         [JsonProperty("path")]
         public string Path { get; set; }
     }

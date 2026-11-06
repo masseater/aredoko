@@ -22,6 +22,7 @@ import {
   listSources,
   removeSource,
 } from "#/shared/api";
+import type { LibraryInfo } from "#/shared/api";
 
 const LIBRARY_INTERVAL = 5000;
 
@@ -63,9 +64,10 @@ const useRemoveSource = (): UseMutationResult<void, Error, number> => {
   return useMutation({ mutationFn: removeSource, onSuccess: refresh });
 };
 
-const useLibrary = (): UseQueryResult<
-  Readonly<{ path: string; assetStore: Option.Option<string> }>
-> => useQuery(queryOptions({ queryKey: LIBRARY_KEY, queryFn: getLibrary, retry: false }));
+type KnownFolder = "assetStore" | "blm";
+
+const useLibrary = (): UseQueryResult<LibraryInfo> =>
+  useQuery(queryOptions({ queryKey: LIBRARY_KEY, queryFn: getLibrary, retry: false }));
 
 interface NamedFolder {
   readonly name: string;
@@ -74,7 +76,12 @@ interface NamedFolder {
 
 const LIBRARY: NamedFolder = { name: "aredoko", removable: false };
 
-const ASSET_STORE: NamedFolder = { name: "Unity Asset Store", removable: true };
+const KNOWN_FOLDERS: Readonly<Record<KnownFolder, NamedFolder>> = {
+  assetStore: { name: "Unity Asset Store", removable: true },
+  blm: { name: "BOOTH Library Manager", removable: true },
+};
+
+const KNOWN: readonly KnownFolder[] = ["assetStore", "blm"];
 
 const NOT_NAMED = (): Option.Option<NamedFolder> => Option.none();
 
@@ -83,19 +90,20 @@ const useFolderName = (): ((path: string) => Option.Option<NamedFolder>) => {
   if (!library.isSuccess) {
     return NOT_NAMED;
   }
-  const { path: libraryPath, assetStore } = library.data;
+  const { data } = library;
   return (path) => {
-    if (path === libraryPath) {
+    if (path === data.path) {
       return Option.some(LIBRARY);
     }
-    if (Option.contains(assetStore, path)) {
-      return Option.some(ASSET_STORE);
-    }
-    return Option.none();
+    return pipe(
+      KNOWN,
+      Array.findFirst((known) => Option.contains(data[known], path)),
+      Option.map((known) => KNOWN_FOLDERS[known]),
+    );
   };
 };
 
-const useAssetStore = (): Option.Option<string> => {
+const useKnownFolder = (known: KnownFolder): Option.Option<string> => {
   const library = useLibrary();
   const sources = useSources();
   if (!library.isSuccess || !sources.isSuccess) {
@@ -103,7 +111,7 @@ const useAssetStore = (): Option.Option<string> => {
   }
   const registered = sources.data;
   return pipe(
-    library.data.assetStore,
+    library.data[known],
     Option.filter(
       (folder) =>
         !pipe(
@@ -129,11 +137,11 @@ const useLastImport = (): LastImport =>
     Option.getOrElse(() => NO_IMPORT),
   );
 
-export type { NamedFolder };
+export type { KnownFolder, NamedFolder };
 export {
   useAddSource,
-  useAssetStore,
   useFolderName,
+  useKnownFolder,
   useImportFiles,
   useLastImport,
   useRefreshLibrary,

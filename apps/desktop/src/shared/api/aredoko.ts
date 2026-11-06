@@ -123,12 +123,18 @@ const removeSource = (id: number): Promise<void> =>
     }),
   );
 
-const getLibrary = (): Promise<Readonly<{ path: string; assetStore: Option.Option<string> }>> =>
+interface LibraryInfo {
+  readonly path: string;
+  readonly assetStore: Option.Option<string>;
+  readonly blm: Option.Option<string>;
+}
+
+const getLibrary = (): Promise<LibraryInfo> =>
   run(
     Effect.gen(function* getLibraryRequest() {
       const { GetLibrary: getLibraryRpc } = yield* AredokoClient;
-      const { path, assetStore } = yield* getLibraryRpc();
-      return { path, assetStore: Option.fromNullOr(assetStore) };
+      const { path, assetStore, blm } = yield* getLibraryRpc();
+      return { path, assetStore: Option.fromNullOr(assetStore), blm: Option.fromNullOr(blm) };
     }),
   );
 
@@ -260,3 +266,4 @@ export {
   removeSource,
   search,
 };
+export type { LibraryInfo };

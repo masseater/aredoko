@@ -1,6 +1,7 @@
 import { Context, Effect, HashMap, HashSet, Layer, Option, Queue, Ref, pipe } from "effect";
 
 import { embedImages } from "./embed-images.ts";
+import { blmLinker } from "./link-blm.ts";
 import { scanFolders } from "./scan-folders.ts";
 import { watchSources } from "./watch-folders.ts";
 
@@ -55,9 +56,10 @@ const libraryLayer = Layer.effect(
     const activity = yield* Ref.make(IDLE);
     const requests = yield* Queue.sliding<boolean>(PENDING_REQUESTS);
     const seen = yield* Ref.make<Seen>(HashMap.empty());
-    const report = (current: string): Effect.Effect<void> => Ref.set(activity, working(current));
+    const linkBlm = yield* blmLinker;
     const scan = Effect.gen(function* scan() {
-      yield* scanFolders(report);
+      yield* scanFolders((current) => Ref.set(activity, working(current)));
+      yield* linkBlm;
       yield* Ref.set(activity, EMBEDDING);
       yield* embedImages;
     }).pipe(

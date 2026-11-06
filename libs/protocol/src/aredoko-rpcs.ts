@@ -51,6 +51,7 @@ const Extracted = Schema.Struct({
 const Library = Schema.Struct({
   path: Schema.String,
   assetStore: Schema.NullOr(Schema.String),
+  blm: Schema.NullOr(Schema.String),
 });
 
 const RenderJob = Schema.Struct({ assetId: Id, pathname: Schema.String }).annotate({

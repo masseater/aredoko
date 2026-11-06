@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { AddAssetStoreButton, AddFolderButton, SourceList } from "#/features/library";
+import { AddKnownFolderButton, AddFolderButton, SourceList } from "#/features/library";
 
 const TITLE = "フォルダ";
 
@@ -9,7 +9,8 @@ const FolderSetting = (): ReactNode => (
     <h3 className="text-sm font-medium">{TITLE}</h3>
     <SourceList />
     <div className="flex flex-wrap gap-2">
-      <AddAssetStoreButton />
+      <AddKnownFolderButton folder="assetStore" />
+      <AddKnownFolderButton folder="blm" />
       <AddFolderButton />
     </div>
   </section>
