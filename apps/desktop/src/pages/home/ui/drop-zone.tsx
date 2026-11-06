@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
+import { useImportFiles } from "#/features/library";
 import { subscribeDrops } from "#/pages/home/api/drop-events";
-import { useImportFiles } from "#/pages/home/api/queries";
 import { useSetDragOver } from "#/pages/home/model";
 
 import { DropOverlay } from "./drop-overlay.tsx";

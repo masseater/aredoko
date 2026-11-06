@@ -1,6 +1,5 @@
 import { Array, Effect, HashMap, Option, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
-import type { SearchResult } from "protocol";
 
 import { vectorBytes } from "#shared/database";
 import { Embedder } from "#shared/embedding";
@@ -8,6 +7,8 @@ import { decodeRows } from "#shared/sql";
 
 import { combine } from "./combine.ts";
 import type { Hit } from "./combine.ts";
+import { resultOf, rowsInOrder } from "./result-row.ts";
+import type { ResultRecord } from "./result-row.ts";
 
 const CANDIDATES = 200;
 
@@ -15,35 +16,9 @@ const RankRow = Schema.Struct({ id: Schema.Int });
 
 const HitRow = Schema.Struct({ id: Schema.Int, distance: Schema.Finite });
 
-const ResultRow = Schema.Struct({
-  id: Schema.Int,
-  guid: Schema.String,
-  pathname: Schema.String,
-  kind: Schema.Literals([
-    "texture",
-    "model",
-    "material",
-    "prefab",
-    "shader",
-    "animation",
-    "audio",
-    "scene",
-    "script",
-    "other",
-  ]),
-  package_id: Schema.Int,
-  package_name: Schema.String,
-  package_kind: Schema.Literals(["unitypackage", "project"]),
-  images: Schema.Int,
-});
-
-const NO_SCORE = 0;
 const FULL_SIMILARITY = 1;
-const NO_IMAGES = 0;
 
 type RankRows = readonly (typeof RankRow.Type)[];
-
-type ResultRecord = typeof ResultRow.Type;
 
 const termsOf = (query: string): readonly string[] =>
   pipe(query, String.toLowerCase, String.split(/[\s　]+/u), Array.filter(String.isNonEmpty));
@@ -97,45 +72,13 @@ const nameRanking = Effect.fn("nameRanking")(function* rankByName(query: string)
   return idsOf(rows);
 });
 
-const rowsOf = Effect.fn("rowsOf")(function* selectRows(ids: readonly number[]) {
-  const sql = yield* SqlClient.SqlClient;
-  return yield* Array.match(ids, {
-    onEmpty: () => Effect.succeed<readonly ResultRecord[]>([]),
-    onNonEmpty: (nonEmpty) =>
-      decodeRows(ResultRow)(
-        sql`select a.id, a.guid, a.pathname, a.kind, a.package_id, p.name as package_name,
-          p.kind as package_kind,
-          (select count(*) from images i where i.asset_id = a.id) as images
-          from assets a join packages p on p.id = a.package_id
-          where ${sql.in("a.id", nonEmpty)}`,
-      ),
-  });
-});
-
-const resultOf =
-  (scores: HashMap.HashMap<number, number>) =>
-  (row: ResultRecord): typeof SearchResult.Type => ({
-    assetId: row.id,
-    guid: row.guid,
-    pathname: row.pathname,
-    kind: row.kind,
-    packageId: row.package_id,
-    packageName: row.package_name,
-    packageKind: row.package_kind,
-    score: pipe(
-      HashMap.get(scores, row.id),
-      Option.getOrElse(() => NO_SCORE),
-    ),
-    hasPreview: row.images > NO_IMAGES,
-  });
-
-const rowIn =
-  (rows: readonly ResultRecord[]) =>
-  (id: number): Option.Option<ResultRecord> =>
-    pipe(
-      rows,
-      Array.findFirst((row) => row.id === id),
-    );
+const ofPackage =
+  (packageId: number | null) =>
+  (row: ResultRecord): boolean =>
+    Option.match(Option.fromNullOr(packageId), {
+      onNone: () => true,
+      onSome: (id) => row.package_id === id,
+    });
 
 const ofKinds =
   (kinds: readonly string[]) =>
@@ -151,10 +94,12 @@ const search = Effect.fn("search")(function* searchAssets({
   query,
   limit,
   kinds,
+  packageId,
 }: {
   readonly query: string;
   readonly limit: number;
   readonly kinds: readonly string[];
+  readonly packageId: number | null;
 }) {
   const [images, texts] = yield* vectorRankings(query);
   const names = yield* nameRanking(query);
@@ -163,13 +108,12 @@ const search = Effect.fn("search")(function* searchAssets({
     ranked,
     Array.map(([id]) => id),
   );
-  const rows = yield* rowsOf(candidates);
+  const rows = yield* rowsInOrder(candidates);
   const scores = HashMap.fromIterable(ranked);
   return pipe(
-    candidates,
-    Array.map(rowIn(rows)),
-    Array.getSomes,
+    rows,
     Array.filter(ofKinds(kinds)),
+    Array.filter(ofPackage(packageId)),
     Array.take(limit),
     Array.map(resultOf(scores)),
   );

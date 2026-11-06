@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
-import { useAddSource, useAssetStore } from "#/pages/home/api/queries";
+import { useAddSource, useAssetStore } from "#/features/library/api/queries";
 
 const LABEL = "Unity Asset Store を追加";
 

@@ -14,16 +14,29 @@ import {
 import { RequestFailed } from "./request-failed.ts";
 
 const MAX_RESULTS = 200;
+const FIRST_OFFSET = 0;
 
 const Sources = Schema.Struct({ sources: Schema.Array(Source) });
 
 const Packages = Schema.Struct({ packages: Schema.Array(Package) });
 
+const Limit = Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: MAX_RESULTS }));
+
 const SearchQuery = {
   query: Schema.String,
-  limit: Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: MAX_RESULTS })),
+  limit: Limit,
   kinds: Schema.Array(AssetKind),
+  packageId: Schema.NullOr(Id),
 };
+
+const BrowseQuery = {
+  packageId: Schema.NullOr(Id),
+  kinds: Schema.Array(AssetKind),
+  offset: Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_OFFSET)),
+  limit: Limit,
+};
+
+const Browsed = Schema.Struct({ assets: Schema.Array(SearchResult), total: Schema.Int });
 
 const SearchResults = Schema.Struct({ results: Schema.Array(SearchResult) });
 
@@ -67,6 +80,7 @@ export class AredokoRpcs extends RpcGroup.make(
   Rpc.make("Reindex", { error: RequestFailed }),
   Rpc.make("ListPackages", { success: Packages, error: RequestFailed }),
   Rpc.make("GetPackage", { payload: { id: Id }, success: Package, error: RequestFailed }),
+  Rpc.make("ListAssets", { payload: BrowseQuery, success: Browsed, error: RequestFailed }),
   Rpc.make("Search", { payload: SearchQuery, success: SearchResults, error: RequestFailed }),
   Rpc.make("GetPreview", { payload: { assetId: Id }, success: Preview, error: RequestFailed }),
   Rpc.make("Extract", {

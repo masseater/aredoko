@@ -6,15 +6,9 @@ import { useClearSearch } from "./search-state.ts";
 
 const selectedAtom = Atom.make<Option.Option<number>>(Option.none());
 
-const filterAtom = Atom.make("");
-
 const useSelectedPackage = (): Option.Option<number> => useAtomValue(selectedAtom);
 
 const useSelectPackage = (): ((id: Option.Option<number>) => void) => useAtomSet(selectedAtom);
-
-const usePackageFilter = (): string => useAtomValue(filterAtom);
-
-const useSetPackageFilter = (): ((filter: string) => void) => useAtomSet(filterAtom);
 
 const useShowPackage = (): ((id: number) => void) => {
   const select = useAtomSet(selectedAtom);
@@ -25,10 +19,4 @@ const useShowPackage = (): ((id: number) => void) => {
   };
 };
 
-export {
-  usePackageFilter,
-  useSelectPackage,
-  useSelectedPackage,
-  useSetPackageFilter,
-  useShowPackage,
-};
+export { useSelectPackage, useSelectedPackage, useShowPackage };

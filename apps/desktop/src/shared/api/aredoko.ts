@@ -165,12 +165,26 @@ const search = (query: {
   readonly query: string;
   readonly kinds: readonly (typeof AssetKind.Type)[];
   readonly limit: number;
+  readonly packageId: number | null;
 }): Promise<readonly (typeof SearchResult.Type)[]> =>
   run(
     Effect.gen(function* searchRequest() {
       const { Search: searchRpc } = yield* AredokoClient;
       const { results } = yield* searchRpc(query);
       return results;
+    }),
+  );
+
+const listAssets = (query: {
+  readonly packageId: number | null;
+  readonly kinds: readonly (typeof AssetKind.Type)[];
+  readonly offset: number;
+  readonly limit: number;
+}): Promise<Readonly<{ assets: readonly (typeof SearchResult.Type)[]; total: number }>> =>
+  run(
+    Effect.gen(function* listAssetsRequest() {
+      const { ListAssets: listAssetsRpc } = yield* AredokoClient;
+      return yield* listAssetsRpc(query);
     }),
   );
 
@@ -205,6 +219,7 @@ export {
   getStatus,
   importFiles,
   linkBooth,
+  listAssets,
   listPackages,
   listSources,
   removeSource,

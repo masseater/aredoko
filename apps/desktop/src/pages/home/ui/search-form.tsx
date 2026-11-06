@@ -8,7 +8,7 @@ import { Input } from "#/shared/ui/input";
 
 import { ClearSearchButton } from "./clear-search-button.tsx";
 
-const PLACEHOLDER = "黒い服、猫耳、ネイル";
+const PLACEHOLDER = "木の床、赤いドラム缶、剣";
 const LABEL = "検索語";
 const SUBMIT = "検索する";
 

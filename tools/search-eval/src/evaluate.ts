@@ -1,4 +1,15 @@
-import { Array, Duration, Effect, FileSystem, HashMap, Layer, Path, Schedule, pipe } from "effect";
+import {
+  Array,
+  Duration,
+  Effect,
+  FileSystem,
+  HashMap,
+  Layer,
+  Option,
+  Path,
+  Schedule,
+  pipe,
+} from "effect";
 import {
   AredokoClient,
   ENDPOINT_FILE,
@@ -17,6 +28,7 @@ import { startServer } from "./server.ts";
 const PROJECT_ROOT = "/aredoko-eval";
 const UPLOAD_BATCH = 10;
 const RESULT_LIMIT = 10;
+const ALL_PACKAGES = Option.getOrNull(Option.none<number>());
 const IDLE_INTERVAL = Duration.fromInputUnsafe("2 seconds");
 
 const placedOf = (assets: readonly LibraryAsset[]): readonly Placed[] =>
@@ -81,7 +93,7 @@ const searchAll = Effect.fn("searchAll")(function* searchAll(
   return yield* pipe(
     queries,
     Effect.forEach(({ query, expected }) =>
-      search({ query, limit: RESULT_LIMIT, kinds: [] }).pipe(
+      search({ query, limit: RESULT_LIMIT, kinds: [], packageId: ALL_PACKAGES }).pipe(
         Effect.map(({ results }) => ({
           query,
           expected,

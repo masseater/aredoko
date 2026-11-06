@@ -2,7 +2,7 @@ import { FolderPlus } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
-import { usePickAndAdd } from "#/pages/home/api/pick-and-add";
+import { usePickAndAdd } from "#/features/library/api/pick-and-add";
 
 const LABEL = "フォルダを登録";
 

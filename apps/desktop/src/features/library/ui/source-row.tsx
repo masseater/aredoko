@@ -2,7 +2,7 @@ import { Option } from "effect";
 import type { Source } from "protocol";
 import type { ReactNode } from "react";
 
-import type { NamedFolder } from "#/pages/home/api/queries";
+import type { NamedFolder } from "#/features/library/api/queries";
 import { Badge } from "#/shared/ui/badge";
 
 import { RemoveSourceButton } from "./remove-source-button.tsx";

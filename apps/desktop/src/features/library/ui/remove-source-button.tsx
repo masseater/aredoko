@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
-import { useRemoveSource } from "#/pages/home/api/queries";
+import { useRemoveSource } from "#/features/library/api/queries";
 
 const LABEL = "登録を外す";
 

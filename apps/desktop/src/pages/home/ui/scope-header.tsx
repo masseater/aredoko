@@ -8,7 +8,7 @@ import { BoothSection } from "./booth-section.tsx";
 import { PackageHeader } from "./package-header.tsx";
 import { PackageSummary } from "./package-summary.tsx";
 
-const PackageDetail = (): ReactNode => {
+const ScopeHeader = (): ReactNode => {
   const selected = useSelectedPackage();
   const packages = usePackages();
   const item = pipe(
@@ -24,12 +24,16 @@ const PackageDetail = (): ReactNode => {
     return false;
   }
   return (
-    <article className="flex min-w-0 flex-1 flex-col gap-6 overflow-y-auto">
-      <PackageHeader item={item.value} />
-      <PackageSummary summary={item.value.summary} />
-      <BoothSection item={item.value} />
-    </article>
+    <section className="bg-card flex shrink-0 flex-wrap gap-6 rounded-lg border p-4">
+      <div className="flex min-w-64 flex-1 flex-col gap-3">
+        <PackageHeader item={item.value} />
+        <PackageSummary summary={item.value.summary} />
+      </div>
+      <div className="w-80">
+        <BoothSection item={item.value} />
+      </div>
+    </section>
   );
 };
 
-export { PackageDetail };
+export { ScopeHeader };
