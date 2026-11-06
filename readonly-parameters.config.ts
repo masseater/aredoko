@@ -75,3 +75,4 @@ const readonlyParameterRule: ReadonlyParameterRule = [
 ];
 
 export { readonlyParameterRule };
+export type { ReadonlyParameterRule };
