@@ -2,8 +2,8 @@ import type { SearchResult } from "protocol";
 import type { ReactNode } from "react";
 
 import { KIND_LABELS } from "#/pages/home/config";
+import { fileNameOf } from "#/shared/lib";
 
-import { fileNameOf } from "./file-name.ts";
 import { ResultActions } from "./result-actions.tsx";
 import { ResultPreview } from "./result-preview.tsx";
 
