@@ -2,7 +2,7 @@ import { Effect, Option } from "effect";
 import { AredokoRpcs, RequestFailed } from "protocol";
 
 import { addSource, listSources, preview, progress, removeSource } from "#features/catalog";
-import { ensureLibraryFolder, findAssetStore, intake, rememberAssetStore } from "#features/intake";
+import { ensureLibraryFolder, intake, rememberAssetStore } from "#features/intake";
 import { Library } from "#features/library";
 import { putRender, readModel, renderJobs } from "#features/render";
 import { browse, search } from "#features/search";
@@ -10,6 +10,7 @@ import { Embedder } from "#shared/embedding";
 
 import {
   extractAssets,
+  libraryInfo,
   linkBoothItem,
   listPackages,
   packageById,
@@ -51,13 +52,7 @@ const handlersLayer = AredokoRpcs.toLayer(
         ),
       RemoveSource: ({ id }) =>
         failed(removeSource(id)).pipe(Effect.tap(() => library.sourcesChanged)),
-      GetLibrary: () =>
-        failed(findAssetStore()).pipe(
-          Effect.map((assetStore) => ({
-            path: libraryPath,
-            assetStore: Option.getOrNull(assetStore),
-          })),
-        ),
+      GetLibrary: () => libraryInfo(libraryPath),
       ImportFiles: ({ paths }) =>
         failed(intake(paths)).pipe(
           Effect.tap(() => library.requestScan),

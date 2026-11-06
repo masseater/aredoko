@@ -1,7 +1,7 @@
 import { PackagePlus } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { AddAssetStoreButton, AddFolderButton, ImportResult } from "#/features/library";
+import { AddKnownFolderButton, AddFolderButton, ImportResult } from "#/features/library";
 
 const DROP_HERE = "ここにドロップ";
 
@@ -12,7 +12,8 @@ const FirstImport = (): ReactNode => (
       <p className="text-sm">{DROP_HERE}</p>
     </div>
     <div className="flex flex-col items-stretch gap-2">
-      <AddAssetStoreButton size="lg" />
+      <AddKnownFolderButton folder="assetStore" size="lg" />
+      <AddKnownFolderButton folder="blm" size="lg" />
       <AddFolderButton size="lg" />
     </div>
     <ImportResult />
