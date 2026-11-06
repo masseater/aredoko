@@ -33,10 +33,9 @@ const browse = Effect.fn("browse")(function* browseAssets({
   const where = sql`where (${packageId} is null or a.package_id = ${packageId}) and ${ofKinds}`;
   const ids = yield* decodeRows(IdRow)(
     sql`select a.id from assets a ${where}
-      order by a.package_id desc,
-        case a.kind when 'model' then 0 when 'prefab' then 1 when 'material' then 2
+      order by case a.kind when 'model' then 0 when 'prefab' then 1 when 'material' then 2
           when 'audio' then 3 when 'texture' then 4 else 5 end,
-        a.pathname
+        a.package_id desc, a.pathname
       limit ${limit} offset ${offset}`,
   );
   const rows = yield* rowsInOrder(
