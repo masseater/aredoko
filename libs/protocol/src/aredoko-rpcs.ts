@@ -35,6 +35,13 @@ const Extracted = Schema.Struct({
   missing: Schema.Array(Schema.String),
 });
 
+const Library = Schema.Struct({
+  path: Schema.String,
+  assetStore: Schema.NullOr(Schema.String),
+});
+
+const Imported = Schema.Struct({ packages: Schema.Int });
+
 const ProjectAssets = {
   projectPath: Schema.String,
   assets: Schema.Array(ProjectAsset),
@@ -51,6 +58,12 @@ export class AredokoRpcs extends RpcGroup.make(
     error: RequestFailed,
   }),
   Rpc.make("RemoveSource", { payload: { id: Id }, error: RequestFailed }),
+  Rpc.make("GetLibrary", { success: Library, error: RequestFailed }),
+  Rpc.make("ImportFiles", {
+    payload: { paths: Schema.Array(Schema.String) },
+    success: Imported,
+    error: RequestFailed,
+  }),
   Rpc.make("Reindex", { error: RequestFailed }),
   Rpc.make("ListPackages", { success: Packages, error: RequestFailed }),
   Rpc.make("GetPackage", { payload: { id: Id }, success: Package, error: RequestFailed }),

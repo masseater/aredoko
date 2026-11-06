@@ -6,6 +6,7 @@ import {
   Effect,
   Layer,
   ManagedRuntime,
+  Option,
   Predicate,
   Record,
   Schema,
@@ -116,6 +117,24 @@ const removeSource = (id: number): Promise<void> =>
     }),
   );
 
+const getLibrary = (): Promise<Readonly<{ path: string; assetStore: Option.Option<string> }>> =>
+  run(
+    Effect.gen(function* getLibraryRequest() {
+      const { GetLibrary: getLibraryRpc } = yield* AredokoClient;
+      const { path, assetStore } = yield* getLibraryRpc();
+      return { path, assetStore: Option.fromNullOr(assetStore) };
+    }),
+  );
+
+const importFiles = (paths: readonly string[]): Promise<number> =>
+  run(
+    Effect.gen(function* importFilesRequest() {
+      const { ImportFiles: importFilesRpc } = yield* AredokoClient;
+      const { packages } = yield* importFilesRpc({ paths });
+      return packages;
+    }),
+  );
+
 const listPackages = (): Promise<readonly (typeof Package.Type)[]> =>
   run(
     Effect.gen(function* listPackagesRequest() {
@@ -176,7 +195,9 @@ export {
   addSource,
   extract,
   getPreview,
+  getLibrary,
   getStatus,
+  importFiles,
   linkBooth,
   listPackages,
   listSources,

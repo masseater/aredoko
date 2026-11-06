@@ -105,6 +105,7 @@ export default defineConfig({
               name: ["Request", "Uint8Array", "RegExp", "RegExpExecArray", "RegExpMatchArray"],
             },
             { from: "package", package: "modern-tar", name: "ParsedTarEntry" },
+            { from: "package", package: "@zip.js/zip.js", name: ["Entry", "FileEntry"] },
             { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
             {
               from: "package",

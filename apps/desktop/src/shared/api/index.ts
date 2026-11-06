@@ -1,7 +1,9 @@
 export {
   addSource,
   extract,
+  getLibrary,
   getPreview,
+  importFiles,
   linkBooth,
   listPackages,
   listSources,

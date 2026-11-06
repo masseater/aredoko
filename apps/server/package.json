@@ -23,6 +23,7 @@
     "@effect/platform-node": "catalog:",
     "@effect/sql-sqlite-node": "catalog:",
     "@huggingface/transformers": "catalog:stack",
+    "@zip.js/zip.js": "catalog:",
     "effect": "catalog:stack",
     "modern-tar": "catalog:",
     "protocol": "workspace:*",

@@ -16,6 +16,7 @@ catalog:
   "@effect/vitest": 4.1.2
   typescript: 6.0.3
   modern-tar: 0.8.6
+  "@zip.js/zip.js": 2.24.0
   sqlite-vec: 0.1.9
   "@eslint-react/eslint-plugin": 5.28.8
   "@shadcn/lint": 0.2.4
