@@ -5,7 +5,7 @@ import { packagesWhere } from "#entities/package";
 import { addSource, listSources, preview, progress, removeSource } from "#features/catalog";
 import { ensureLibraryFolder, findAssetStore, intake } from "#features/intake";
 import { Library } from "#features/library";
-import { search } from "#features/search";
+import { browse, search } from "#features/search";
 import { Embedder } from "#shared/embedding";
 
 import { extractAssets, linkBoothItem, packageById, putAssets } from "./package-handlers.ts";
@@ -63,6 +63,7 @@ const handlersLayer = AredokoRpcs.toLayer(
           Effect.map((packages) => ({ packages })),
         ),
       GetPackage: ({ id }) => packageById(id),
+      ListAssets: (request) => failed(browse(request)),
       Search: (request) => failed(search(request)).pipe(Effect.map((results) => ({ results }))),
       GetPreview: ({ assetId }) =>
         preview(assetId).pipe(

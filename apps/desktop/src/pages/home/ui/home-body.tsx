@@ -1,15 +1,27 @@
+import { Array } from "effect";
 import type { ReactNode } from "react";
 
-import { useQueryText } from "#/pages/home/model";
+import { usePackages } from "#/pages/home/api/queries";
 
-import { LibraryView } from "./library-view.tsx";
-import { SearchView } from "./search-view.tsx";
+import { Assets } from "./assets.tsx";
+import { FirstImport } from "./first-import.tsx";
+import { ResultDetail } from "./result-detail.tsx";
+import { ScopeHeader } from "./scope-header.tsx";
 
 const HomeBody = (): ReactNode => {
-  if (useQueryText() === "") {
-    return <LibraryView />;
+  const packages = usePackages();
+  if (packages.isSuccess && Array.isReadonlyArrayEmpty(packages.data)) {
+    return <FirstImport />;
   }
-  return <SearchView />;
+  return (
+    <div className="flex min-h-0 flex-1 gap-6">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto">
+        <ScopeHeader />
+        <Assets />
+      </div>
+      <ResultDetail />
+    </div>
+  );
 };
 
 export { HomeBody };

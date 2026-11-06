@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { cn } from "ui/cn";
 
 import { useSearch } from "#/pages/home/api/queries";
-import { searchViewOf, useKinds, useQueryText } from "#/pages/home/model";
+import { searchViewOf, useKinds, useQueryText, useSelectedPackage } from "#/pages/home/model";
 
 import { MatchedResults } from "./matched-results.tsx";
 
@@ -25,7 +25,7 @@ const phaseOf = ({
 const SearchResults = (): ReactNode => {
   const query = useQueryText();
   const kinds = useKinds();
-  const search = useSearch({ query, kinds });
+  const search = useSearch({ query, kinds, packageId: useSelectedPackage() });
   const view = searchViewOf({
     phase: phaseOf(search),
     failure: pipe(

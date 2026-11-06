@@ -1,7 +1,7 @@
 import { CircleAlert, CircleCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useLastImport } from "#/pages/home/api/queries";
+import { useLastImport } from "#/features/library/api/queries";
 
 const NOTHING = "取り込める unitypackage がありませんでした";
 const NONE_PLACED = 0;

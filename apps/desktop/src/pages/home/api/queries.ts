@@ -1,46 +1,42 @@
 import {
+  infiniteQueryOptions,
   queryOptions,
+  useInfiniteQuery,
   useMutation,
-  useMutationState,
   useQuery,
-  useQueryClient,
 } from "@tanstack/react-query";
-import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
-import { Array, Option, String, pipe } from "effect";
-import type { AssetKind, Package, SearchResult, Source, SourceKind } from "protocol";
+import type {
+  UseInfiniteQueryResult,
+  UseMutationResult,
+  UseQueryResult,
+  InfiniteData,
+} from "@tanstack/react-query";
+import { Array, Effect, Number, Option, String, pipe } from "effect";
+import type { AssetKind, Package, SearchResult } from "protocol";
+import { useCallback } from "react";
 
-import { NO_IMPORT, lastImportOf } from "#/pages/home/model";
-import type { LastImport } from "#/pages/home/model";
+import { useRefreshLibrary } from "#/features/library";
 import {
-  STATUS_KEY,
-  addSource,
-  getLibrary,
+  ASSETS_KEY,
+  PACKAGES_KEY,
   getPreview,
-  importFiles,
   linkBooth,
+  listAssets,
   listPackages,
-  listSources,
-  removeSource,
   search,
 } from "#/shared/api";
 
 const LIBRARY_INTERVAL = 5000;
 const SEARCH_LIMIT = 120;
+const PAGE_SIZE = 120;
+const FIRST_PAGE = 0;
 
-const SOURCES_KEY = ["sources"];
-const LIBRARY_KEY = ["library"];
-const IMPORT_KEY = ["import"];
-const PACKAGES_KEY = ["packages"];
+type Kind = typeof AssetKind.Type;
 
-const useSources = (): UseQueryResult<readonly (typeof Source.Type)[]> =>
-  useQuery(
-    queryOptions({
-      queryKey: SOURCES_KEY,
-      queryFn: listSources,
-      refetchInterval: LIBRARY_INTERVAL,
-      retry: false,
-    }),
-  );
+interface AssetPage {
+  readonly assets: readonly (typeof SearchResult.Type)[];
+  readonly total: number;
+}
 
 const usePackages = (): UseQueryResult<readonly (typeof Package.Type)[]> =>
   useQuery(
@@ -52,18 +48,73 @@ const usePackages = (): UseQueryResult<readonly (typeof Package.Type)[]> =>
     }),
   );
 
+const nextOffset = ({ total }: AssetPage, pages: readonly AssetPage[]): number | undefined => {
+  const loaded = pipe(
+    pages,
+    Array.map(({ assets }) => assets.length),
+    Number.sumAll,
+  );
+  return pipe(
+    Option.some(loaded),
+    Option.filter((count) => count < total),
+    Option.getOrUndefined,
+  );
+};
+
+const useAssets = ({
+  packageId,
+  kinds,
+}: Readonly<{
+  packageId: Option.Option<number>;
+  kinds: readonly Kind[];
+}>): UseInfiniteQueryResult<InfiniteData<AssetPage, number>> =>
+  useInfiniteQuery(
+    infiniteQueryOptions({
+      queryKey: [...ASSETS_KEY, Option.getOrNull(packageId), kinds],
+      queryFn: ({ pageParam }) =>
+        listAssets({
+          packageId: Option.getOrNull(packageId),
+          kinds,
+          offset: pageParam,
+          limit: PAGE_SIZE,
+        }),
+      initialPageParam: FIRST_PAGE,
+      getNextPageParam: nextOffset,
+      refetchInterval: LIBRARY_INTERVAL,
+      retry: false,
+    }),
+  );
+
+const useLoadNext = ({
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
+}: Readonly<{
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => Promise<unknown>;
+}>): (() => void) =>
+  useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      Effect.runFork(Effect.promise(fetchNextPage));
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
 const useSearch = ({
   query,
   kinds,
+  packageId,
 }: Readonly<{
   query: string;
-  kinds: readonly (typeof AssetKind.Type)[];
+  kinds: readonly Kind[];
+  packageId: Option.Option<number>;
 }>): UseQueryResult<readonly (typeof SearchResult.Type)[]> => {
   const enabled = String.isNonEmpty(String.trim(query));
+  const scope = Option.getOrNull(packageId);
   return useQuery(
     queryOptions({
-      queryKey: ["search", query, kinds],
-      queryFn: () => search({ query, kinds, limit: SEARCH_LIMIT }),
+      queryKey: ["search", query, kinds, scope],
+      queryFn: () => search({ query, kinds, limit: SEARCH_LIMIT, packageId: scope }),
       enabled,
     }),
   );
@@ -74,98 +125,8 @@ const usePreview = (assetId: number): UseQueryResult<string> =>
     queryOptions({
       queryKey: ["preview", assetId],
       queryFn: () => getPreview(assetId),
-      staleTime: Number.POSITIVE_INFINITY,
+      staleTime: globalThis.Number.POSITIVE_INFINITY,
     }),
-  );
-
-const useRefreshLibrary = (): (() => Promise<unknown>) => {
-  const client = useQueryClient();
-  return () =>
-    Promise.all([
-      client.invalidateQueries({ queryKey: SOURCES_KEY }),
-      client.invalidateQueries({ queryKey: PACKAGES_KEY }),
-      client.invalidateQueries({ queryKey: STATUS_KEY }),
-    ]);
-};
-
-const useAddSource = (): UseMutationResult<
-  typeof Source.Type,
-  Error,
-  Readonly<{ path: string; kind: typeof SourceKind.Type }>
-> => {
-  const refresh = useRefreshLibrary();
-  return useMutation({ mutationFn: addSource, onSuccess: refresh });
-};
-
-const useRemoveSource = (): UseMutationResult<void, Error, number> => {
-  const refresh = useRefreshLibrary();
-  return useMutation({ mutationFn: removeSource, onSuccess: refresh });
-};
-
-const useLibrary = (): UseQueryResult<
-  Readonly<{ path: string; assetStore: Option.Option<string> }>
-> => useQuery(queryOptions({ queryKey: LIBRARY_KEY, queryFn: getLibrary, retry: false }));
-
-interface NamedFolder {
-  readonly name: string;
-  readonly removable: boolean;
-}
-
-const LIBRARY: NamedFolder = { name: "aredoko", removable: false };
-
-const ASSET_STORE: NamedFolder = { name: "Unity Asset Store", removable: true };
-
-const NOT_NAMED = (): Option.Option<NamedFolder> => Option.none();
-
-const useFolderName = (): ((path: string) => Option.Option<NamedFolder>) => {
-  const library = useLibrary();
-  if (!library.isSuccess) {
-    return NOT_NAMED;
-  }
-  const { path: libraryPath, assetStore } = library.data;
-  return (path) => {
-    if (path === libraryPath) {
-      return Option.some(LIBRARY);
-    }
-    if (Option.contains(assetStore, path)) {
-      return Option.some(ASSET_STORE);
-    }
-    return Option.none();
-  };
-};
-
-const useAssetStore = (): Option.Option<string> => {
-  const library = useLibrary();
-  const sources = useSources();
-  if (!library.isSuccess || !sources.isSuccess) {
-    return Option.none();
-  }
-  const registered = sources.data;
-  return pipe(
-    library.data.assetStore,
-    Option.filter(
-      (folder) =>
-        !pipe(
-          registered,
-          Array.some(({ path }) => path === folder),
-        ),
-    ),
-  );
-};
-
-const useImportFiles = (): UseMutationResult<number, Error, readonly string[]> => {
-  const refresh = useRefreshLibrary();
-  return useMutation({ mutationKey: IMPORT_KEY, mutationFn: importFiles, onSuccess: refresh });
-};
-
-const useLastImport = (): LastImport =>
-  pipe(
-    useMutationState({
-      filters: { mutationKey: IMPORT_KEY },
-      select: ({ state: { status, data, error } }) => lastImportOf({ status, data, error }),
-    }),
-    Array.last,
-    Option.getOrElse(() => NO_IMPORT),
   );
 
 const useLinkBooth = (): UseMutationResult<
@@ -177,17 +138,5 @@ const useLinkBooth = (): UseMutationResult<
   return useMutation({ mutationFn: linkBooth, onSuccess: refresh });
 };
 
-export type { NamedFolder };
-export {
-  useAddSource,
-  useImportFiles,
-  useAssetStore,
-  useLastImport,
-  useFolderName,
-  useLinkBooth,
-  usePackages,
-  usePreview,
-  useRemoveSource,
-  useSearch,
-  useSources,
-};
+export type { AssetPage };
+export { useAssets, useLinkBooth, useLoadNext, usePackages, usePreview, useSearch };

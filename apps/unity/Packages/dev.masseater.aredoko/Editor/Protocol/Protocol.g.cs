@@ -94,6 +94,15 @@ namespace Aredoko.Protocol
         [JsonProperty("LinkBoothSuccess")]
         public Package LinkBoothSuccess { get; set; }
 
+        [JsonProperty("ListAssetsError")]
+        public RequestFailedEncoded ListAssetsError { get; set; }
+
+        [JsonProperty("ListAssetsPayload")]
+        public ListAssetsPayload ListAssetsPayload { get; set; }
+
+        [JsonProperty("ListAssetsSuccess")]
+        public ListAssetsSuccess ListAssetsSuccess { get; set; }
+
         [JsonProperty("ListPackagesError")]
         public RequestFailedEncoded ListPackagesError { get; set; }
 
@@ -338,6 +347,60 @@ namespace Aredoko.Protocol
         public string Url { get; set; }
     }
 
+    public partial class ListAssetsPayload
+    {
+        [JsonProperty("kinds")]
+        public AssetKind[] Kinds { get; set; }
+
+        [JsonProperty("limit")]
+        public long Limit { get; set; }
+
+        [JsonProperty("offset")]
+        public long Offset { get; set; }
+
+        [JsonProperty("packageId")]
+        public long? PackageId { get; set; }
+    }
+
+    public partial class ListAssetsSuccess
+    {
+        [JsonProperty("assets")]
+        public SearchResult[] Assets { get; set; }
+
+        [JsonProperty("total")]
+        public long Total { get; set; }
+    }
+
+    public partial class SearchResult
+    {
+        [JsonProperty("assetId")]
+        public long AssetId { get; set; }
+
+        [JsonProperty("guid")]
+        public string Guid { get; set; }
+
+        [JsonProperty("hasPreview")]
+        public bool HasPreview { get; set; }
+
+        [JsonProperty("kind")]
+        public AssetKind Kind { get; set; }
+
+        [JsonProperty("packageId")]
+        public long PackageId { get; set; }
+
+        [JsonProperty("packageKind")]
+        public PackageKind PackageKind { get; set; }
+
+        [JsonProperty("packageName")]
+        public string PackageName { get; set; }
+
+        [JsonProperty("pathname")]
+        public string Pathname { get; set; }
+
+        [JsonProperty("score")]
+        public double Score { get; set; }
+    }
+
     public partial class ListPackagesSuccess
     {
         [JsonProperty("packages")]
@@ -388,6 +451,9 @@ namespace Aredoko.Protocol
         [JsonProperty("limit")]
         public long Limit { get; set; }
 
+        [JsonProperty("packageId")]
+        public long? PackageId { get; set; }
+
         [JsonProperty("query")]
         public string Query { get; set; }
     }
@@ -396,36 +462,6 @@ namespace Aredoko.Protocol
     {
         [JsonProperty("results")]
         public SearchResult[] Results { get; set; }
-    }
-
-    public partial class SearchResult
-    {
-        [JsonProperty("assetId")]
-        public long AssetId { get; set; }
-
-        [JsonProperty("guid")]
-        public string Guid { get; set; }
-
-        [JsonProperty("hasPreview")]
-        public bool HasPreview { get; set; }
-
-        [JsonProperty("kind")]
-        public AssetKind Kind { get; set; }
-
-        [JsonProperty("packageId")]
-        public long PackageId { get; set; }
-
-        [JsonProperty("packageKind")]
-        public PackageKind PackageKind { get; set; }
-
-        [JsonProperty("packageName")]
-        public string PackageName { get; set; }
-
-        [JsonProperty("pathname")]
-        public string Pathname { get; set; }
-
-        [JsonProperty("score")]
-        public double Score { get; set; }
     }
 
     public enum Reason { Failed, Invalid, NotFound };
@@ -752,6 +788,7 @@ namespace Aredoko.Protocol
         public static readonly Rpc<Empty, Empty, RequestFailedEncoded> Reindex = new Rpc<Empty, Empty, RequestFailedEncoded>("Reindex");
         public static readonly Rpc<Empty, ListPackagesSuccess, RequestFailedEncoded> ListPackages = new Rpc<Empty, ListPackagesSuccess, RequestFailedEncoded>("ListPackages");
         public static readonly Rpc<GetPackagePayload, Package, RequestFailedEncoded> GetPackage = new Rpc<GetPackagePayload, Package, RequestFailedEncoded>("GetPackage");
+        public static readonly Rpc<ListAssetsPayload, ListAssetsSuccess, RequestFailedEncoded> ListAssets = new Rpc<ListAssetsPayload, ListAssetsSuccess, RequestFailedEncoded>("ListAssets");
         public static readonly Rpc<SearchPayload, SearchSuccess, RequestFailedEncoded> Search = new Rpc<SearchPayload, SearchSuccess, RequestFailedEncoded>("Search");
         public static readonly Rpc<GetPreviewPayload, GetPreviewSuccess, RequestFailedEncoded> GetPreview = new Rpc<GetPreviewPayload, GetPreviewSuccess, RequestFailedEncoded>("GetPreview");
         public static readonly Rpc<ExtractPayload, ExtractSuccess, RequestFailedEncoded> Extract = new Rpc<ExtractPayload, ExtractSuccess, RequestFailedEncoded>("Extract");
