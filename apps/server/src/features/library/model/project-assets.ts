@@ -7,6 +7,7 @@ import type { PackageEntry } from "#shared/unitypackage";
 
 import { embedTexts } from "./embed-texts.ts";
 import { insertAssets } from "./insert-assets.ts";
+import type { AssetInput } from "./insert-assets.ts";
 import { encodeJson } from "./json.ts";
 import { nameOf } from "./name.ts";
 import { AssetGuidRow, IdRow } from "./rows.ts";
@@ -57,7 +58,12 @@ const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAss
   const packageId = yield* projectPackage(projectPath);
   const inputs = pipe(
     assets,
-    Array.map((asset) => ({ ...asset, references: [] })),
+    Array.map((asset): AssetInput => ({
+      ...asset,
+      references: [],
+      file: Option.none(),
+      render: false,
+    })),
   );
   yield* sql.withTransaction(
     insertAssets({ packageId, packageName: nameOf(projectPath), assets: inputs }),

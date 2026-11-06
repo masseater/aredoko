@@ -15,6 +15,12 @@ const NO_PACKAGE = "パッケージが見つかりません";
 const INVALID_BOOTH_URL = "BOOTH の商品ページの URL を入力してください";
 
 /** @internal */
+const listPackages = Effect.fn("ListPackages")(function* listRequest() {
+  const packages = yield* failed(Option.none<number>().pipe(packagesWhere));
+  return { packages };
+});
+
+/** @internal */
 const packageById = Effect.fn("packageById")(function* selectPackage(id: number) {
   return yield* firstOr(NO_PACKAGE)(Option.some(id).pipe(packagesWhere));
 });
@@ -72,4 +78,4 @@ const putAssets = Effect.fn("PutProjectAssets")(function* putRequest({
   }
 });
 
-export { extractAssets, linkBoothItem, packageById, putAssets };
+export { extractAssets, linkBoothItem, listPackages, packageById, putAssets };

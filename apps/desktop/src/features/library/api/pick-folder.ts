@@ -1,7 +1,7 @@
 import { open } from "@tauri-apps/plugin-dialog";
 import { Effect, Option } from "effect";
 
-const TITLE = "unitypackage を置いているフォルダ";
+const TITLE = "アセットを置いているフォルダ";
 
 const pickFolder = (): Promise<Option.Option<string>> =>
   Effect.runPromise(

@@ -1,14 +1,20 @@
 import { Effect, Option } from "effect";
 import { AredokoRpcs, RequestFailed } from "protocol";
 
-import { packagesWhere } from "#entities/package";
 import { addSource, listSources, preview, progress, removeSource } from "#features/catalog";
-import { ensureLibraryFolder, findAssetStore, intake } from "#features/intake";
+import { ensureLibraryFolder, findAssetStore, intake, rememberAssetStore } from "#features/intake";
 import { Library } from "#features/library";
+import { putRender, readModel, renderJobs } from "#features/render";
 import { browse, search } from "#features/search";
 import { Embedder } from "#shared/embedding";
 
-import { extractAssets, linkBoothItem, packageById, putAssets } from "./package-handlers.ts";
+import {
+  extractAssets,
+  linkBoothItem,
+  listPackages,
+  packageById,
+  putAssets,
+} from "./package-handlers.ts";
 import { failed } from "./request-failed.ts";
 
 const VERSION = "0.1.0";
@@ -58,10 +64,7 @@ const handlersLayer = AredokoRpcs.toLayer(
           Effect.map((packages) => ({ packages })),
         ),
       Reindex: () => library.requestScan,
-      ListPackages: () =>
-        failed(Option.none<number>().pipe(packagesWhere)).pipe(
-          Effect.map((packages) => ({ packages })),
-        ),
+      ListPackages: listPackages,
       GetPackage: ({ id }) => packageById(id),
       ListAssets: (request) => failed(browse(request)),
       Search: (request) => failed(search(request)).pipe(Effect.map((results) => ({ results }))),
@@ -75,6 +78,11 @@ const handlersLayer = AredokoRpcs.toLayer(
       Extract: extractAssets,
       LinkBooth: linkBoothItem,
       PutProjectAssets: putAssets,
+      ListRenderJobs: () => failed(renderJobs()).pipe(Effect.map((jobs) => ({ jobs }))),
+      ReadModel: ({ assetId }) => failed(readModel(assetId)),
+      PutAssetStore: ({ path }) => failed(rememberAssetStore(path)),
+      PutRender: (rendered) =>
+        failed(putRender(rendered)).pipe(Effect.tap(() => library.requestScan)),
     });
   }),
 );

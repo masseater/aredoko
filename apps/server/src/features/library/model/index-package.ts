@@ -18,6 +18,8 @@ const assetOf = ({ guid, pathname, preview, references }: PackageEntry): AssetIn
   pathname,
   previews: Option.toArray(preview),
   references,
+  file: Option.none(),
+  render: false,
 });
 
 /** @internal */
@@ -35,7 +37,7 @@ const indexPackage = Effect.fn("indexPackage")(function* indexPackageFile(file: 
   const packageName = labelOf({ name, booth });
   const packageId = yield* sql.withTransaction(
     Effect.gen(function* write() {
-      const id = yield* insertPackage({ file, name, summary, booth });
+      const id = yield* insertPackage({ kind: "unitypackage", file, name, summary, booth });
       yield* insertAssets({ packageId: id, packageName, assets });
       return id;
     }),

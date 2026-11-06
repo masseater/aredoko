@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { useLastImport } from "#/features/library/api/queries";
 
-const NOTHING = "取り込める unitypackage がありませんでした";
+const NOTHING = "取り込めるアセットがありませんでした";
 const NONE_PLACED = 0;
 
 const ImportResult = (): ReactNode => {

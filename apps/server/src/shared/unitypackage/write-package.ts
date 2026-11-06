@@ -10,10 +10,29 @@ interface Selection {
   readonly guids: HashSet.HashSet<string>;
 }
 
+interface LooseFile {
+  readonly guid: string;
+  readonly pathname: string;
+  readonly data: Uint8Array;
+}
+
 interface TarFile {
   readonly header: ParsedTarEntry["header"];
   readonly body: Uint8Array;
 }
+
+const encoder = new TextEncoder();
+
+const tarFile = (name: string, body: Uint8Array): TarFile => ({
+  header: { name, size: body.byteLength, type: "file" },
+  body,
+});
+
+const looseEntries = ({ guid, pathname, data }: LooseFile): readonly TarFile[] => [
+  tarFile(`${guid}/asset`, data),
+  tarFile(`${guid}/asset.meta`, encoder.encode(`fileFormatVersion: 2\nguid: ${guid}\n`)),
+  tarFile(`${guid}/pathname`, encoder.encode(pathname)),
+];
 
 const guidOf = ({ header }: ParsedTarEntry): string =>
   pipe(header.name, String.replace(/^\.\//u, ""), String.split("/"), Array.headNonEmpty);
@@ -49,11 +68,12 @@ const filesOf = Effect.fn("filesOf")(function* selectedFiles({ source, guids }: 
 /** @internal */
 const writePackage = Effect.fn("writePackage")(function* writeUnityPackage(
   selections: readonly Selection[],
+  loose: readonly LooseFile[],
   destination: string,
 ) {
   const fileSystem = yield* FileSystem.FileSystem;
   const perSelection = yield* pipe(selections, Effect.forEach(filesOf));
-  const files = Array.flatten(perSelection);
+  const files = [...Array.flatten(perSelection), ...pipe(loose, Array.flatMap(looseEntries))];
   const failed = (cause: unknown): UnityPackageUnreadable =>
     UnityPackageUnreadable.make({ path: destination, cause });
   const tar = yield* Effect.tryPromise({ try: () => packTar(files), catch: failed });
@@ -62,4 +82,4 @@ const writePackage = Effect.fn("writePackage")(function* writeUnityPackage(
 });
 
 export { writePackage };
-export type { Selection };
+export type { LooseFile, Selection };

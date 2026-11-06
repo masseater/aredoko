@@ -1,4 +1,4 @@
-import { Array, Effect, pipe } from "effect";
+import { Array, Effect, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { kindOf, searchableText } from "#entities/package";
@@ -11,6 +11,8 @@ interface AssetInput {
   readonly pathname: string;
   readonly previews: readonly Uint8Array[];
   readonly references: readonly string[];
+  readonly file: Option.Option<string>;
+  readonly render: boolean;
 }
 
 interface OneAsset {
@@ -19,18 +21,28 @@ interface OneAsset {
   readonly asset: AssetInput;
 }
 
+const RENDER_NONE = 0;
+const RENDER_PENDING = 1;
+
+const renderState = (render: boolean): number =>
+  pipe(
+    Option.liftPredicate(RENDER_PENDING, () => render),
+    Option.getOrElse(() => RENDER_NONE),
+  );
+
 const insertAsset = Effect.fn("insertAsset")(function* insertOneAsset({
   packageId,
   packageName,
-  asset: { guid, pathname, previews, references },
+  asset: { guid, pathname, previews, references, file, render },
 }: OneAsset) {
   const sql = yield* SqlClient.SqlClient;
   const kind = kindOf(pathname);
   const text = searchableText({ pathname, kind, packageName });
   yield* sql`delete from assets where package_id = ${packageId} and guid = ${guid}`;
   const rows = yield* decodeRows(IdRow)(
-    sql`insert into assets(package_id, guid, pathname, kind, text)
-      values (${packageId}, ${guid}, ${pathname}, ${kind}, ${text}) returning id`,
+    sql`insert into assets(package_id, guid, pathname, kind, text, file, render)
+      values (${packageId}, ${guid}, ${pathname}, ${kind}, ${text}, ${Option.getOrNull(file)},
+        ${renderState(render)}) returning id`,
   );
   const { id } = yield* Effect.fromOption(Array.head(rows));
   yield* pipe(

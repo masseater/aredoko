@@ -446,6 +446,7 @@ namespace Aredoko.Window
             {
                 status = await AredokoClient.Shared.Call(AredokoRpcs.GetStatus);
                 unreachable = false;
+                await AssetStoreLocation.Report();
             }
             catch (AredokoException exception)
             {

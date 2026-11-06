@@ -14,6 +14,7 @@ const ResultRow = Schema.Struct({
   package_name: Schema.String,
   package_kind: PackageKind,
   images: Schema.Int,
+  file: Schema.NullOr(Schema.String),
 });
 
 const NO_SCORE = 0;
@@ -29,7 +30,7 @@ const rowsOf = Effect.fn("rowsOf")(function* selectRows(ids: readonly number[]) 
     onNonEmpty: (nonEmpty) =>
       decodeRows(ResultRow)(
         sql`select a.id, a.guid, a.pathname, a.kind, a.package_id, p.name as package_name,
-          p.kind as package_kind,
+          p.kind as package_kind, a.file,
           (select count(*) from images i where i.asset_id = a.id) as images
           from assets a join packages p on p.id = a.package_id
           where ${sql.in("a.id", nonEmpty)}`,
@@ -66,6 +67,7 @@ const resultOf =
       Option.getOrElse(() => NO_SCORE),
     ),
     hasPreview: row.images > NO_IMAGES,
+    file: row.file,
   });
 
 /** @internal */

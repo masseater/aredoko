@@ -25,9 +25,11 @@
     "@huggingface/transformers": "catalog:stack",
     "@zip.js/zip.js": "catalog:",
     "effect": "catalog:stack",
+    "fzstd": "catalog:",
     "modern-tar": "catalog:",
     "protocol": "workspace:*",
     "runtime": "workspace:*",
+    "sharp": "catalog:",
     "sqlite-vec": "catalog:"
   },
   "devDependencies": {

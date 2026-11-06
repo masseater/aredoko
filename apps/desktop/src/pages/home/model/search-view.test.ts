@@ -13,6 +13,7 @@ const RESULT = {
   packageKind: "unitypackage",
   score: 0.8,
   hasPreview: true,
+  file: Option.getOrNull(Option.none<string>()),
 } as const;
 
 describe("searchViewOf", () => {

@@ -1,6 +1,6 @@
 import { Array, Effect, Option, Record, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
-import { BoothItem, Summary } from "protocol";
+import { BoothItem, PackageKind, Summary } from "protocol";
 import type { Package } from "protocol";
 
 import { decodeRows } from "#shared/sql";
@@ -14,7 +14,7 @@ const StoredSummary = Schema.Struct({
 
 const PackageRow = Schema.Struct({
   id: Schema.Int,
-  kind: Schema.Literals(["unitypackage", "project"]),
+  kind: PackageKind,
   path: Schema.String,
   name: Schema.String,
   assets: Schema.Int,

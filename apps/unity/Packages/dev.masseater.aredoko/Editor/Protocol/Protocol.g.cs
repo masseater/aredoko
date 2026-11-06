@@ -109,17 +109,44 @@ namespace Aredoko.Protocol
         [JsonProperty("ListPackagesSuccess")]
         public ListPackagesSuccess ListPackagesSuccess { get; set; }
 
+        [JsonProperty("ListRenderJobsError")]
+        public RequestFailedEncoded ListRenderJobsError { get; set; }
+
+        [JsonProperty("ListRenderJobsSuccess")]
+        public ListRenderJobsSuccess ListRenderJobsSuccess { get; set; }
+
         [JsonProperty("ListSourcesError")]
         public RequestFailedEncoded ListSourcesError { get; set; }
 
         [JsonProperty("ListSourcesSuccess")]
         public ListSourcesSuccess ListSourcesSuccess { get; set; }
 
+        [JsonProperty("PutAssetStoreError")]
+        public RequestFailedEncoded PutAssetStoreError { get; set; }
+
+        [JsonProperty("PutAssetStorePayload")]
+        public PutAssetStorePayload PutAssetStorePayload { get; set; }
+
         [JsonProperty("PutProjectAssetsError")]
         public RequestFailedEncoded PutProjectAssetsError { get; set; }
 
         [JsonProperty("PutProjectAssetsPayload")]
         public PutProjectAssetsPayload PutProjectAssetsPayload { get; set; }
+
+        [JsonProperty("PutRenderError")]
+        public RequestFailedEncoded PutRenderError { get; set; }
+
+        [JsonProperty("PutRenderPayload")]
+        public PutRenderPayload PutRenderPayload { get; set; }
+
+        [JsonProperty("ReadModelError")]
+        public RequestFailedEncoded ReadModelError { get; set; }
+
+        [JsonProperty("ReadModelPayload")]
+        public ReadModelPayload ReadModelPayload { get; set; }
+
+        [JsonProperty("ReadModelSuccess")]
+        public ReadModelSuccess ReadModelSuccess { get; set; }
 
         [JsonProperty("ReindexError")]
         public RequestFailedEncoded ReindexError { get; set; }
@@ -376,6 +403,9 @@ namespace Aredoko.Protocol
         [JsonProperty("assetId")]
         public long AssetId { get; set; }
 
+        [JsonProperty("file")]
+        public string? File { get; set; }
+
         [JsonProperty("guid")]
         public string Guid { get; set; }
 
@@ -407,10 +437,31 @@ namespace Aredoko.Protocol
         public Package[] Packages { get; set; }
     }
 
+    public partial class ListRenderJobsSuccess
+    {
+        [JsonProperty("jobs")]
+        public Job[] Jobs { get; set; }
+    }
+
+    public partial class Job
+    {
+        [JsonProperty("assetId")]
+        public long AssetId { get; set; }
+
+        [JsonProperty("pathname")]
+        public string Pathname { get; set; }
+    }
+
     public partial class ListSourcesSuccess
     {
         [JsonProperty("sources")]
         public Source[] Sources { get; set; }
+    }
+
+    public partial class PutAssetStorePayload
+    {
+        [JsonProperty("path")]
+        public string Path { get; set; }
     }
 
     public partial class PutProjectAssetsPayload
@@ -435,6 +486,39 @@ namespace Aredoko.Protocol
 
         [JsonProperty("previews")]
         public string[] Previews { get; set; }
+    }
+
+    public partial class PutRenderPayload
+    {
+        [JsonProperty("assetId")]
+        public long AssetId { get; set; }
+
+        [JsonProperty("pngs")]
+        public string[] Pngs { get; set; }
+    }
+
+    public partial class ReadModelPayload
+    {
+        [JsonProperty("assetId")]
+        public long AssetId { get; set; }
+    }
+
+    public partial class ReadModelSuccess
+    {
+        [JsonProperty("files")]
+        public File[] Files { get; set; }
+
+        [JsonProperty("model")]
+        public string Model { get; set; }
+    }
+
+    public partial class File
+    {
+        [JsonProperty("data")]
+        public string Data { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
     }
 
     public partial class RemoveSourcePayload
@@ -470,7 +554,7 @@ namespace Aredoko.Protocol
 
     public enum SourceKind { Folder, Project };
 
-    public enum PackageKind { Project, Unitypackage };
+    public enum PackageKind { Files, Project, Unitypackage };
 
     public enum AssetKind { Animation, Audio, Material, Model, Other, Prefab, Scene, Script, Shader, Texture };
 
@@ -633,6 +717,8 @@ namespace Aredoko.Protocol
             var value = serializer.Deserialize<string>(reader);
             switch (value)
             {
+                case "files":
+                    return PackageKind.Files;
                 case "project":
                     return PackageKind.Project;
                 case "unitypackage":
@@ -651,6 +737,9 @@ namespace Aredoko.Protocol
             var value = (PackageKind)untypedValue;
             switch (value)
             {
+                case PackageKind.Files:
+                    serializer.Serialize(writer, "files");
+                    return;
                 case PackageKind.Project:
                     serializer.Serialize(writer, "project");
                     return;
@@ -794,5 +883,9 @@ namespace Aredoko.Protocol
         public static readonly Rpc<ExtractPayload, ExtractSuccess, RequestFailedEncoded> Extract = new Rpc<ExtractPayload, ExtractSuccess, RequestFailedEncoded>("Extract");
         public static readonly Rpc<LinkBoothPayload, Package, RequestFailedEncoded> LinkBooth = new Rpc<LinkBoothPayload, Package, RequestFailedEncoded>("LinkBooth");
         public static readonly Rpc<PutProjectAssetsPayload, Empty, RequestFailedEncoded> PutProjectAssets = new Rpc<PutProjectAssetsPayload, Empty, RequestFailedEncoded>("PutProjectAssets");
+        public static readonly Rpc<Empty, ListRenderJobsSuccess, RequestFailedEncoded> ListRenderJobs = new Rpc<Empty, ListRenderJobsSuccess, RequestFailedEncoded>("ListRenderJobs");
+        public static readonly Rpc<ReadModelPayload, ReadModelSuccess, RequestFailedEncoded> ReadModel = new Rpc<ReadModelPayload, ReadModelSuccess, RequestFailedEncoded>("ReadModel");
+        public static readonly Rpc<PutRenderPayload, Empty, RequestFailedEncoded> PutRender = new Rpc<PutRenderPayload, Empty, RequestFailedEncoded>("PutRender");
+        public static readonly Rpc<PutAssetStorePayload, Empty, RequestFailedEncoded> PutAssetStore = new Rpc<PutAssetStorePayload, Empty, RequestFailedEncoded>("PutAssetStore");
     }
 }

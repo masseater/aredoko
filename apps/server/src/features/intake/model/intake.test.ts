@@ -1,45 +1,22 @@
 import { NodeServices } from "@effect/platform-node";
 import { expect, layer } from "@effect/vitest";
 import { TextReader, Uint8ArrayWriter, ZipWriter } from "@zip.js/zip.js";
-import { Array, Effect, FileSystem, Option, Order, Path, pipe } from "effect";
+import { Effect, FileSystem, Path } from "effect";
 
-import { Settings } from "#shared/settings";
-
+import { listed, withSettings } from "./intake-fixture.ts";
 import { intake } from "./intake.ts";
-import { libraryFolder } from "./library-folder.ts";
 
 const ZIPPED = "衣装/Dress.unitypackage";
 const BOTH = 2;
+const THREE = 3;
 const NONE = 0;
 
 const makeZip = Effect.gen(function* makeZip() {
   const writer = new ZipWriter(new Uint8ArrayWriter());
   yield* Effect.promise(() => writer.add(ZIPPED, new TextReader("dress")));
   yield* Effect.promise(() => writer.add("readme.txt", new TextReader("ignored")));
+  yield* Effect.promise(() => writer.add("Textures/dress.png", new TextReader("png")));
   return yield* Effect.promise(() => writer.close());
-});
-
-const withSettings = Effect.fn("withSettings")(function* withSettings<Value, Failure, Requirements>(
-  run: (folder: string) => Effect.Effect<Value, Failure, Requirements>,
-) {
-  const fileSystem = yield* FileSystem.FileSystem;
-  const dataDirectory = yield* fileSystem.makeTempDirectoryScoped();
-  const settings = {
-    dataDirectory,
-    modelDirectory: Option.none<string>(),
-    embedderWorker: new URL("file:///unused"),
-  };
-  const library = yield* libraryFolder.pipe(Effect.provideService(Settings, settings));
-  return yield* run(library).pipe(Effect.provideService(Settings, settings));
-});
-
-const listed = Effect.fn("listed")(function* listed(folder: string) {
-  const fileSystem = yield* FileSystem.FileSystem;
-  const names = yield* fileSystem.readDirectory(folder, { recursive: true });
-  return pipe(
-    names,
-    Array.sortWith((name: string) => name, Order.String),
-  );
 });
 
 layer(NodeServices.layer, { excludeTestServices: true })("intake", (it) => {
@@ -56,12 +33,14 @@ layer(NodeServices.layer, { excludeTestServices: true })("intake", (it) => {
       yield* withSettings((library) =>
         Effect.gen(function* inLibrary() {
           const placed = yield* intake([cabin, zip]);
-          expect(placed).toBe(BOTH);
+          expect(placed).toBe(THREE);
           const names = yield* listed(library);
           expect(names).toStrictEqual([
             "Cabin.unitypackage",
             "Dress",
             path.join("Dress", "Dress.unitypackage"),
+            path.join("Dress", "Textures"),
+            path.join("Dress", "Textures", "dress.png"),
           ]);
           const again = yield* intake([downloads]);
           expect(again).toBe(NONE);

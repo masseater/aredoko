@@ -7,7 +7,10 @@ export {
   linkBooth,
   listAssets,
   listPackages,
+  listRenderJobs,
   listSources,
+  putRender,
+  readModel,
   removeSource,
   search,
 } from "./aredoko.ts";
