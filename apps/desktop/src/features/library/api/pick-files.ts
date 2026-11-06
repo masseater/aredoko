@@ -1,7 +1,11 @@
 import { open } from "@tauri-apps/plugin-dialog";
-import { Effect, Option, pipe } from "effect";
+import { Array, Effect, Option, Record, pipe } from "effect";
+import { ARCHIVE_EXTENSIONS, LOOSE_EXTENSIONS } from "protocol";
 
-const FILTER = { name: "Unity パッケージ", extensions: ["unitypackage", "zip"] };
+const FILTER = {
+  name: "アセット",
+  extensions: [...ARCHIVE_EXTENSIONS, ...pipe(Record.values(LOOSE_EXTENSIONS), Array.flatten)],
+};
 
 const pickFiles = (): Promise<readonly string[]> =>
   Effect.runPromise(

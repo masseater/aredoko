@@ -30,11 +30,13 @@ const boothOf = Effect.fn("boothOf")(function* storedBooth(path: string) {
 
 /** @internal */
 const insertPackage = Effect.fn("insertPackage")(function* insertPackageRow({
+  kind,
   file,
   name,
   summary,
   booth,
 }: {
+  readonly kind: "unitypackage" | "files";
   readonly file: PackageFile;
   readonly name: string;
   readonly summary: string;
@@ -58,7 +60,7 @@ const insertPackage = Effect.fn("insertPackage")(function* insertPackageRow({
   const rows = yield* decodeRows(IdRow)(
     sql`insert into packages(source_id, kind, path, name, size, modified_at, summary,
         booth_item_id, booth_item)
-      values (${file.sourceId}, 'unitypackage', ${file.path}, ${name}, ${file.size},
+      values (${file.sourceId}, ${kind}, ${file.path}, ${name}, ${file.size},
         ${file.modifiedAt}, ${summary}, ${boothId}, ${boothJson})
       returning id`,
   );

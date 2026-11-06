@@ -1,15 +1,14 @@
 import { Array, Option, Record, String, pipe } from "effect";
+import { LOOSE_EXTENSIONS } from "protocol";
 
 import { capture } from "#shared/text";
 
 const EXTENSIONS = {
-  texture: ["png", "jpg", "jpeg", "tga", "psd", "tif", "tiff", "bmp", "exr", "hdr", "gif"],
-  model: ["fbx", "obj", "blend", "dae", "3ds", "glb", "gltf", "vrm"],
+  ...LOOSE_EXTENSIONS,
   material: ["mat"],
   prefab: ["prefab"],
   shader: ["shader", "cginc", "hlsl", "shadergraph", "compute"],
   animation: ["anim", "controller", "overridecontroller", "mask"],
-  audio: ["wav", "mp3", "ogg", "flac", "aif", "aiff"],
   scene: ["unity"],
   script: ["cs", "asmdef", "dll"],
 } as const;

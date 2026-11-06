@@ -6,7 +6,7 @@ const Id = Schema.Int.check(Schema.isGreaterThan(NO_ID));
 
 const SourceKind = Schema.Literals(["folder", "project"]).annotate({ identifier: "SourceKind" });
 
-const PackageKind = Schema.Literals(["unitypackage", "project"]).annotate({
+const PackageKind = Schema.Literals(["unitypackage", "project", "files"]).annotate({
   identifier: "PackageKind",
 });
 
@@ -70,6 +70,7 @@ const SearchResult = Schema.Struct({
   packageKind: PackageKind,
   score: Schema.Finite,
   hasPreview: Schema.Boolean,
+  file: Schema.NullOr(Schema.String),
 }).annotate({ identifier: "SearchResult" });
 
 const Progress = Schema.Struct({ done: Schema.Int, total: Schema.Int }).annotate({

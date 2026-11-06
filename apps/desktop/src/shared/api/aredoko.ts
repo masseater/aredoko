@@ -199,6 +199,38 @@ const extract = (
     }),
   );
 
+const listRenderJobs = (): Promise<readonly Readonly<{ assetId: number; pathname: string }>[]> =>
+  run(
+    Effect.gen(function* listRenderJobsRequest() {
+      const { ListRenderJobs: listRenderJobsRpc } = yield* AredokoClient;
+      const { jobs } = yield* listRenderJobsRpc();
+      return jobs;
+    }),
+  );
+
+const readModel = (
+  assetId: number,
+): Promise<
+  Readonly<{ model: Uint8Array; files: readonly Readonly<{ name: string; data: Uint8Array }>[] }>
+> =>
+  run(
+    Effect.gen(function* readModelRequest() {
+      const { ReadModel: readModelRpc } = yield* AredokoClient;
+      return yield* readModelRpc({ assetId });
+    }),
+  );
+
+const putRender = (rendered: {
+  readonly assetId: number;
+  readonly pngs: readonly Uint8Array[];
+}): Promise<void> =>
+  run(
+    Effect.gen(function* putRenderRequest() {
+      const { PutRender: putRenderRpc } = yield* AredokoClient;
+      yield* putRenderRpc(rendered);
+    }),
+  );
+
 const encodeBase64 = Schema.encodeEffect(Schema.Uint8ArrayFromBase64);
 
 const getPreview = (assetId: number): Promise<string> =>
@@ -221,7 +253,10 @@ export {
   linkBooth,
   listAssets,
   listPackages,
+  listRenderJobs,
   listSources,
+  putRender,
+  readModel,
   removeSource,
   search,
 };

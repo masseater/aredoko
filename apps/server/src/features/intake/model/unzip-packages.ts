@@ -1,9 +1,11 @@
 import { ZipReader, configure } from "@zip.js/zip.js";
 import type { Entry, FileEntry } from "@zip.js/zip.js";
-import { Array, Effect, FileSystem, Path, pipe } from "effect";
+import { Array, Effect, FileSystem, Option, Path, pipe } from "effect";
 
+import { isCompanion, isLoose } from "#entities/package";
 import { collectBytes } from "#shared/bytes";
 
+import { bundleCount, placedCount } from "./counts.ts";
 import { FileReader } from "./file-reader.ts";
 import type { ReadRange } from "./file-reader.ts";
 import { IntakeFailed } from "./intake-failed.ts";
@@ -33,6 +35,9 @@ const attempt = <Value>(evaluate: () => Promise<Value>): Effect.Effect<Value, In
 
 const isPackageEntry = (entry: Entry): entry is FileEntry =>
   !entry.directory && isPackage(entry.filename);
+
+const isAssetEntry = (entry: Entry): entry is FileEntry =>
+  !entry.directory && (isLoose(entry.filename) || isCompanion(entry.filename));
 
 type Run = <Value, Failure>(
   effect: Effect.Effect<Value, Failure, FileSystem.FileSystem>,
@@ -74,7 +79,10 @@ const rangeOf =
 const placeEntry = Effect.fn("placeEntry")(function* placeEntry(folder: string, entry: FileEntry) {
   const path = yield* Path.Path;
   return yield* placeFile({
-    folder,
+    folder: pipe(
+      Option.liftPredicate(folder, () => isPackage(entry.filename)),
+      Option.getOrElse(() => path.join(folder, path.dirname(entry.filename))),
+    ),
     name: path.basename(entry.filename),
     size: entry.uncompressedSize,
     write: (partial) => writeEntry(entry, partial),
@@ -106,12 +114,17 @@ const unzipPackages = Effect.fn("unzipPackages")(function* unzipPackagesInto(
   const entries = yield* attempt(() =>
     reader.getEntries({ decodeText: (value) => decodeName(value) }),
   );
-  const placed = yield* pipe(
+  const packages = yield* pipe(
     entries,
     Array.filter(isPackageEntry),
     Effect.forEach((entry) => placeEntry(folder, entry)),
   );
-  return pipe(placed, Array.filter(Boolean), Array.length);
+  const assets = yield* pipe(
+    entries,
+    Array.filter(isAssetEntry),
+    Effect.forEach((entry) => placeEntry(folder, entry)),
+  );
+  return placedCount(packages) + bundleCount(assets);
 }, Effect.scoped);
 
 export { unzipPackages };

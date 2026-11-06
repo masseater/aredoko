@@ -71,7 +71,23 @@ const images = Effect.gen(function* images() {
   end`;
 });
 
+const files = Effect.gen(function* files() {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`alter table assets add column file text`;
+  yield* sql`alter table assets add column render integer not null default 0`;
+  yield* sql`create index assets_render on assets(id) where render = 1`;
+});
+
+const settings = Effect.gen(function* settings() {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`create table settings (key text primary key, value text not null)`;
+});
+
 const init = Effect.all([vectors, library, assets, images], { discard: true });
 
 /** @internal */
-export const loader: Migrator.Loader = Migrator.fromRecord({ "1_init": init });
+export const loader: Migrator.Loader = Migrator.fromRecord({
+  "1_init": init,
+  "2_files": files,
+  "3_settings": settings,
+});

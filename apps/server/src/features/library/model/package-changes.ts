@@ -1,5 +1,7 @@
 import { Array, Duration, Effect, FileSystem, Stream, pipe } from "effect";
 
+import { isLoose } from "#entities/package";
+
 import { isPackage } from "./scan-folders.ts";
 
 const watchFolder =
@@ -22,7 +24,7 @@ const packageChanges = Effect.fn("packageChanges")(function* watchPackages(
     paths,
     Array.map(watchFolder(fileSystem)),
     Stream.mergeAll({ concurrency: "unbounded" }),
-    Stream.filter(isPackage),
+    Stream.filter((path) => isPackage(path) || isLoose(path)),
     Stream.debounce(Duration.millis(settleMillis)),
   );
 });

@@ -18,6 +18,7 @@ import { decodeRows } from "#shared/sql";
 import { writePackage } from "#shared/unitypackage";
 
 import { closure, missingOf } from "./closure.ts";
+import { looseEntries } from "./loose-entries.ts";
 
 const ReferenceRow = Schema.Struct({
   path: Schema.String,
@@ -87,13 +88,19 @@ const planOf = Effect.fn("planOf")(function* plan({ packageId, selected }: PlanI
   return { source: source.path, guids: included, missing: missingOf({ included, references }) };
 });
 
+const destinationIn = Effect.fn("destinationIn")(function* destinationIn(directory: string) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  yield* fileSystem.makeDirectory(directory, { recursive: true });
+  const now = yield* Clock.currentTimeMillis;
+  return path.join(directory, `aredoko-${now.toString()}.unitypackage`);
+});
+
 /** @internal */
 const extract = Effect.fn("extract")(function* extractAssets(
   assetIds: readonly number[],
   directory: string,
 ) {
-  const fileSystem = yield* FileSystem.FileSystem;
-  const path = yield* Path.Path;
   const selected = yield* selectedAssets(assetIds);
   const packageIds = pipe(
     selected,
@@ -104,18 +111,18 @@ const extract = Effect.fn("extract")(function* extractAssets(
     packageIds,
     Effect.forEach((packageId) => planOf({ packageId, selected })),
   );
-  yield* fileSystem.makeDirectory(directory, { recursive: true });
-  const now = yield* Clock.currentTimeMillis;
-  const destination = path.join(directory, `aredoko-${now.toString()}.unitypackage`);
-  yield* writePackage(plans, destination);
+  const destination = yield* destinationIn(directory);
+  const loose = yield* looseEntries(assetIds);
+  yield* writePackage(plans, loose, destination);
   return {
     path: destination,
-    assets: Number.sumAll(
-      pipe(
+    assets: Number.sumAll([
+      ...pipe(
         plans,
         Array.map(({ guids }) => HashSet.size(guids)),
       ),
-    ),
+      loose.length,
+    ]),
     missing: pipe(
       plans,
       Array.flatMap(({ missing }) => missing),

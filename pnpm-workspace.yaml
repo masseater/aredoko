@@ -17,6 +17,10 @@ catalog:
   typescript: 6.0.3
   modern-tar: 0.8.6
   "@zip.js/zip.js": 2.24.0
+  sharp: 0.35.5
+  fzstd: 0.1.1
+  three: 0.187.0
+  "@types/three": 0.187.0
   sqlite-vec: 0.1.9
   "@eslint-react/eslint-plugin": 5.28.8
   "@shadcn/lint": 0.2.5

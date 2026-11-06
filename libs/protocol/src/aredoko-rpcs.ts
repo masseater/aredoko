@@ -53,6 +53,29 @@ const Library = Schema.Struct({
   assetStore: Schema.NullOr(Schema.String),
 });
 
+const RenderJob = Schema.Struct({ assetId: Id, pathname: Schema.String }).annotate({
+  identifier: "RenderJob",
+});
+
+const RenderJobs = Schema.Struct({ jobs: Schema.Array(RenderJob) });
+
+const ModelFile = Schema.Struct({
+  name: Schema.String,
+  data: Schema.Uint8ArrayFromBase64,
+}).annotate({
+  identifier: "ModelFile",
+});
+
+const ModelFiles = Schema.Struct({
+  model: Schema.Uint8ArrayFromBase64,
+  files: Schema.Array(ModelFile),
+});
+
+const Rendered = {
+  assetId: Id,
+  pngs: Schema.Array(Schema.Uint8ArrayFromBase64),
+};
+
 const Imported = Schema.Struct({ packages: Schema.Int });
 
 const ProjectAssets = {
@@ -94,4 +117,8 @@ export class AredokoRpcs extends RpcGroup.make(
     error: RequestFailed,
   }),
   Rpc.make("PutProjectAssets", { payload: ProjectAssets, error: RequestFailed }),
+  Rpc.make("ListRenderJobs", { success: RenderJobs, error: RequestFailed }),
+  Rpc.make("ReadModel", { payload: { assetId: Id }, success: ModelFiles, error: RequestFailed }),
+  Rpc.make("PutRender", { payload: Rendered, error: RequestFailed }),
+  Rpc.make("PutAssetStore", { payload: { path: Schema.String }, error: RequestFailed }),
 ) {}

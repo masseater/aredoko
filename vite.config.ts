@@ -15,6 +15,7 @@ import {
   tanstackRules,
   turnedOff,
 } from "./lint.config.ts";
+import { readonlyParameterRule } from "./readonly-parameters.config.ts";
 
 export default defineConfig({
   staged: {
@@ -95,53 +96,7 @@ export default defineConfig({
       "node/no-top-level-await": "off",
       "eslint/one-var": ["error", "never"],
       "eslint/no-restricted-imports": ["error", restrictedImports],
-      "typescript/prefer-readonly-parameter-types": [
-        "error",
-        {
-          ignoreInferredTypes: true,
-          allow: [
-            {
-              from: "lib",
-              name: ["Request", "Uint8Array", "RegExp", "RegExpExecArray", "RegExpMatchArray"],
-            },
-            { from: "package", package: "modern-tar", name: "ParsedTarEntry" },
-            { from: "package", package: "@zip.js/zip.js", name: ["Entry", "FileEntry"] },
-            { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
-            {
-              from: "package",
-              package: "react",
-              name: [
-                "ReactNode",
-                "ButtonHTMLAttributes",
-                "ClassAttributes",
-                "ChangeEvent",
-                "SubmitEvent",
-              ],
-            },
-            { from: "package", package: "clsx", name: "ClassValue" },
-            {
-              from: "package",
-              package: "@huggingface/transformers",
-              name: ["RawImage", "PretrainedConfig", "PreTrainedModel", "Processor"],
-            },
-            {
-              from: "package",
-              package: "effect",
-              name: [
-                "Cause",
-                "Context",
-                "Effect",
-                "Exit",
-                "HashMap",
-                "HashSet",
-                "Layer",
-                "Option",
-                "Stream",
-              ],
-            },
-          ],
-        },
-      ],
+      "typescript/prefer-readonly-parameter-types": readonlyParameterRule,
       "eslint/no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
       "react/function-component-definition": [
         "error",
