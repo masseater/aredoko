@@ -1,22 +1,11 @@
-import {
-  Array,
-  Effect,
-  FileSystem,
-  Number,
-  Option,
-  Order,
-  Path,
-  Record,
-  String,
-  pipe,
-} from "effect";
+import { Array, Effect, Number, Option, Order, Path, Record, String, pipe } from "effect";
 
 import { isLoose } from "#entities/package";
 
+import { statOf } from "./file-stat.ts";
 import type { PackageFile } from "./package-row.ts";
 
 const SEPARATOR = "/";
-const UNKNOWN_TIME = 0;
 const SINGLE = 1;
 
 interface Member {
@@ -35,19 +24,13 @@ const partsOf = (name: string): readonly string[] =>
   pipe(name, String.replaceAll("\\", SEPARATOR), String.split(SEPARATOR));
 
 const memberOf = Effect.fn("memberOf")(function* statMember(root: string, name: string) {
-  const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const file = path.join(root, name);
-  const info = yield* fileSystem.stat(file);
+  const stat = yield* statOf(file);
   return {
     pathname: pipe(partsOf(name), Array.join(SEPARATOR)),
     file,
-    size: globalThis.Number(info.size),
-    modifiedAt: pipe(
-      info.mtime,
-      Option.map((date) => date.getTime()),
-      Option.getOrElse(() => UNKNOWN_TIME),
-    ),
+    ...stat,
   } satisfies Member;
 });
 

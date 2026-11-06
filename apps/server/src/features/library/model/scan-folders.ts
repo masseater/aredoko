@@ -1,8 +1,9 @@
-import { Array, Effect, FileSystem, HashSet, Option, Path, String, pipe } from "effect";
+import { Array, Effect, FileSystem, HashSet, Path, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { decodeRows } from "#shared/sql";
 
+import { statOf } from "./file-stat.ts";
 import { indexBundle } from "./index-bundle.ts";
 import { indexPackage } from "./index-package.ts";
 import { bundlesIn } from "./loose-files.ts";
@@ -11,7 +12,6 @@ import type { PackageFile } from "./package-row.ts";
 import { PackageFileRow, SourcePathRow } from "./rows.ts";
 
 const PACKAGE_EXTENSION = ".unitypackage";
-const UNKNOWN_TIME = 0;
 
 type Source = typeof SourcePathRow.Type;
 
@@ -31,20 +31,10 @@ const isPackage = (name: string): boolean =>
   pipe(name, String.toLowerCase, String.endsWith(PACKAGE_EXTENSION));
 
 const fileOf = Effect.fn("fileOf")(function* statFile({ id, path: root }: Source, name: string) {
-  const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const full = path.join(root, name);
-  const info = yield* fileSystem.stat(full);
-  return {
-    sourceId: id,
-    path: full,
-    size: globalThis.Number(info.size),
-    modifiedAt: pipe(
-      info.mtime,
-      Option.map((date) => date.getTime()),
-      Option.getOrElse(() => UNKNOWN_TIME),
-    ),
-  } satisfies PackageFile;
+  const stat = yield* statOf(full);
+  return { sourceId: id, path: full, ...stat } satisfies PackageFile;
 });
 
 const filesOf = Effect.fn("filesOf")(function* listPackageFiles(source: Source) {
