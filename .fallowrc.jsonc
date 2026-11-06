@@ -1,6 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "production": true,
+  "entry": ["apps/server/src/app/fetch-model.ts"],
   "typeAware": { "enabled": true, "require": "complete" },
   "failOnParseError": true,
   "ignorePatterns": [".claude/**"],
