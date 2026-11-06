@@ -92,4 +92,4 @@ const PARSERS: Readonly<Record<string, Parse>> = {
 };
 
 export { PARSERS, unreadable };
-export type { ModelSource };
+export type { ModelSource, Parse };

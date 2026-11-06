@@ -84,4 +84,4 @@ const companionsOf = Effect.fn("companionsOf")(function* companionsOfModel(
 });
 
 export { bundleFolder, companionsOf };
-export type { Companion, Folder };
+export type { Folder };
