@@ -32,7 +32,7 @@ const createTables = Effect.gen(function* createTables() {
 const createBlm = Effect.gen(function* createBlm() {
   const sql = yield* SqlClient.SqlClient;
   yield* createTables;
-  yield* sql`insert into preferences (item_directory_path) values (${utf16(ITEM_DIRECTORY)})`;
+  yield* sql`insert into preferences (item_directory_path) values (${utf16(`${ITEM_DIRECTORY}\u0000`)})`;
   yield* sql`insert into registered_items values ('a1b2', ${BOOTH_ID}), ('loose', null)`;
   yield* sql`insert into booth_items values (${BOOTH_ID}, 'Original', 'shop')`;
   yield* sql`insert into shops values ('shop', 'Shop Name')`;

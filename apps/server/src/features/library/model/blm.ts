@@ -9,6 +9,7 @@ import {
   Option,
   Path,
   Schema,
+  String,
   pipe,
 } from "effect";
 import { SqlClient } from "effect/sql";
@@ -20,13 +21,14 @@ const DATABASE = ["pm.booth.library-manager", "data.db"] as const;
 const EVEN = 2;
 const NUL = 0;
 const HIGH_BYTE = 1;
+const NUL_CHARACTER = "\u0000";
 
 const Text = Schema.Union([Schema.String, Schema.Uint8Array]);
 
 const DirectoryRow = Schema.Struct({ item_directory_path: Text });
 
 const ItemRow = Schema.Struct({
-  folder: Schema.String,
+  folder: Schema.Union([Schema.String, Schema.Int]),
   booth_id: Schema.Union([Schema.Int, Schema.FiniteFromString]),
   name: Schema.NullOr(Schema.String),
   shop: Schema.NullOr(Schema.String),
@@ -61,11 +63,11 @@ const textOf = (value: typeof Text.Type): string => {
     Option.map(() => "utf-16le"),
     Option.getOrElse(() => "utf8"),
   );
-  return new TextDecoder(encoding).decode(value);
+  return pipe(new TextDecoder(encoding).decode(value), String.replaceAll(NUL_CHARACTER, ""));
 };
 
 const itemOf = (row: typeof ItemRow.Type): BlmItem => ({
-  folder: row.folder,
+  folder: `${row.folder}`,
   boothId: row.booth_id,
   name: Option.fromNullOr(row.name),
   shop: Option.fromNullOr(row.shop),
@@ -78,7 +80,7 @@ const readBlm = Effect.fn("readBlm")(function* readBlmDatabase() {
   );
   const rows = yield* decodeRows(ItemRow)(
     sql`select r.id as folder, r.booth_item_id as booth_id,
-        coalesce(o.name, b.name) as name, s.name as shop
+        coalesce(nullif(o.name, ''), b.name) as name, s.name as shop
       from registered_items r
       left join booth_items b on b.id = r.booth_item_id
       left join shops s on s.subdomain = b.shop_subdomain
