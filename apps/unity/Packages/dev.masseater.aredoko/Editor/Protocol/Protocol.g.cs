@@ -403,6 +403,9 @@ namespace Aredoko.Protocol
 
     public partial class SearchResult
     {
+        [JsonProperty("analyzing")]
+        public bool Analyzing { get; set; }
+
         [JsonProperty("assetId")]
         public long AssetId { get; set; }
 

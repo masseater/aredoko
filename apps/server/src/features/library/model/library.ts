@@ -61,7 +61,7 @@ const libraryLayer = Layer.effect(
       yield* scanFolders((current) => Ref.set(activity, working(current)));
       yield* linkBlm;
       yield* Ref.set(activity, EMBEDDING);
-      yield* embedImages;
+      yield* embedImages((current) => Ref.set(activity, working(current)));
     }).pipe(
       Effect.catchCause((cause) => Effect.logError("scan failed", cause)),
       Effect.ensuring(Ref.set(activity, IDLE)),
