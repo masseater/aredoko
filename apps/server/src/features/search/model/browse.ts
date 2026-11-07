@@ -1,23 +1,12 @@
-import { Array, Effect, Schema, pipe } from "effect";
-import { SqlClient } from "effect/sql";
+import { Array, Effect, pipe } from "effect";
 
-import { ASSET_ORDER } from "#shared/database";
-import { decodeRows } from "#shared/sql";
+import { rowsInOrder, scopedPage, unscored } from "./result-row.ts";
+import type { Scope } from "./result-row.ts";
 
-import { rowsInOrder, unscored } from "./result-row.ts";
-
-const IdRow = Schema.Struct({ id: Schema.Int });
-
-const CountRow = Schema.Struct({ total: Schema.Int });
-
-interface BrowseQuery {
-  readonly packageId: number | null;
-  readonly kinds: readonly string[];
+interface BrowseQuery extends Scope {
   readonly offset: number;
   readonly limit: number;
 }
-
-const NO_ASSETS = 0;
 
 /** @internal */
 const browse = Effect.fn("browse")(function* browseAssets({
@@ -26,27 +15,10 @@ const browse = Effect.fn("browse")(function* browseAssets({
   offset,
   limit,
 }: BrowseQuery) {
-  const sql = yield* SqlClient.SqlClient;
-  const ofKinds = Array.match(kinds, {
-    onEmpty: () => sql`1 = 1`,
-    onNonEmpty: (nonEmpty) => sql.in("a.kind", nonEmpty),
-  });
-  const where = sql`where (${packageId} is null or a.package_id = ${packageId}) and ${ofKinds}`;
-  const ids = yield* decodeRows(IdRow)(
-    sql`select a.id from assets a ${where}
-      order by ${sql.literal(ASSET_ORDER)}
-      limit ${limit} offset ${offset}`,
-  );
-  const rows = yield* rowsInOrder(
-    pipe(
-      ids,
-      Array.map(({ id }) => id),
-    ),
-  );
-  const [counted = { total: NO_ASSETS }] = yield* decodeRows(CountRow)(
-    sql`select count(*) as total from assets a ${where}`,
-  );
-  return { assets: pipe(rows, Array.map(unscored)), total: counted.total };
+  const scope = { packageId, kinds };
+  const { ids, total } = yield* scopedPage({ scope, offset, limit });
+  const rows = yield* rowsInOrder(ids, scope);
+  return { assets: pipe(rows, Array.map(unscored)), total };
 });
 
 export { browse };

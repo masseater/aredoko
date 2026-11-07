@@ -84,7 +84,8 @@ const Status = Schema.Struct({
   indexing: Schema.Boolean,
   current: Schema.NullOr(Schema.String),
   analyzingAssetIds: Schema.Array(Id),
-  packages: Progress,
+  packages: Schema.Int,
+  step: Progress,
   images: Progress,
 }).annotate({ identifier: "Status" });
 

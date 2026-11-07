@@ -4,15 +4,15 @@ import { embedImages } from "./embed-images.ts";
 import type { AnalyzedBatch } from "./embed-images.ts";
 import { blmLinker } from "./link-blm.ts";
 import { scanFolders } from "./scan-folders.ts";
+import type { ScannedFile } from "./scan-folders.ts";
 import { watchSources } from "./watch-folders.ts";
 
 const PENDING_REQUESTS = 1;
 
-interface Activity {
-  readonly indexing: boolean;
-  readonly current: Option.Option<string>;
-  readonly analyzing: readonly number[];
-}
+type Activity =
+  | { readonly status: "idle" }
+  | { readonly status: "scanning"; readonly file: ScannedFile }
+  | { readonly status: "analyzing"; readonly batch: Option.Option<AnalyzedBatch> };
 
 interface ProjectGuids {
   readonly projectPath: string;
@@ -21,21 +21,7 @@ interface ProjectGuids {
 
 type Seen = HashMap.HashMap<string, HashSet.HashSet<string>>;
 
-const IDLE: Activity = { indexing: false, current: Option.none(), analyzing: [] };
-
-const EMBEDDING: Activity = { indexing: true, current: Option.none(), analyzing: [] };
-
-const working = (current: string): Activity => ({
-  indexing: true,
-  current: Option.some(current),
-  analyzing: [],
-});
-
-const analyzing = ({ assetIds, pathname }: AnalyzedBatch): Activity => ({
-  indexing: true,
-  current: Option.some(pathname),
-  analyzing: assetIds,
-});
+const IDLE: Activity = { status: "idle" };
 
 class Library extends Context.Service<
   Library,
@@ -65,15 +51,17 @@ const remember =
 const libraryLayer = Layer.effect(
   Library,
   Effect.gen(function* makeLibrary() {
-    const activity = yield* Ref.make(IDLE);
+    const activity = yield* Ref.make<Activity>(IDLE);
     const requests = yield* Queue.sliding<boolean>(PENDING_REQUESTS);
     const seen = yield* Ref.make<Seen>(HashMap.empty());
     const linkBlm = yield* blmLinker;
     const scan = Effect.gen(function* scan() {
-      yield* scanFolders((current) => Ref.set(activity, working(current)));
+      yield* scanFolders((file) => Ref.set(activity, { status: "scanning", file }));
       yield* linkBlm;
-      yield* Ref.set(activity, EMBEDDING);
-      yield* embedImages((batch) => Ref.set(activity, analyzing(batch)));
+      yield* Ref.set(activity, { status: "analyzing", batch: Option.none() });
+      yield* embedImages((batch) =>
+        Ref.set(activity, { status: "analyzing", batch: Option.some(batch) }),
+      );
     }).pipe(
       Effect.catchCause((cause) => Effect.logError("scan failed", cause)),
       Effect.ensuring(Ref.set(activity, IDLE)),
@@ -93,3 +81,4 @@ const libraryLayer = Layer.effect(
 );
 
 export { Library, libraryLayer };
+export type { Activity };

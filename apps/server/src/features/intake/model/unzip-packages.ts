@@ -2,14 +2,13 @@ import { ZipReader, configure } from "@zip.js/zip.js";
 import type { Entry, FileEntry } from "@zip.js/zip.js";
 import { Array, Effect, FileSystem, Option, Path, pipe } from "effect";
 
-import { isCompanion, isLoose } from "#entities/package";
+import { isCompanion, isLoose, isPackage } from "#entities/package";
 import { collectBytes } from "#shared/bytes";
 
 import { bundleCount, placedCount } from "./counts.ts";
 import { FileReader } from "./file-reader.ts";
 import type { ReadRange } from "./file-reader.ts";
 import { IntakeFailed } from "./intake-failed.ts";
-import { isPackage } from "./is-package.ts";
 import { placeFile } from "./place-file.ts";
 
 const LEGACY_ENCODING = "shift_jis";

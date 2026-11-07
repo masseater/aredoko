@@ -1,11 +1,11 @@
 import type { FileSystem } from "effect";
-import { Effect, Option, String, pipe } from "effect";
+import { Effect, Option } from "effect";
 
-import { kindOf } from "#entities/package";
+import { hasExtension, kindOf } from "#entities/package";
 import { blendPreview } from "#shared/blend";
 import { imagePreview } from "#shared/preview";
-import type { PackageEntry } from "#shared/unitypackage";
 
+import { plainAsset } from "./insert-assets.ts";
 import type { AssetInput } from "./insert-assets.ts";
 import type { Member } from "./loose-files.ts";
 
@@ -18,8 +18,7 @@ interface Preview {
 
 const NO_PREVIEW: Preview = { previews: [], render: false };
 
-const isBlend = (pathname: string): boolean =>
-  pipe(pathname, String.toLowerCase, String.endsWith(BLEND_EXTENSION));
+const isBlend = hasExtension(BLEND_EXTENSION);
 
 const previewOf = ({
   pathname,
@@ -49,25 +48,13 @@ const previewOf = ({
 };
 
 /** @internal */
-const assetOf = Effect.fn("assetOf")(function* looseAsset(member: Member) {
+const looseAsset = Effect.fn("looseAsset")(function* looseAsset(member: Member) {
   const { previews, render } = yield* previewOf(member);
   return {
-    guid: member.pathname,
-    pathname: member.pathname,
-    previews,
-    references: [],
+    ...plainAsset({ guid: member.pathname, pathname: member.pathname, previews }),
     file: Option.some(member.file),
     render,
   } satisfies AssetInput;
 });
 
-const entryOf = ({ pathname }: Member): PackageEntry => ({
-  guid: pathname,
-  pathname,
-  asset: Option.none(),
-  meta: Option.none(),
-  preview: Option.none(),
-  references: [],
-});
-
-export { assetOf, entryOf };
+export { looseAsset };

@@ -1,13 +1,11 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
-import { cn } from "ui/cn";
 
 import { useSearch } from "#/pages/home/api/queries";
 import { searchViewOf, useKinds, useQueryText, useSelectedPackage } from "#/pages/home/model";
+import { Notice } from "#/shared/ui/notice";
 
 import { MatchedResults } from "./matched-results.tsx";
-
-const TONE_CLASSES = { muted: "text-muted-foreground", error: "text-destructive" } as const;
 
 const phaseOf = ({
   isPending,
@@ -40,7 +38,7 @@ const SearchResults = (): ReactNode => {
   if (view.status === "results") {
     return <MatchedResults matches={view.matches} others={view.others} />;
   }
-  return <p className={cn("text-sm", TONE_CLASSES[view.tone])}>{view.text}</p>;
+  return <Notice tone={view.tone}>{view.text}</Notice>;
 };
 
 export { SearchResults };

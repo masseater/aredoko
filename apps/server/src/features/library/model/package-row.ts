@@ -2,10 +2,7 @@ import { Array, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 import { BoothItem } from "protocol";
 
-import { decodeRows } from "#shared/sql";
-
-import { encodeJson } from "./json.ts";
-import { IdRow } from "./rows.ts";
+import { decodeRows, firstId } from "#shared/sql";
 
 interface PackageFile {
   readonly sourceId: number;
@@ -14,7 +11,18 @@ interface PackageFile {
   readonly modifiedAt: number;
 }
 
-const BoothRow = Schema.Struct({ booth_item: Schema.NullOr(Schema.fromJsonString(BoothItem)) });
+const StoredBooth = Schema.fromJsonString(BoothItem);
+
+const BoothRow = Schema.Struct({ booth_item: Schema.NullOr(StoredBooth) });
+
+const encode = Schema.encodeEffect(StoredBooth);
+
+/** @internal */
+const encodeBooth = Effect.fn("encodeBooth")(function* encodeBoothItem(
+  item: typeof BoothItem.Type,
+) {
+  return yield* encode(item);
+});
 
 /** @internal */
 const boothOf = Effect.fn("boothOf")(function* storedBooth(path: string) {
@@ -48,25 +56,17 @@ const insertPackage = Effect.fn("insertPackage")(function* insertPackageRow({
     Option.map(({ id }) => id),
     Option.getOrNull,
   );
-  const encoded = yield* pipe(
-    booth,
-    Option.match({
-      onNone: () => Effect.succeedNone,
-      onSome: (item) => Effect.asSome(encodeJson(item)),
-    }),
-  );
+  const encoded = yield* pipe(booth, Option.map(encodeBooth), Effect.transposeOption);
   const boothJson = Option.getOrNull(encoded);
   yield* sql`delete from packages where path = ${file.path}`;
-  const rows = yield* decodeRows(IdRow)(
+  return yield* firstId(
     sql`insert into packages(source_id, kind, path, name, size, modified_at, summary,
         booth_item_id, booth_item)
       values (${file.sourceId}, ${kind}, ${file.path}, ${name}, ${file.size},
         ${file.modifiedAt}, ${summary}, ${boothId}, ${boothJson})
       returning id`,
   );
-  const { id } = yield* Effect.fromOption(Array.head(rows));
-  return id;
 });
 
-export { boothOf, insertPackage };
+export { boothOf, encodeBooth, insertPackage };
 export type { PackageFile };

@@ -1,7 +1,7 @@
 import type { SearchResult } from "protocol";
 import type { ReactNode } from "react";
 
-import { KIND_LABELS } from "#/pages/home/config";
+import { originOf } from "#/pages/home/model";
 import { fileNameOf } from "#/shared/lib";
 
 import { ResultActions } from "./result-actions.tsx";
@@ -14,7 +14,7 @@ const ResultSummary = ({ result }: Readonly<{ result: typeof SearchResult.Type }
     </div>
     <h3 className="text-base font-semibold break-all">{fileNameOf(result.pathname)}</h3>
     <p className="text-muted-foreground text-xs break-all">{result.pathname}</p>
-    <p className="text-sm">{`${KIND_LABELS[result.kind]}・${result.packageName}`}</p>
+    <p className="text-sm">{originOf(result)}</p>
     <ResultActions result={result} />
   </>
 );

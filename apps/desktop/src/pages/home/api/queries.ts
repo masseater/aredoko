@@ -18,6 +18,7 @@ import { useCallback } from "react";
 import { useRefreshLibrary } from "#/features/library";
 import {
   ASSETS_KEY,
+  LIBRARY_POLL,
   PACKAGES_KEY,
   getPreview,
   linkBooth,
@@ -26,7 +27,6 @@ import {
   search,
 } from "#/shared/api";
 
-const LIBRARY_INTERVAL = 5000;
 const SEARCH_LIMIT = 120;
 const PAGE_SIZE = 120;
 const FIRST_PAGE = 0;
@@ -43,10 +43,22 @@ const usePackages = (): UseQueryResult<readonly (typeof Package.Type)[]> =>
     queryOptions({
       queryKey: PACKAGES_KEY,
       queryFn: listPackages,
-      refetchInterval: LIBRARY_INTERVAL,
-      retry: false,
+      ...LIBRARY_POLL,
     }),
   );
+
+const usePackage = (id: Option.Option<number>): Option.Option<typeof Package.Type> => {
+  const { data } = usePackages();
+  return pipe(
+    id,
+    Option.flatMap((wanted) =>
+      pipe(
+        Option.fromUndefinedOr(data),
+        Option.flatMap(Array.findFirst((candidate) => candidate.id === wanted)),
+      ),
+    ),
+  );
+};
 
 const nextOffset = ({ total }: AssetPage, pages: readonly AssetPage[]): number | undefined => {
   const loaded = pipe(
@@ -80,8 +92,7 @@ const useAssets = ({
         }),
       initialPageParam: FIRST_PAGE,
       getNextPageParam: nextOffset,
-      refetchInterval: LIBRARY_INTERVAL,
-      retry: false,
+      ...LIBRARY_POLL,
     }),
   );
 
@@ -139,4 +150,4 @@ const useLinkBooth = (): UseMutationResult<
 };
 
 export type { AssetPage };
-export { useAssets, useLinkBooth, useLoadNext, usePackages, usePreview, useSearch };
+export { useAssets, useLinkBooth, useLoadNext, usePackage, usePackages, usePreview, useSearch };

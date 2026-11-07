@@ -1,12 +1,10 @@
 import { Array, Effect, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
+import { RENDER } from "#shared/database";
 import { decodeRows } from "#shared/sql";
 
 const JOBS_PER_REQUEST = 8;
-const RENDER_PENDING = 1;
-const RENDER_DONE = 2;
-const RENDER_FAILED = -1;
 
 const JobRow = Schema.Struct({ assetId: Schema.Int, pathname: Schema.String });
 
@@ -15,7 +13,7 @@ const renderJobs = Effect.fn("renderJobs")(function* listRenderJobs() {
   const sql = yield* SqlClient.SqlClient;
   return yield* decodeRows(JobRow)(
     sql`select id as assetId, pathname from assets
-      where render = ${RENDER_PENDING} order by id limit ${JOBS_PER_REQUEST}`,
+      where render = ${RENDER.pending} order by id limit ${JOBS_PER_REQUEST}`,
   );
 });
 
@@ -28,7 +26,7 @@ const putRender = Effect.fn("putRender")(function* storeRender({
   readonly pngs: readonly Uint8Array[];
 }) {
   const sql = yield* SqlClient.SqlClient;
-  const state = Array.match(pngs, { onEmpty: () => RENDER_FAILED, onNonEmpty: () => RENDER_DONE });
+  const state = Array.match(pngs, { onEmpty: () => RENDER.failed, onNonEmpty: () => RENDER.done });
   yield* sql.withTransaction(
     Effect.gen(function* write() {
       yield* sql`delete from images where asset_id = ${assetId}`;

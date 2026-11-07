@@ -344,7 +344,10 @@ namespace Aredoko.Protocol
         public bool Indexing { get; set; }
 
         [JsonProperty("packages")]
-        public Progress Packages { get; set; }
+        public long Packages { get; set; }
+
+        [JsonProperty("step")]
+        public Progress Step { get; set; }
 
         [JsonProperty("version")]
         public string Version { get; set; }
