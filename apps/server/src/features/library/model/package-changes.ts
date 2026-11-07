@@ -1,8 +1,6 @@
 import { Array, Duration, Effect, FileSystem, Stream, pipe } from "effect";
 
-import { isLoose } from "#entities/package";
-
-import { isPackage } from "./scan-folders.ts";
+import { isLoose, isPackage } from "#entities/package";
 
 const watchFolder =
   (fileSystem: FileSystem.FileSystem) =>

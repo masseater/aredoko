@@ -1,10 +1,11 @@
 import { Array, Option, String, pipe } from "effect";
 import type { BoothItem } from "protocol";
 
+import { partsOf } from "#entities/package";
+
 const nameOf = (path: string): string =>
   pipe(
-    path,
-    String.split(/[\\/]/u),
+    partsOf(path),
     Array.last,
     Option.getOrElse(() => path),
     String.replace(/\.unitypackage$/iu, ""),

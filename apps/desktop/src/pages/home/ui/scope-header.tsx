@@ -1,7 +1,7 @@
-import { Array, Option, pipe } from "effect";
+import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { usePackages } from "#/pages/home/api/queries";
+import { usePackage } from "#/pages/home/api/queries";
 import { useSelectedPackage } from "#/pages/home/model";
 
 import { BoothSection } from "./booth-section.tsx";
@@ -9,17 +9,7 @@ import { PackageHeader } from "./package-header.tsx";
 import { PackageSummary } from "./package-summary.tsx";
 
 const ScopeHeader = (): ReactNode => {
-  const selected = useSelectedPackage();
-  const packages = usePackages();
-  const item = pipe(
-    selected,
-    Option.flatMap((id) =>
-      pipe(
-        packages.data ?? [],
-        Array.findFirst((candidate) => candidate.id === id),
-      ),
-    ),
-  );
+  const item = usePackage(useSelectedPackage());
   if (Option.isNone(item)) {
     return false;
   }

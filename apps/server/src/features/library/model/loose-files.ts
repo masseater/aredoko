@@ -1,6 +1,6 @@
-import { Array, Effect, Number, Option, Order, Path, Record, String, pipe } from "effect";
+import { Array, Effect, Number, Option, Order, Path, Record, pipe } from "effect";
 
-import { isLoose } from "#entities/package";
+import { isLoose, partsOf } from "#entities/package";
 
 import { statOf } from "./file-stat.ts";
 import type { PackageFile } from "./package-row.ts";
@@ -19,9 +19,6 @@ interface Bundle extends PackageFile {
   readonly name: string;
   readonly members: readonly Member[];
 }
-
-const partsOf = (name: string): readonly string[] =>
-  pipe(name, String.replaceAll("\\", SEPARATOR), String.split(SEPARATOR));
 
 const memberOf = Effect.fn("memberOf")(function* statMember(root: string, name: string) {
   const path = yield* Path.Path;

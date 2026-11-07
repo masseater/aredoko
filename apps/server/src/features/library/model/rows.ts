@@ -1,7 +1,5 @@
 import { Schema } from "effect";
 
-const IdRow = Schema.Struct({ id: Schema.Int });
-
 const PackageFileRow = Schema.Struct({
   id: Schema.Int,
   path: Schema.String,
@@ -26,4 +24,4 @@ const AssetGuidRow = Schema.Struct({
   pathname: Schema.String,
 });
 
-export { AssetGuidRow, AssetTextRow, IdRow, ImageRow, PackageFileRow, SourcePathRow };
+export { AssetGuidRow, AssetTextRow, ImageRow, PackageFileRow, SourcePathRow };

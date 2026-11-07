@@ -1,7 +1,6 @@
 import { Array, String, pipe } from "effect";
 
-import { avatarsIn, wordsOf } from "./avatars.ts";
-import { colorsIn } from "./colors.ts";
+import { avatarsIn, colorsIn, wordsOf } from "./aliases.ts";
 import type { AssetKind } from "./kind.ts";
 
 const KIND_LABELS: Readonly<Record<AssetKind, string>> = {

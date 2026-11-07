@@ -1,7 +1,7 @@
-import { Array, Option, pipe } from "effect";
+import { Option, pipe } from "effect";
 import type { SearchResult } from "protocol";
 
-import { usePackages } from "#/pages/home/api/queries";
+import { usePackage } from "#/pages/home/api/queries";
 
 interface ResultLinks {
   readonly file: Option.Option<string>;
@@ -10,11 +10,7 @@ interface ResultLinks {
 }
 
 const useResultLinks = (result: typeof SearchResult.Type): ResultLinks => {
-  const packages = usePackages();
-  const owner = pipe(
-    Option.fromNullishOr(packages.data),
-    Option.flatMap(Array.findFirst(({ id }) => id === result.packageId)),
-  );
+  const owner = usePackage(Option.some(result.packageId));
   const file = Option.fromNullOr(result.file);
   return {
     file,

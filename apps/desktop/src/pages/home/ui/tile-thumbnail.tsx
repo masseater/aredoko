@@ -2,20 +2,9 @@ import type { SearchResult } from "protocol";
 import type { ReactNode } from "react";
 import { cn } from "ui/cn";
 
-import { useStatus } from "#/shared/api";
+import { useAnalysis } from "#/features/indexing";
 
 import { ResultPreview } from "./result-preview.tsx";
-
-interface Analysis {
-  readonly waiting: boolean;
-  readonly now: boolean;
-}
-
-const useAnalysis = ({ assetId, analyzing }: typeof SearchResult.Type): Analysis => {
-  const status = useStatus();
-  const now = status.isSuccess && status.data.analyzingAssetId === assetId;
-  return { waiting: analyzing && !now, now };
-};
 
 const TileThumbnail = ({
   result,

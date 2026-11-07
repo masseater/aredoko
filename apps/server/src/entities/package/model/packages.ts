@@ -5,12 +5,7 @@ import type { Package } from "protocol";
 
 import { decodeRows } from "#shared/sql";
 
-const StoredSummary = Schema.Struct({
-  counts: Schema.Record(Schema.String, Schema.Int),
-  shaders: Schema.Array(Schema.String),
-  avatars: Schema.Array(Schema.String),
-  colors: Schema.Array(Schema.String),
-});
+import { StoredSummary } from "./summary.ts";
 
 const PackageRow = Schema.Struct({
   id: Schema.Int,

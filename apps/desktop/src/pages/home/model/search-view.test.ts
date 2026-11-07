@@ -45,13 +45,13 @@ describe("searchViewOf", () => {
     expect(view).toMatchObject({ status: "message", tone: "muted" });
   });
 
-  it("says nothing was found for an empty result", () => {
+  it("shows an empty result as no matches", () => {
     const view = searchViewOf({
       phase: "settled",
       failure: Option.none(),
       results: Option.some([]),
     });
-    expect(view).toMatchObject({ status: "message", tone: "muted" });
+    expect(view).toStrictEqual({ status: "results", matches: [], others: [] });
   });
 });
 

@@ -20,6 +20,8 @@ class InvalidBoothUrl extends taggedError<InvalidBoothUrl, { readonly brand: uni
   { url: Schema.String },
 ) {}
 
+const itemUrl = (id: number | string): string => `https://booth.pm/ja/items/${id.toString()}`;
+
 const itemIdOf = capture({ pattern: /booth\.pm\/(?:[a-z-]+\/)?items\/(?<id>\d+)/u, name: "id" });
 
 /** @internal */
@@ -30,7 +32,7 @@ const fetchItem = Effect.fn("fetchItem")(function* fetchBoothItem(url: string) {
     Effect.mapError(() => InvalidBoothUrl.make({ url })),
   );
   const client = yield* HttpClient.HttpClient;
-  const response = yield* client.get(`https://booth.pm/ja/items/${id}.json`);
+  const response = yield* client.get(`${itemUrl(id)}.json`);
   const item = yield* HttpClientResponse.schemaBodyJson(ItemJson)(response);
   return {
     id: item.id,
@@ -45,4 +47,4 @@ const fetchItem = Effect.fn("fetchItem")(function* fetchBoothItem(url: string) {
   } satisfies typeof BoothItem.Type;
 });
 
-export { fetchItem };
+export { fetchItem, itemUrl };

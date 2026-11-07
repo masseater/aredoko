@@ -7,12 +7,13 @@ import {
 } from "@tanstack/react-query";
 import type { UseMutationResult, UseQueryResult } from "@tanstack/react-query";
 import { Array, Option, pipe } from "effect";
-import type { Source, SourceKind } from "protocol";
+import type { Source } from "protocol";
 
 import { NO_IMPORT, lastImportOf } from "#/features/library/model/last-import";
 import type { LastImport } from "#/features/library/model/last-import";
 import {
   ASSETS_KEY,
+  LIBRARY_POLL,
   PACKAGES_KEY,
   SOURCES_KEY,
   STATUS_KEY,
@@ -24,8 +25,6 @@ import {
 } from "#/shared/api";
 import type { LibraryInfo } from "#/shared/api";
 
-const LIBRARY_INTERVAL = 5000;
-
 const LIBRARY_KEY = ["library"];
 const IMPORT_KEY = ["import"];
 
@@ -34,8 +33,7 @@ const useSources = (): UseQueryResult<readonly (typeof Source.Type)[]> =>
     queryOptions({
       queryKey: SOURCES_KEY,
       queryFn: listSources,
-      refetchInterval: LIBRARY_INTERVAL,
-      retry: false,
+      ...LIBRARY_POLL,
     }),
   );
 
@@ -50,13 +48,12 @@ const useRefreshLibrary = (): (() => Promise<unknown>) => {
     ]);
 };
 
-const useAddSource = (): UseMutationResult<
-  typeof Source.Type,
-  Error,
-  Readonly<{ path: string; kind: typeof SourceKind.Type }>
-> => {
+const addFolder = (path: string): Promise<typeof Source.Type> =>
+  addSource({ path, kind: "folder" });
+
+const useAddFolder = (): UseMutationResult<typeof Source.Type, Error, string> => {
   const refresh = useRefreshLibrary();
-  return useMutation({ mutationFn: addSource, onSuccess: refresh });
+  return useMutation({ mutationFn: addFolder, onSuccess: refresh });
 };
 
 const useRemoveSource = (): UseMutationResult<void, Error, number> => {
@@ -139,7 +136,7 @@ const useLastImport = (): LastImport =>
 
 export type { KnownFolder, NamedFolder };
 export {
-  useAddSource,
+  useAddFolder,
   useFolderName,
   useKnownFolder,
   useImportFiles,

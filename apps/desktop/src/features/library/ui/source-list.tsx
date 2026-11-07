@@ -2,19 +2,19 @@ import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { useFolderName, useSources } from "#/features/library/api/queries";
+import { Loading } from "#/shared/ui/loading";
+import { Notice } from "#/shared/ui/notice";
 
 import { SourceRow } from "./source-row.tsx";
-
-const LOADING = "読み込んでいます…";
 
 const SourceList = (): ReactNode => {
   const sources = useSources();
   const nameOf = useFolderName();
   if (sources.isPending) {
-    return <p className="text-muted-foreground text-sm">{LOADING}</p>;
+    return <Loading />;
   }
   if (sources.isError) {
-    return <p className="text-destructive text-sm">{sources.error.message}</p>;
+    return <Notice tone="error">{sources.error.message}</Notice>;
   }
   return (
     <ul className="flex flex-col gap-1">

@@ -1,45 +1,29 @@
-import { Array, Effect, HashSet, Option, pipe } from "effect";
+import { Array, Effect, HashSet, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { summarize } from "#entities/package";
-import { decodeRows } from "#shared/sql";
-import type { PackageEntry } from "#shared/unitypackage";
+import { encodeSummary, listedEntry } from "#entities/package";
+import { decodeRows, firstId } from "#shared/sql";
 
 import { embedTexts } from "./embed-texts.ts";
-import { insertAssets } from "./insert-assets.ts";
-import type { AssetInput } from "./insert-assets.ts";
-import { encodeJson } from "./json.ts";
+import { insertAssets, plainAsset } from "./insert-assets.ts";
 import { nameOf } from "./name.ts";
-import { AssetGuidRow, IdRow } from "./rows.ts";
+import { AssetGuidRow } from "./rows.ts";
 
 const NO_SIZE = 0;
-
-type AssetGuid = typeof AssetGuidRow.Type;
-
-const entryOf = ({ guid, pathname }: AssetGuid): PackageEntry => ({
-  guid,
-  pathname,
-  asset: Option.none(),
-  meta: Option.none(),
-  preview: Option.none(),
-  references: [],
-});
 
 const projectPackage = Effect.fn("projectPackage")(function* ensureProjectPackage(
   projectPath: string,
 ) {
   const sql = yield* SqlClient.SqlClient;
   const name = nameOf(projectPath);
-  const empty = yield* encodeJson(summarize({ name, entries: [] }));
+  const empty = yield* encodeSummary({ name, entries: [] });
   yield* sql`insert into sources(path, kind) values (${projectPath}, 'project')
     on conflict(path) do nothing`;
   yield* sql`insert into packages(source_id, kind, path, name, size, modified_at, summary)
     select id, 'project', ${projectPath}, ${name}, ${NO_SIZE}, ${NO_SIZE}, ${empty}
     from sources where path = ${projectPath}
     on conflict(path) do nothing`;
-  const rows = yield* decodeRows(IdRow)(sql`select id from packages where path = ${projectPath}`);
-  const { id } = yield* Effect.fromOption(Array.head(rows));
-  return id;
+  return yield* firstId(sql`select id from packages where path = ${projectPath}`);
 });
 
 /** @internal */
@@ -56,15 +40,7 @@ const putProjectAssets = Effect.fn("putProjectAssets")(function* storeProjectAss
 }) {
   const sql = yield* SqlClient.SqlClient;
   const packageId = yield* projectPackage(projectPath);
-  const inputs = pipe(
-    assets,
-    Array.map((asset): AssetInput => ({
-      ...asset,
-      references: [],
-      file: Option.none(),
-      render: false,
-    })),
-  );
+  const inputs = pipe(assets, Array.map(plainAsset));
   yield* sql.withTransaction(
     insertAssets({ packageId, packageName: nameOf(projectPath), assets: inputs }),
   );
@@ -99,8 +75,7 @@ const pruneProject = Effect.fn("pruneProject")(function* pruneProjectAssets({
     removed,
     Effect.forEach(({ id }) => sql`delete from assets where id = ${id}`),
   );
-  const entries = pipe(kept, Array.map(entryOf));
-  const summary = yield* encodeJson(summarize({ name, entries }));
+  const summary = yield* encodeSummary({ name, entries: pipe(kept, Array.map(listedEntry)) });
   yield* sql`update packages set summary = ${summary} where id = ${packageId}`;
 });
 
