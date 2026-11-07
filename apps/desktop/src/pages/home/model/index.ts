@@ -15,3 +15,4 @@ export {
 } from "./search-state.ts";
 export { searchViewOf } from "./search-view.ts";
 export { useSelectPackage, useSelectedPackage, useShowPackage } from "./selection.ts";
+export { originOf } from "./origin.ts";

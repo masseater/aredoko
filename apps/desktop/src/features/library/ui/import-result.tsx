@@ -2,6 +2,7 @@ import { CircleAlert, CircleCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { useLastImport } from "#/features/library/api/queries";
+import { Notice } from "#/shared/ui/notice";
 
 const NOTHING = "取り込めるアセットがありませんでした";
 const NONE_PLACED = 0;
@@ -10,10 +11,10 @@ const ImportResult = (): ReactNode => {
   const last = useLastImport();
   if (last.status === "failed") {
     return (
-      <p className="text-destructive flex items-center gap-1.5 text-xs">
-        <CircleAlert className="size-3.5" />
+      <Notice tone="error" size="xs">
+        <CircleAlert />
         {last.message}
-      </p>
+      </Notice>
     );
   }
   if (last.status !== "placed") {
@@ -21,17 +22,17 @@ const ImportResult = (): ReactNode => {
   }
   if (last.packages === NONE_PLACED) {
     return (
-      <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-        <CircleAlert className="size-3.5" />
+      <Notice size="xs">
+        <CircleAlert />
         {NOTHING}
-      </p>
+      </Notice>
     );
   }
   return (
-    <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-      <CircleCheck className="size-3.5" />
+    <Notice size="xs">
+      <CircleCheck />
       {`${last.packages.toString()} 個を取り込みました`}
-    </p>
+    </Notice>
   );
 };
 

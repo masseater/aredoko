@@ -1,9 +1,8 @@
 import { Array, Effect, FileSystem, Number, Path, pipe } from "effect";
 
-import { isCompanion, isLoose } from "#entities/package";
+import { isCompanion, isLoose, isPackage, isZip } from "#entities/package";
 
 import { bundleCount, placedCount } from "./counts.ts";
-import { isPackage, isZip } from "./is-package.ts";
 import { libraryFolder } from "./library-folder.ts";
 import { placeFile } from "./place-file.ts";
 import { unzipPackages } from "./unzip-packages.ts";

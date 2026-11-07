@@ -1,5 +1,6 @@
 import { Array, Effect, FileSystem, Path, String, pipe } from "effect";
 
+import { hasExtension } from "./file-name.ts";
 import { kindOf } from "./kind.ts";
 import { isCompanion } from "./loose.ts";
 
@@ -18,8 +19,7 @@ interface Companion {
 
 const latin1 = new TextDecoder("latin1");
 
-const isMaterialName = (name: string): boolean =>
-  pipe(name, String.toLowerCase, String.endsWith(MATERIAL_EXTENSION));
+const isMaterialName = hasExtension(MATERIAL_EXTENSION);
 
 const isNeeded = (name: string): boolean => kindOf(name) === "texture" || isCompanion(name);
 

@@ -6,6 +6,8 @@ import { getStatus } from "./aredoko.ts";
 
 const STATUS_INTERVAL = 2000;
 
+const LIBRARY_POLL = { refetchInterval: 5000, retry: false } as const;
+
 const STATUS_KEY = ["status"];
 
 const SOURCES_KEY = ["sources"];
@@ -24,4 +26,4 @@ const useStatus = (): UseQueryResult<typeof Status.Type> =>
     }),
   );
 
-export { ASSETS_KEY, PACKAGES_KEY, SOURCES_KEY, STATUS_KEY, useStatus };
+export { ASSETS_KEY, LIBRARY_POLL, PACKAGES_KEY, SOURCES_KEY, STATUS_KEY, useStatus };

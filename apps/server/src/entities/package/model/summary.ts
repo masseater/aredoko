@@ -1,10 +1,9 @@
-import { Array, HashMap, Option, Order, Record, String, pipe } from "effect";
+import type { Effect } from "effect";
+import { Array, HashMap, Option, Order, Record, Schema, String, pipe } from "effect";
 
 import { capture } from "#shared/text";
-import type { PackageEntry } from "#shared/unitypackage";
 
-import { avatarsIn } from "./avatars.ts";
-import { colorsIn } from "./colors.ts";
+import { avatarsIn, colorsIn } from "./aliases.ts";
 import { kindOf } from "./kind.ts";
 import type { AssetKind } from "./kind.ts";
 
@@ -16,18 +15,28 @@ const SHADER_MARKERS = [
   { name: "UnityChanToonShader", marker: "_utsTechnique" },
 ] as const;
 
-interface PackageSummary {
-  readonly counts: Readonly<Record<string, number>>;
-  readonly shaders: readonly string[];
-  readonly avatars: readonly string[];
-  readonly colors: readonly string[];
+const StoredSummary = Schema.Struct({
+  counts: Schema.Record(Schema.String, Schema.Int),
+  shaders: Schema.Array(Schema.String),
+  avatars: Schema.Array(Schema.String),
+  colors: Schema.Array(Schema.String),
+});
+
+type PackageSummary = typeof StoredSummary.Type;
+
+interface SummaryEntry {
+  readonly guid: string;
+  readonly pathname: string;
+  readonly asset: Option.Option<Uint8Array>;
 }
+
+const encode = Schema.encodeEffect(Schema.fromJsonString(StoredSummary));
 
 const decoder = new TextDecoder();
 
 const decode = (bytes: Uint8Array): string => decoder.decode(bytes);
 
-const textOf = ({ asset }: PackageEntry): Option.Option<string> => pipe(asset, Option.map(decode));
+const textOf = ({ asset }: SummaryEntry): Option.Option<string> => pipe(asset, Option.map(decode));
 
 const shaderGuidOf = capture({
   pattern: /m_Shader: \{fileID: -?\d+, guid: (?<guid>[0-9a-f]{32})/u,
@@ -59,7 +68,7 @@ const shaderOfMaterial =
       Option.orElse(() => markerOf(material)),
     );
 
-const shaderEntry = (entry: PackageEntry): Option.Option<readonly [string, string]> =>
+const shaderEntry = (entry: SummaryEntry): Option.Option<readonly [string, string]> =>
   pipe(
     textOf(entry),
     Option.flatMap(shaderNameOf),
@@ -68,20 +77,20 @@ const shaderEntry = (entry: PackageEntry): Option.Option<readonly [string, strin
 
 const ofKind =
   (kind: AssetKind) =>
-  (entries: readonly PackageEntry[]): readonly PackageEntry[] =>
+  (entries: readonly SummaryEntry[]): readonly SummaryEntry[] =>
     pipe(
       entries,
       Array.filter(({ pathname }) => kindOf(pathname) === kind),
     );
 
-const countKinds = (entries: readonly PackageEntry[]): Readonly<Record<string, number>> =>
+const countKinds = (entries: readonly SummaryEntry[]): Readonly<Record<string, number>> =>
   pipe(
     entries,
     Array.groupBy(({ pathname }): string => kindOf(pathname)),
     Record.map(Array.length),
   );
 
-const shadersOf = (entries: readonly PackageEntry[]): readonly string[] => {
+const shadersOf = (entries: readonly SummaryEntry[]): readonly string[] => {
   const shaders = HashMap.fromIterable(
     pipe(entries, ofKind("shader"), Array.map(shaderEntry), Array.getSomes),
   );
@@ -97,7 +106,7 @@ const shadersOf = (entries: readonly PackageEntry[]): readonly string[] => {
   );
 };
 
-const pathsOf = (entries: readonly PackageEntry[]): string =>
+const pathsOf = (entries: readonly SummaryEntry[]): string =>
   pipe(
     entries,
     Array.map(({ pathname }) => pathname),
@@ -109,7 +118,7 @@ const summarize = ({
   entries,
 }: {
   readonly name: string;
-  readonly entries: readonly PackageEntry[];
+  readonly entries: readonly SummaryEntry[];
 }): PackageSummary => ({
   counts: countKinds(entries),
   shaders: shadersOf(entries),
@@ -117,5 +126,19 @@ const summarize = ({
   colors: colorsIn(pathsOf(ofKind("material")(entries))),
 });
 
-export { summarize };
-export type { PackageSummary };
+const listedEntry = ({
+  guid,
+  pathname,
+}: Readonly<{ guid: string; pathname: string }>): SummaryEntry => ({
+  guid,
+  pathname,
+  asset: Option.none(),
+});
+
+const encodeSummary = (input: {
+  readonly name: string;
+  readonly entries: readonly SummaryEntry[];
+}): Effect.Effect<string, Schema.SchemaError> => encode(summarize(input));
+
+export { StoredSummary, encodeSummary, listedEntry };
+export type { SummaryEntry };

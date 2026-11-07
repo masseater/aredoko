@@ -2,6 +2,7 @@ import { Array, Effect, Option, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 import type { Source } from "protocol";
 
+import { EMBEDDING } from "#shared/database";
 import { decodeRows } from "#shared/sql";
 
 const SourceRow = Schema.Struct({
@@ -14,6 +15,10 @@ const SourceRow = Schema.Struct({
 const PreviewRow = Schema.Struct({ png: Schema.Uint8Array });
 
 const CountRow = Schema.Struct({ done: Schema.Int, total: Schema.Int });
+
+const TotalRow = Schema.Struct({ total: Schema.Int });
+
+const NOTHING = { done: 0, total: 0 };
 
 const sourcesWhere = Effect.fn("sourcesWhere")(function* selectSources(
   where: Option.Option<string>,
@@ -62,13 +67,13 @@ const preview = Effect.fn("preview")(function* selectPreview(assetId: number) {
 /** @internal */
 const progress = Effect.gen(function* countProgress() {
   const sql = yield* SqlClient.SqlClient;
-  const [packages = { done: 0, total: 0 }] = yield* decodeRows(CountRow)(
-    sql`select count(*) as done, count(*) as total from packages`,
+  const [packages = NOTHING] = yield* decodeRows(TotalRow)(
+    sql`select count(*) as total from packages`,
   );
-  const [images = { done: 0, total: 0 }] = yield* decodeRows(CountRow)(
-    sql`select coalesce(sum(embedded <> 0), 0) as done, count(*) as total from images`,
+  const [images = NOTHING] = yield* decodeRows(CountRow)(
+    sql`select coalesce(sum(embedded <> ${EMBEDDING.pending}), 0) as done, count(*) as total from images`,
   );
-  return { packages, images };
+  return { packages: packages.total, images };
 });
 
 export { addSource, listSources, preview, progress, removeSource };

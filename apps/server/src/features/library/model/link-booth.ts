@@ -6,8 +6,8 @@ import { kindOf, searchableText } from "#entities/package";
 import { decodeRows } from "#shared/sql";
 
 import { embedTexts } from "./embed-texts.ts";
-import { encodeJson } from "./json.ts";
 import { labelOf } from "./name.ts";
+import { encodeBooth } from "./package-row.ts";
 
 const AssetPathRow = Schema.Struct({
   id: Schema.Int,
@@ -37,7 +37,7 @@ const linkBooth = Effect.fn("linkBooth")(function* linkBoothItem({
   readonly item: typeof BoothItem.Type;
 }) {
   const sql = yield* SqlClient.SqlClient;
-  const stored = yield* encodeJson(item);
+  const stored = yield* encodeBooth(item);
   const rows = yield* decodeRows(AssetPathRow)(
     sql`select a.id, a.pathname, p.name from assets a join packages p on p.id = a.package_id
       where a.package_id = ${packageId}`,
