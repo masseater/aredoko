@@ -12,8 +12,8 @@ const NO_IMAGES = 0;
 
 type Image = typeof ImageRow.Type;
 
-interface AnalyzedAsset {
-  readonly assetId: number;
+interface AnalyzedBatch {
+  readonly assetIds: readonly number[];
   readonly pathname: string;
 }
 
@@ -55,7 +55,7 @@ const embedOneByOne = Effect.fn("embedOneByOne")(function* embedOneByOne(images:
 });
 
 const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
-  onAsset: (asset: AnalyzedAsset) => Effect.Effect<void>,
+  onBatch: (batch: AnalyzedBatch) => Effect.Effect<void>,
 ) {
   const sql = yield* SqlClient.SqlClient;
   const pending = yield* decodeRows(ImageRow)(
@@ -68,7 +68,15 @@ const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
     Array.head(pending),
     Option.match({
       onNone: () => Effect.void,
-      onSome: ({ asset_id: assetId, pathname }) => onAsset({ assetId, pathname }),
+      onSome: ({ pathname }) =>
+        onBatch({
+          assetIds: pipe(
+            pending,
+            Array.map(({ asset_id: assetId }) => assetId),
+            Array.dedupe,
+          ),
+          pathname,
+        }),
     }),
   );
   yield* embedBatch(pending).pipe(Effect.catchCause(() => embedOneByOne(pending)));
@@ -77,10 +85,10 @@ const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
 
 /** @internal */
 const embedImages = Effect.fn("embedImages")(function* embedAllImages(
-  onAsset: (asset: AnalyzedAsset) => Effect.Effect<void>,
+  onBatch: (batch: AnalyzedBatch) => Effect.Effect<void>,
 ) {
-  yield* embedPending(onAsset).pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
+  yield* embedPending(onBatch).pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
 });
 
 export { embedImages };
-export type { AnalyzedAsset };
+export type { AnalyzedBatch };

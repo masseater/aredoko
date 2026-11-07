@@ -31,7 +31,7 @@ const getStatus = Effect.fn("GetStatus")(function* status() {
     device: embedder.device,
     indexing,
     current: Option.getOrNull(current),
-    analyzingAssetId: Option.getOrNull(analyzing),
+    analyzingAssetIds: analyzing,
     packages,
     images,
   };

@@ -13,7 +13,7 @@ interface Analysis {
 
 const useAnalysis = ({ assetId, analyzing }: typeof SearchResult.Type): Analysis => {
   const status = useStatus();
-  const now = status.isSuccess && status.data.analyzingAssetId === assetId;
+  const now = status.isSuccess && status.data.analyzingAssetIds.includes(assetId);
   return { waiting: analyzing && !now, now };
 };
 
