@@ -55,3 +55,17 @@
     }
   }
 }
+
+@theme {
+  --animate-scan: scan 1.4s ease-in-out infinite;
+
+  @keyframes scan {
+    from {
+      transform: translateY(-100%);
+    }
+
+    to {
+      transform: translateY(300%);
+    }
+  }
+}

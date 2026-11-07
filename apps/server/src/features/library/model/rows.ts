@@ -11,7 +11,7 @@ const PackageFileRow = Schema.Struct({
 
 const AssetTextRow = Schema.Struct({ id: Schema.Int, text: Schema.String });
 
-const ImageRow = Schema.Struct({ id: Schema.Int, png: Schema.Uint8Array });
+const ImageRow = Schema.Struct({ id: Schema.Int, png: Schema.Uint8Array, pathname: Schema.String });
 
 const SourcePathRow = Schema.Struct({ id: Schema.Int, path: Schema.String });
 

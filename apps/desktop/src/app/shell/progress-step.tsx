@@ -17,7 +17,7 @@ const ProgressStep = ({
   label,
   counter,
 }: Readonly<{ label: string; counter: Counter }>): ReactNode => (
-  <div className="flex w-32 flex-col gap-1">
+  <div className="flex w-40 flex-col gap-1">
     <p className="text-muted-foreground">{textOf(label, counter)}</p>
     <Progress label={label} value={counter.done} max={counter.total} />
   </div>

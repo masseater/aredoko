@@ -1,4 +1,4 @@
-import { Array, Effect, pipe } from "effect";
+import { Array, Effect, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { vectorBytes } from "#shared/database";
@@ -49,16 +49,27 @@ const embedOneByOne = Effect.fn("embedOneByOne")(function* embedOneByOne(images:
   );
 });
 
-const embedPending = Effect.fn("embedPending")(function* embedPendingImages() {
+const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
+  onAsset: (pathname: string) => Effect.Effect<void>,
+) {
   const sql = yield* SqlClient.SqlClient;
   const pending = yield* decodeRows(ImageRow)(
-    sql`select id, png from images where embedded = 0 limit ${IMAGE_BATCH}`,
+    sql`select i.id, i.png, a.pathname from images i join assets a on a.id = i.asset_id
+      where i.embedded = 0 limit ${IMAGE_BATCH}`,
+  );
+  yield* pipe(
+    Array.head(pending),
+    Option.match({ onNone: () => Effect.void, onSome: ({ pathname }) => onAsset(pathname) }),
   );
   yield* embedBatch(pending).pipe(Effect.catchCause(() => embedOneByOne(pending)));
   return pending.length;
 });
 
 /** @internal */
-const embedImages = embedPending().pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
+const embedImages = Effect.fn("embedImages")(function* embedAllImages(
+  onAsset: (pathname: string) => Effect.Effect<void>,
+) {
+  yield* embedPending(onAsset).pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
+});
 
 export { embedImages };

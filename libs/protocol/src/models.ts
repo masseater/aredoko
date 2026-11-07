@@ -70,6 +70,7 @@ const SearchResult = Schema.Struct({
   packageKind: PackageKind,
   score: Schema.Finite,
   hasPreview: Schema.Boolean,
+  analyzing: Schema.Boolean,
   file: Schema.NullOr(Schema.String),
 }).annotate({ identifier: "SearchResult" });
 
