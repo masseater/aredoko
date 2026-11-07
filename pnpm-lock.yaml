@@ -198,8 +198,8 @@ catalogs:
       specifier: 0.2.5
       version: 0.2.5
     '@tanstack/eslint-plugin-query':
-      specifier: 5.105.3
-      version: 5.105.3
+      specifier: 5.106.0
+      version: 5.106.0
     '@tanstack/eslint-plugin-router':
       specifier: 1.162.0
       version: 1.162.0
@@ -283,8 +283,8 @@ catalogs:
       specifier: 4.3.2
       version: 4.3.2
     '@tanstack/react-query':
-      specifier: 5.105.3
-      version: 5.105.3
+      specifier: 5.106.0
+      version: 5.106.0
     alchemy:
       specifier: 2.0.0-beta.85
       version: 2.0.0-beta.85
@@ -295,8 +295,8 @@ catalogs:
       specifier: 1.8.1
       version: 1.8.1
     renovate:
-      specifier: 44.213.0
-      version: 44.213.0
+      specifier: 44.216.0
+      version: 44.216.0
     steiger:
       specifier: 0.9.0
       version: 0.9.0
@@ -363,7 +363,7 @@ importers:
         version: 0.2.5(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
       '@tanstack/eslint-plugin-query':
         specifier: 'catalog:'
-        version: 5.105.3(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
+        version: 5.106.0(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       '@tanstack/eslint-plugin-router':
         specifier: 'catalog:'
         version: 1.162.0(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
@@ -402,7 +402,7 @@ importers:
         version: 1.91.0
       renovate:
         specifier: catalog:stack
-        version: 44.213.0(supports-color@7.2.0)(typanion@3.14.0)
+        version: 44.216.0(supports-color@7.2.0)(typanion@3.14.0)
       skills:
         specifier: 'catalog:'
         version: 1.7.6
@@ -463,7 +463,7 @@ importers:
         version: 4.1.2(effect@4.1.2)(react@19.3.1)(scheduler@0.28.0)
       '@tanstack/react-query':
         specifier: catalog:stack
-        version: 5.105.3(@types/react@19.3.0)(react@19.3.1)
+        version: 5.106.0(@types/react@19.3.0)(react@19.3.1)
       '@tauri-apps/api':
         specifier: 2.12.4
         version: 2.12.4
@@ -1173,8 +1173,8 @@ packages:
     resolution: {integrity: sha512-sGEA473TlCvhCGNoTBY9OXZVWdscIXdGt0dm8EpB+2MRfmt8LNh/X56P/T3nCtEB+eH5qGEa3odphSAoUxSfSQ==}
     engines: {node: '>=22.12.0'}
 
-  '@containerbase/base@14.63.1':
-    resolution: {integrity: sha512-/Gvs9rS2cH+upyMeaWY9he/9/KwJwe6+Kp5mPWr5FDGWRJOGNH/IaT4msHaOlkX3ymWFgCZLxYlVE06DMUzFBg==}
+  '@containerbase/base@14.64.0':
+    resolution: {integrity: sha512-NwbnZQktQDhJulr4Z23rLsHrbcFAMP7OqcsmwE0QQaTI4iNUPgcnMyyWRhyl6vgmvflf3oiJXMtLePDCGS+gmQ==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -1182,8 +1182,8 @@ packages:
       zod:
         optional: true
 
-  '@containerbase/base@14.64.0':
-    resolution: {integrity: sha512-NwbnZQktQDhJulr4Z23rLsHrbcFAMP7OqcsmwE0QQaTI4iNUPgcnMyyWRhyl6vgmvflf3oiJXMtLePDCGS+gmQ==}
+  '@containerbase/base@14.66.0':
+    resolution: {integrity: sha512-UNlbRdFXKiGXhkh13p5hYT7N4BxS+5AdGxQzr1AokUOGLdEsPWW64y3SBxaGywHlYRy/MIXFsTbv0cye7fmGlQ==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -3503,8 +3503,8 @@ packages:
     peerDependencies:
       '@redis/client': ^6.2.1
 
-  '@renovatebot/base-image@13.157.1':
-    resolution: {integrity: sha512-r0+kRMIAP8sOpupBoY1vXXNiIZY7Z16xpy+iqi/9xp8Ao1U9TYw6LuFSTJ4+XDgQPePrQplQ5IUfEtLW7pNYew==}
+  '@renovatebot/base-image@13.160.0':
+    resolution: {integrity: sha512-ultJEjOZEfbhPFg+mwM5kvddHZKSIkpDzTpZhYOaQ+o7mliMUcxMJ/UdcpK+Tgb57ESo7ugpf9XrLjU7QzEoAg==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -3848,8 +3848,8 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7 || ^8
 
-  '@tanstack/eslint-plugin-query@5.105.3':
-    resolution: {integrity: sha512-Q6WxKsiiS8RvtZYyUfWhdijXbomPxerWpNZNsWx439/Y3JkcXRBtRNIoeVC5i4jmD5SgNdvIL7emHLUkqN4YqA==}
+  '@tanstack/eslint-plugin-query@5.106.0':
+    resolution: {integrity: sha512-HW8NF0wuV15qJlnrjxxG6+7XfnZS4eTLLg/dPdpR9IGmRUUCHd+TRenhunDIbkKCCTjyz4b/O3YVip2Lm4FIhQ==}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: ^5.6.0 || ^6.0.0 || ^7.0.0
@@ -3867,11 +3867,11 @@ packages:
     engines: {node: '>=20.12.0'}
     hasBin: true
 
-  '@tanstack/query-core@5.105.3':
-    resolution: {integrity: sha512-v1rbNy7MB/4Akth7CQH+CerV13K7Ok9hAusEsfz4sCjDdu3/kOSJPoWfoB+YjdEX1eBFBWKNAGE5nqZCgdlHDw==}
+  '@tanstack/query-core@5.106.0':
+    resolution: {integrity: sha512-3GuqVrhCG0bBfmLt4AU0SIm8UuZ1rzeRjDiQBnYuzW3lkri1RdawWN73jZYvB4kC8WyDUoDgBx3kyO3TbNH/6Q==}
 
-  '@tanstack/react-query@5.105.3':
-    resolution: {integrity: sha512-dj5hGWZmwoc9NG4enoXuYbiYwb5FxgJYPVv06eUgicMTfEMTRXn08Xv9D/r1V8TfjAv+BpxdvZFzJ1h3hSWZcQ==}
+  '@tanstack/react-query@5.106.0':
+    resolution: {integrity: sha512-OuP/ST9dEMBwHhisE5A/bBSWMhMmB/xKPfeZ2U0Wy8W/txb9QiGd7iXhxJPQ7jGbfcKlV13sJUHip9Nki54yyg==}
     peerDependencies:
       '@types/react': ^18 || ^19
       react: ^18 || ^19
@@ -7767,8 +7767,8 @@ packages:
   remark@15.0.1:
     resolution: {integrity: sha512-Eht5w30ruCXgFmxVUSlNWQ9iiimq07URKeFS3hNc8cUWy1llX4KDWfyEDZRycMc+znsN9Ux5/tJ/BFdgdOwA3A==}
 
-  renovate@44.213.0:
-    resolution: {integrity: sha512-MoNrDmDnQ3L5l6ozVqH0l43ucUkRfRYON/6gPRYKvccm3WT8qLyxt81UTxM4Or2h8+MLmQzKHE03/5nfW7r3yg==}
+  renovate@44.216.0:
+    resolution: {integrity: sha512-Ehpu0eUpcFLIJPU0f9IRBElPyLVWBCBoTKCsKxth7wykE+Qt6XVDJ0pLpsBjNnsvDNg1M/2HyfJPVSBHcx0azA==}
     engines: {node: ^24.11.0, pnpm: ^11.0.0}
     hasBin: true
 
@@ -9592,13 +9592,13 @@ snapshots:
       conventional-commits-parser: 7.1.2
       picocolors: 1.1.1
 
-  '@containerbase/base@14.63.1(zod@4.6.7)':
+  '@containerbase/base@14.64.0(zod@4.6.7)':
     dependencies:
       semver: 7.8.5
     optionalDependencies:
       zod: 4.6.7
 
-  '@containerbase/base@14.64.0(zod@4.6.7)':
+  '@containerbase/base@14.66.0(zod@4.6.7)':
     dependencies:
       semver: 7.8.5
     optionalDependencies:
@@ -11609,9 +11609,9 @@ snapshots:
     dependencies:
       '@redis/client': 6.2.1(@opentelemetry/api@1.10.0)
 
-  '@renovatebot/base-image@13.157.1(zod@4.6.7)':
+  '@renovatebot/base-image@13.160.0(zod@4.6.7)':
     dependencies:
-      '@containerbase/base': 14.63.1(zod@4.6.7)
+      '@containerbase/base': 14.66.0(zod@4.6.7)
     optionalDependencies:
       zod: 4.6.7
 
@@ -11887,7 +11887,7 @@ snapshots:
       tailwindcss: 4.3.4
       vite: '@voidzero-dev/vite-plus-core@1.5.0(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.51.2)(typescript@6.0.3)(yaml@2.9.1)'
 
-  '@tanstack/eslint-plugin-query@5.105.3(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
+  '@tanstack/eslint-plugin-query@5.106.0(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)':
     dependencies:
       '@typescript-eslint/utils': 8.72.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
       eslint: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
@@ -11906,11 +11906,11 @@ snapshots:
 
   '@tanstack/intent@0.5.6': {}
 
-  '@tanstack/query-core@5.105.3': {}
+  '@tanstack/query-core@5.106.0': {}
 
-  '@tanstack/react-query@5.105.3(@types/react@19.3.0)(react@19.3.1)':
+  '@tanstack/react-query@5.106.0(@types/react@19.3.0)(react@19.3.1)':
     dependencies:
-      '@tanstack/query-core': 5.105.3
+      '@tanstack/query-core': 5.106.0
       react: 19.3.1
     optionalDependencies:
       '@types/react': 19.3.0
@@ -16312,7 +16312,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  renovate@44.213.0(supports-color@7.2.0)(typanion@3.14.0):
+  renovate@44.216.0(supports-color@7.2.0)(typanion@3.14.0):
     dependencies:
       '@aws-sdk/client-codecommit': 3.1139.0
       '@aws-sdk/client-ec2': 3.1139.0
@@ -16345,7 +16345,7 @@ snapshots:
       '@pnpm/parse-overrides': 1001.0.4
       '@qnighy/marshal': 0.1.3
       '@redis/client': 6.3.0(@opentelemetry/api@1.10.0)
-      '@renovatebot/base-image': 13.157.1(zod@4.6.7)
+      '@renovatebot/base-image': 13.160.0(zod@4.6.7)
       '@renovatebot/detect-tools': 5.0.0
       '@renovatebot/good-enough-parser': 4.0.3
       '@renovatebot/osv-offline': 4.5.10(supports-color@7.2.0)(zod@4.6.7)
