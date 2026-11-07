@@ -26,12 +26,12 @@ describe("searchViewOf", () => {
   it("shows the failure message", () => {
     const view = searchViewOf({
       phase: "settled",
-      failure: Option.some("サーバーに接続できません"),
+      failure: Option.some("接続できません"),
       results: Option.none(),
     });
     expect(view).toStrictEqual({
       status: "message",
-      text: "サーバーに接続できません",
+      text: "接続できません",
       tone: "error",
     });
   });

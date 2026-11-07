@@ -12,12 +12,12 @@ namespace Aredoko.Window
         static readonly Dictionary<AssetKind, string> KindNames = new Dictionary<AssetKind, string>
         {
             [AssetKind.Texture] = "テクスチャ",
-            [AssetKind.Model] = "3Dモデル",
+            [AssetKind.Model] = "3D モデル",
             [AssetKind.Material] = "マテリアル",
             [AssetKind.Prefab] = "プレハブ",
             [AssetKind.Shader] = "シェーダー",
             [AssetKind.Animation] = "アニメーション",
-            [AssetKind.Audio] = "音声",
+            [AssetKind.Audio] = "オーディオ",
             [AssetKind.Scene] = "シーン",
             [AssetKind.Script] = "スクリプト",
             [AssetKind.Other] = "その他",

@@ -224,10 +224,10 @@ namespace Aredoko.Client
             var failure = error.SelectToken("data[0].error");
             if (failure != null && failure.Value<string>("_tag") == "RequestFailed")
             {
-                return failure.Value<string>("message") ?? "処理に失敗しました。";
+                return failure.Value<string>("message") ?? "処理に失敗しました";
             }
 
-            return error.Value<string>("message") ?? "処理に失敗しました。";
+            return error.Value<string>("message") ?? "処理に失敗しました";
         }
     }
 }

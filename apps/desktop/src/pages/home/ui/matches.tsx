@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { ResultGrid } from "./result-grid.tsx";
 import { StillImporting } from "./still-importing.tsx";
 
-const EMPTY = "見つかりませんでした。";
+const EMPTY = "見つかりませんでした";
 
 type Results = readonly (typeof SearchResult.Type)[];
 

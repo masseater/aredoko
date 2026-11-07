@@ -27,7 +27,7 @@ import { ServerError } from "./server-error.ts";
 
 const STATUS_TIMEOUT = Duration.fromInputUnsafe("3 seconds");
 const REQUEST_TIMEOUT = Duration.fromInputUnsafe("15 seconds");
-const UNREACHABLE = "サーバーに接続できません";
+const UNREACHABLE = "接続できません";
 
 const unreachable = (): ServerError => ServerError.make({ message: UNREACHABLE });
 
