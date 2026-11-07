@@ -1,10 +1,9 @@
-import { Array, Effect, Option, pipe } from "effect";
+import { Effect, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
 import { kindOf, searchableText } from "#entities/package";
-import { decodeRows } from "#shared/sql";
-
-import { IdRow } from "./rows.ts";
+import { RENDER } from "#shared/database";
+import { firstId } from "#shared/sql";
 
 interface AssetInput {
   readonly guid: string;
@@ -21,13 +20,23 @@ interface OneAsset {
   readonly asset: AssetInput;
 }
 
-const RENDER_NONE = 0;
-const RENDER_PENDING = 1;
+const plainAsset = ({
+  guid,
+  pathname,
+  previews,
+}: Readonly<{ guid: string; pathname: string; previews: readonly Uint8Array[] }>): AssetInput => ({
+  guid,
+  pathname,
+  previews,
+  references: [],
+  file: Option.none(),
+  render: false,
+});
 
 const renderState = (render: boolean): number =>
   pipe(
-    Option.liftPredicate(RENDER_PENDING, () => render),
-    Option.getOrElse(() => RENDER_NONE),
+    Option.liftPredicate(RENDER.pending, () => render),
+    Option.getOrElse(() => RENDER.none),
   );
 
 const insertAsset = Effect.fn("insertAsset")(function* insertOneAsset({
@@ -39,12 +48,11 @@ const insertAsset = Effect.fn("insertAsset")(function* insertOneAsset({
   const kind = kindOf(pathname);
   const text = searchableText({ pathname, kind, packageName });
   yield* sql`delete from assets where package_id = ${packageId} and guid = ${guid}`;
-  const rows = yield* decodeRows(IdRow)(
+  const id = yield* firstId(
     sql`insert into assets(package_id, guid, pathname, kind, text, file, render)
       values (${packageId}, ${guid}, ${pathname}, ${kind}, ${text}, ${Option.getOrNull(file)},
         ${renderState(render)}) returning id`,
   );
-  const { id } = yield* Effect.fromOption(Array.head(rows));
   yield* pipe(
     previews,
     Effect.forEach((png) => sql`insert into images(asset_id, png) values (${id}, ${png})`),
@@ -74,5 +82,5 @@ const insertAssets = Effect.fn("insertAssets")(function* insertAllAssets({
   );
 });
 
-export { insertAssets };
+export { insertAssets, plainAsset };
 export type { AssetInput };

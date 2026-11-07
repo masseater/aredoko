@@ -3,8 +3,7 @@ import type { SearchResult } from "protocol";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { KIND_LABELS } from "#/pages/home/config";
-import { useSelectResult, useSelectedResult } from "#/pages/home/model";
+import { originOf, useSelectResult, useSelectedResult } from "#/pages/home/model";
 import { fileNameOf } from "#/shared/lib";
 
 import { TileThumbnail } from "./tile-thumbnail.tsx";
@@ -27,7 +26,7 @@ const ResultTile = ({ result }: Readonly<{ result: typeof SearchResult.Type }>):
       >
         <TileThumbnail result={result} active={active} />
         <span className="truncate text-xs font-medium">{fileNameOf(result.pathname)}</span>
-        <span className="text-muted-foreground truncate text-xs">{`${KIND_LABELS[result.kind]}・${result.packageName}`}</span>
+        <span className="text-muted-foreground truncate text-xs">{originOf(result)}</span>
       </button>
     </li>
   );

@@ -2,7 +2,9 @@ import { FilePlus } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "ui/button";
 
-import { usePickAndImport } from "#/features/library/api/pick-and-import";
+import { usePickThen } from "#/features/library/api/pick-then";
+import { pickFiles } from "#/features/library/api/pickers";
+import { useImportFiles } from "#/features/library/api/queries";
 
 const LABEL = "ファイルを取り込む";
 
@@ -10,7 +12,8 @@ const PickFilesButton = ({
   size = "default",
   variant = "default",
 }: Readonly<{ size?: "default" | "lg"; variant?: "default" | "outline" }>): ReactNode => {
-  const { onClick, busy } = usePickAndImport();
+  const { mutate, isPending } = useImportFiles();
+  const { onClick, busy } = usePickThen({ pick: pickFiles, onPicked: mutate, pending: isPending });
   return (
     <Button size={size} variant={variant} onClick={onClick} disabled={busy}>
       <FilePlus />

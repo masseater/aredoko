@@ -1,17 +1,15 @@
-import { Array, Effect, FileSystem, HashSet, Path, String, pipe } from "effect";
+import { Array, Effect, FileSystem, HashSet, Path, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
+import { isPackage } from "#entities/package";
 import { decodeRows } from "#shared/sql";
 
 import { statOf } from "./file-stat.ts";
-import { indexBundle } from "./index-bundle.ts";
-import { indexPackage } from "./index-package.ts";
+import { indexBundle, indexPackage } from "./index-package.ts";
 import { bundlesIn } from "./loose-files.ts";
 import type { Bundle } from "./loose-files.ts";
 import type { PackageFile } from "./package-row.ts";
 import { PackageFileRow, SourcePathRow } from "./rows.ts";
-
-const PACKAGE_EXTENSION = ".unitypackage";
 
 type Source = typeof SourcePathRow.Type;
 
@@ -21,14 +19,18 @@ type Scanned =
   | { readonly kind: "unitypackage"; readonly file: PackageFile }
   | { readonly kind: "files"; readonly file: Bundle };
 
-const keyOf = ({ file: { path, size, modifiedAt } }: Scanned): string =>
-  `${path}\n${size.toString()}\n${modifiedAt.toString()}`;
+interface ScannedFile {
+  readonly path: string;
+  readonly done: number;
+  readonly total: number;
+}
 
-const knownKey = ({ path, size, modified_at: modifiedAt }: KnownPackage): string =>
+const fileKey = ({
+  path,
+  size,
+  modifiedAt,
+}: Readonly<{ path: string; size: number; modifiedAt: number }>): string =>
   `${path}\n${size.toString()}\n${modifiedAt.toString()}`;
-
-const isPackage = (name: string): boolean =>
-  pipe(name, String.toLowerCase, String.endsWith(PACKAGE_EXTENSION));
 
 const fileOf = Effect.fn("fileOf")(function* statFile({ id, path: root }: Source, name: string) {
   const path = yield* Path.Path;
@@ -105,7 +107,7 @@ const indexScanned = Effect.fn("indexScanned")(function* indexScannedFile(scanne
 
 /** @internal */
 const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
-  onPackage: (path: string) => Effect.Effect<void>,
+  onFile: (file: ScannedFile) => Effect.Effect<void>,
 ) {
   const sql = yield* SqlClient.SqlClient;
   const files = yield* currentFiles();
@@ -113,15 +115,20 @@ const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
     sql`select id, path, size, modified_at from packages where kind in ('unitypackage', 'files')`,
   );
   yield* removeStale(known, files);
-  const unchanged = HashSet.fromIterable(pipe(known, Array.map(knownKey)));
+  const unchanged = HashSet.fromIterable(
+    pipe(
+      known,
+      Array.map(({ path, size, modified_at: modifiedAt }) => fileKey({ path, size, modifiedAt })),
+    ),
+  );
   const changed = pipe(
     files,
-    Array.filter((file) => !HashSet.has(unchanged, keyOf(file))),
+    Array.filter(({ file }) => !HashSet.has(unchanged, fileKey(file))),
   );
   yield* pipe(
     changed,
-    Effect.forEach((scanned) =>
-      onPackage(scanned.file.path).pipe(
+    Effect.forEach((scanned, done) =>
+      onFile({ path: scanned.file.path, done, total: changed.length }).pipe(
         Effect.andThen(indexScanned(scanned)),
         Effect.catchCause((cause) => Effect.logWarning("index failed", scanned.file.path, cause)),
       ),
@@ -129,4 +136,5 @@ const scanFolders = Effect.fn("scanFolders")(function* scanSourceFolders(
   );
 });
 
-export { folderSources, isPackage, scanFolders };
+export { folderSources, scanFolders };
+export type { ScannedFile };

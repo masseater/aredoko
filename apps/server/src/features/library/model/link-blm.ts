@@ -3,7 +3,7 @@ import { Array, Effect, HashMap, HashSet, Option, Path, Ref, Schema, String, pip
 import { SqlClient } from "effect/sql";
 import type { BoothItem } from "protocol";
 
-import { fetchItem } from "#entities/booth";
+import { fetchItem, itemUrl } from "#entities/booth";
 import { decodeRows } from "#shared/sql";
 
 import { Blm } from "./blm.ts";
@@ -21,8 +21,6 @@ interface Pending {
   readonly packageId: number;
   readonly item: BlmItem;
 }
-
-const urlOf = (boothId: number): string => `https://booth.pm/ja/items/${boothId.toString()}`;
 
 const isFolderName =
   (path: Path.Path) =>
@@ -44,7 +42,7 @@ const fromBlm = ({ boothId, name, shop }: BlmItem): Option.Option<typeof BoothIt
     name,
     Option.map((itemName) => ({
       id: boothId,
-      url: urlOf(boothId),
+      url: itemUrl(boothId),
       name: itemName,
       shop: Option.getOrElse(shop, () => NO_PRICE),
       price: NO_PRICE,
@@ -62,7 +60,7 @@ const offline =
     );
 
 const linkOne = Effect.fn("linkOne")(function* linkFromBlmItem({ packageId, item }: Pending) {
-  const boothItem = yield* fetchItem(urlOf(item.boothId)).pipe(Effect.catchCause(offline(item)));
+  const boothItem = yield* fetchItem(itemUrl(item.boothId)).pipe(Effect.catchCause(offline(item)));
   yield* linkBooth({ packageId, item: boothItem });
 });
 
