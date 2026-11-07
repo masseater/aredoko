@@ -5,7 +5,7 @@ import { useStatus } from "#/shared/api";
 import { IndexingProgress } from "./indexing-progress.tsx";
 import { Unreachable } from "./unreachable.tsx";
 
-const STARTING = "サーバーを起動しています…";
+const STARTING = "起動しています…";
 
 const ServerStatus = (): ReactNode => {
   const status = useStatus();

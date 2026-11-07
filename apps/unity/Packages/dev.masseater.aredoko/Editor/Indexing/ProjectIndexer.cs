@@ -33,7 +33,7 @@ namespace Aredoko.Indexing
                 .ToArray();
             for (var start = 0; start < paths.Length; start += BatchSize)
             {
-                report($"プロジェクトを索引に追加しています… {start}/{paths.Length}");
+                report($"プロジェクトを追加しています… {start} / {paths.Length}");
                 var batch = paths.Skip(start).Take(BatchSize).ToArray();
                 var assets = await Describe(batch);
                 await AredokoClient.Shared.Call(AredokoRpcs.PutProjectAssets, new PutProjectAssetsPayload { ProjectPath = projectPath, Assets = assets, Complete = false });

@@ -9,7 +9,7 @@ type SearchView =
   | Readonly<{ status: "results"; matches: Results; others: Results }>;
 
 const SEARCHING = "探しています…";
-const EMPTY = "見つかりませんでした。";
+const EMPTY = "見つかりませんでした";
 const MATCH_FLOOR = 0.72;
 
 const viewOfResults = (results: Results): SearchView => {

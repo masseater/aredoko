@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { useStatus } from "#/shared/api";
 
-const IMPORTING = "まだ取り込み中";
+const IMPORTING = "まだ解析中";
 
 const StillImporting = (): ReactNode => {
   const status = useStatus();

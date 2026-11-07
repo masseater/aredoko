@@ -122,7 +122,7 @@ namespace Aredoko.Window
             GUILayout.Space(6);
             using (new EditorGUI.DisabledScope(busy))
             {
-                if (GUILayout.Button("このプロジェクトを索引に追加", EditorStyles.toolbarButton))
+                if (GUILayout.Button("このプロジェクトを追加", EditorStyles.toolbarButton))
                 {
                     IndexProject();
                 }
@@ -135,8 +135,11 @@ namespace Aredoko.Window
             {
                 using (new EditorGUILayout.HorizontalScope(EditorStyles.helpBox))
                 {
-                    EditorGUILayout.LabelField("管理アプリが起動していません", EditorStyles.wordWrappedLabel);
-                    if (File.Exists(DesktopApp) && GUILayout.Button("管理アプリを起動", GUILayout.Width(120)))
+                    if (!File.Exists(DesktopApp))
+                    {
+                        EditorGUILayout.LabelField("管理アプリが起動していません", EditorStyles.wordWrappedLabel);
+                    }
+                    else if (GUILayout.Button("管理アプリを起動"))
                     {
                         Process.Start(DesktopApp);
                     }
@@ -148,15 +151,17 @@ namespace Aredoko.Window
             string line;
             if (status == null)
             {
-                line = "サーバーに接続しています…";
+                line = "接続しています…";
             }
             else if (status.Indexing)
             {
-                line = $"索引を作成中　{status.Current ?? ""}　パッケージ {status.Packages.Done}/{status.Packages.Total}・画像 {status.Images.Done}/{status.Images.Total}";
+                line = status.Packages.Done < status.Packages.Total
+                    ? $"取り込み中 {status.Packages.Done} / {status.Packages.Total}"
+                    : $"この PC で解析中 {status.Images.Done} / {status.Images.Total}";
             }
             else
             {
-                line = $"パッケージ {status.Packages.Total}・画像 {status.Images.Total}";
+                line = $"パッケージ {status.Packages.Total}";
             }
 
             if (notice != null)
@@ -507,7 +512,7 @@ namespace Aredoko.Window
             try
             {
                 var count = await ProjectIndexer.Run(progress => notice = progress);
-                notice = $"{count} 個のアセットを索引に追加しました";
+                notice = $"{count} 個のアセットを追加しました";
             }
             catch (AredokoException exception)
             {
