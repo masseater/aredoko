@@ -1,6 +1,7 @@
 import { Context, Effect, HashMap, HashSet, Layer, Option, Queue, Ref, pipe } from "effect";
 
 import { embedImages } from "./embed-images.ts";
+import type { AnalyzedAsset } from "./embed-images.ts";
 import { blmLinker } from "./link-blm.ts";
 import { scanFolders } from "./scan-folders.ts";
 import { watchSources } from "./watch-folders.ts";
@@ -10,6 +11,7 @@ const PENDING_REQUESTS = 1;
 interface Activity {
   readonly indexing: boolean;
   readonly current: Option.Option<string>;
+  readonly analyzing: Option.Option<number>;
 }
 
 interface ProjectGuids {
@@ -19,11 +21,21 @@ interface ProjectGuids {
 
 type Seen = HashMap.HashMap<string, HashSet.HashSet<string>>;
 
-const IDLE: Activity = { indexing: false, current: Option.none() };
+const IDLE: Activity = { indexing: false, current: Option.none(), analyzing: Option.none() };
 
-const EMBEDDING: Activity = { indexing: true, current: Option.none() };
+const EMBEDDING: Activity = { indexing: true, current: Option.none(), analyzing: Option.none() };
 
-const working = (current: string): Activity => ({ indexing: true, current: Option.some(current) });
+const working = (current: string): Activity => ({
+  indexing: true,
+  current: Option.some(current),
+  analyzing: Option.none(),
+});
+
+const analyzing = ({ assetId, pathname }: AnalyzedAsset): Activity => ({
+  indexing: true,
+  current: Option.some(pathname),
+  analyzing: Option.some(assetId),
+});
 
 class Library extends Context.Service<
   Library,
@@ -61,7 +73,7 @@ const libraryLayer = Layer.effect(
       yield* scanFolders((current) => Ref.set(activity, working(current)));
       yield* linkBlm;
       yield* Ref.set(activity, EMBEDDING);
-      yield* embedImages((current) => Ref.set(activity, working(current)));
+      yield* embedImages((asset) => Ref.set(activity, analyzing(asset)));
     }).pipe(
       Effect.catchCause((cause) => Effect.logError("scan failed", cause)),
       Effect.ensuring(Ref.set(activity, IDLE)),

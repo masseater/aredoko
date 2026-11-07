@@ -3,8 +3,6 @@ import type { ReactNode } from "react";
 
 import { useStatus } from "#/shared/api";
 
-const IMPORTING = "まだ解析中";
-
 const StillImporting = (): ReactNode => {
   const status = useStatus();
   if (!status.isSuccess || !status.data.indexing) {
@@ -14,7 +12,7 @@ const StillImporting = (): ReactNode => {
   return (
     <p className="text-muted-foreground flex items-center gap-2 text-sm">
       <LoaderCircle className="animate-spin" />
-      {`${IMPORTING} ${done.toString()} / ${total.toString()}`}
+      {`${done.toString()} / ${total.toString()}`}
     </p>
   );
 };

@@ -1,6 +1,7 @@
 import { Array, Effect, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
+import { ASSET_ORDER } from "#shared/database";
 import { decodeRows } from "#shared/sql";
 
 import { rowsInOrder, unscored } from "./result-row.ts";
@@ -33,9 +34,7 @@ const browse = Effect.fn("browse")(function* browseAssets({
   const where = sql`where (${packageId} is null or a.package_id = ${packageId}) and ${ofKinds}`;
   const ids = yield* decodeRows(IdRow)(
     sql`select a.id from assets a ${where}
-      order by case a.kind when 'model' then 0 when 'prefab' then 1 when 'material' then 2
-          when 'audio' then 3 when 'texture' then 4 else 5 end,
-        a.package_id desc, a.pathname
+      order by ${sql.literal(ASSET_ORDER)}
       limit ${limit} offset ${offset}`,
   );
   const rows = yield* rowsInOrder(

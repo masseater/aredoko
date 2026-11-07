@@ -155,9 +155,8 @@ namespace Aredoko.Window
             }
             else if (status.Indexing)
             {
-                line = status.Packages.Done < status.Packages.Total
-                    ? $"取り込み中 {status.Packages.Done} / {status.Packages.Total}"
-                    : $"この PC で解析中 {status.Images.Done} / {status.Images.Total}";
+                var step = status.Packages.Done < status.Packages.Total ? status.Packages : status.Images;
+                line = $"{step.Done} / {step.Total}";
             }
             else
             {
@@ -169,7 +168,15 @@ namespace Aredoko.Window
                 EditorGUILayout.HelpBox(notice, MessageType.Info);
             }
 
-            EditorGUILayout.LabelField(line, EditorStyles.miniLabel);
+            var spinning = status != null && status.Indexing;
+            var content = spinning
+                ? new GUIContent(line, EditorGUIUtility.IconContent($"WaitSpin{(int)(EditorApplication.timeSinceStartup * 10) % 12:00}").image)
+                : new GUIContent(line);
+            EditorGUILayout.LabelField(content, EditorStyles.miniLabel);
+            if (spinning)
+            {
+                Repaint();
+            }
         }
 
         void DrawResults()
