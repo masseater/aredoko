@@ -14,6 +14,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
+      "fetch-model": "node src/app/fetch-model.ts",
       serve: {
         command: "node src/app/main.ts",
         cache: false,
