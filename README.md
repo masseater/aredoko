@@ -1,5 +1,7 @@
 # aredoko
 
+このリポジトリは [masseater/masseater.dev](https://github.com/masseater/masseater.dev) に移り、アーカイブされた。導入の手順は [`apps/aredoko-desktop/README.md`](https://github.com/masseater/masseater.dev/blob/main/apps/aredoko-desktop/README.md) にある。Unity の Package Manager に入れる git URL は `https://github.com/masseater/masseater.dev.git?path=apps/aredoko-unity/Packages/dev.masseater.aredoko` になった。
+
 「あれどこだっけ」を見た目の言葉で探せる Unity エディタ拡張。
 
 Unity の中で、プロジェクトや unitypackage に入っているモデル・テクスチャ・マテリアルを「白いフリルのスカート」「古びた木の机」のような日本語で検索できます。
