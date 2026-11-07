@@ -6,16 +6,22 @@ import { useStatus } from "#/shared/api";
 
 import { ResultPreview } from "./result-preview.tsx";
 
-const useAnalyzingNow = (assetId: number): boolean => {
+interface Analysis {
+  readonly waiting: boolean;
+  readonly now: boolean;
+}
+
+const useAnalysis = ({ assetId, analyzing }: typeof SearchResult.Type): Analysis => {
   const status = useStatus();
-  return status.isSuccess && status.data.analyzingAssetId === assetId;
+  const now = status.isSuccess && status.data.analyzingAssetId === assetId;
+  return { waiting: analyzing && !now, now };
 };
 
 const TileThumbnail = ({
   result,
   active,
 }: Readonly<{ result: typeof SearchResult.Type; active: boolean }>): ReactNode => {
-  const now = useAnalyzingNow(result.assetId);
+  const { waiting, now } = useAnalysis(result);
   return (
     <span
       className={cn(
@@ -26,7 +32,7 @@ const TileThumbnail = ({
       <span
         className={cn(
           "flex size-full items-center justify-center transition-all duration-700",
-          result.analyzing && !now && "opacity-40 grayscale",
+          waiting && "opacity-40 grayscale",
         )}
       >
         <ResultPreview result={result} />

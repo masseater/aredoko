@@ -15,8 +15,8 @@ const ServerStatus = (): ReactNode => {
   if (status.isError) {
     return <Unreachable />;
   }
-  const { indexing, current, packages, images } = status.data;
-  return indexing && <IndexingProgress current={current} packages={packages} images={images} />;
+  const { indexing, packages, images } = status.data;
+  return indexing && <IndexingProgress packages={packages} images={images} />;
 };
 
 export { ServerStatus };
