@@ -82,12 +82,15 @@ const run = <Value>(
     ),
   );
 
+const call = <Value>(
+  request: (
+    client: typeof AredokoClient.Service,
+  ) => Effect.Effect<Value, { readonly message: string }>,
+): Promise<Value> => run(AredokoClient.pipe(Effect.flatMap(request)));
+
 const getStatus = (): Promise<typeof Status.Type> =>
-  run(
-    Effect.gen(function* getStatusRequest() {
-      const { GetStatus: getStatusRpc } = yield* AredokoClient;
-      return yield* getStatusRpc();
-    }).pipe(
+  call(({ GetStatus: getStatusRpc }) =>
+    getStatusRpc().pipe(
       Effect.timeoutOrElse({
         duration: STATUS_TIMEOUT,
         orElse: () => Effect.fail({ message: UNREACHABLE }),
@@ -96,32 +99,15 @@ const getStatus = (): Promise<typeof Status.Type> =>
   );
 
 const listSources = (): Promise<readonly (typeof Source.Type)[]> =>
-  run(
-    Effect.gen(function* listSourcesRequest() {
-      const { ListSources: listSourcesRpc } = yield* AredokoClient;
-      const { sources } = yield* listSourcesRpc();
-      return sources;
-    }),
-  );
+  call(({ ListSources: listSourcesRpc }) => Effect.map(listSourcesRpc(), ({ sources }) => sources));
 
 const addSource = (source: {
   readonly path: string;
   readonly kind: typeof SourceKind.Type;
-}): Promise<typeof Source.Type> =>
-  run(
-    Effect.gen(function* addSourceRequest() {
-      const { AddSource: addSourceRpc } = yield* AredokoClient;
-      return yield* addSourceRpc(source);
-    }),
-  );
+}): Promise<typeof Source.Type> => call(({ AddSource: addSourceRpc }) => addSourceRpc(source));
 
 const removeSource = (id: number): Promise<void> =>
-  run(
-    Effect.gen(function* removeSourceRequest() {
-      const { RemoveSource: removeSourceRpc } = yield* AredokoClient;
-      yield* removeSourceRpc({ id });
-    }),
-  );
+  call(({ RemoveSource: removeSourceRpc }) => removeSourceRpc({ id }));
 
 interface LibraryInfo {
   readonly path: string;
@@ -130,42 +116,28 @@ interface LibraryInfo {
 }
 
 const getLibrary = (): Promise<LibraryInfo> =>
-  run(
-    Effect.gen(function* getLibraryRequest() {
-      const { GetLibrary: getLibraryRpc } = yield* AredokoClient;
-      const { path, assetStore, blm } = yield* getLibraryRpc();
-      return { path, assetStore: Option.fromNullOr(assetStore), blm: Option.fromNullOr(blm) };
-    }),
+  call(({ GetLibrary: getLibraryRpc }) =>
+    Effect.map(getLibraryRpc(), ({ path, assetStore, blm }) => ({
+      path,
+      assetStore: Option.fromNullOr(assetStore),
+      blm: Option.fromNullOr(blm),
+    })),
   );
 
 const importFiles = (paths: readonly string[]): Promise<number> =>
-  run(
-    Effect.gen(function* importFilesRequest() {
-      const { ImportFiles: importFilesRpc } = yield* AredokoClient;
-      const { packages } = yield* importFilesRpc({ paths });
-      return packages;
-    }),
+  call(({ ImportFiles: importFilesRpc }) =>
+    Effect.map(importFilesRpc({ paths }), ({ packages }) => packages),
   );
 
 const listPackages = (): Promise<readonly (typeof Package.Type)[]> =>
-  run(
-    Effect.gen(function* listPackagesRequest() {
-      const { ListPackages: listPackagesRpc } = yield* AredokoClient;
-      const { packages } = yield* listPackagesRpc();
-      return packages;
-    }),
+  call(({ ListPackages: listPackagesRpc }) =>
+    Effect.map(listPackagesRpc(), ({ packages }) => packages),
   );
 
 const linkBooth = (link: {
   readonly packageId: number;
   readonly url: string;
-}): Promise<typeof Package.Type> =>
-  run(
-    Effect.gen(function* linkBoothRequest() {
-      const { LinkBooth: linkBoothRpc } = yield* AredokoClient;
-      return yield* linkBoothRpc(link);
-    }),
-  );
+}): Promise<typeof Package.Type> => call(({ LinkBooth: linkBoothRpc }) => linkBoothRpc(link));
 
 const search = (query: {
   readonly query: string;
@@ -173,13 +145,7 @@ const search = (query: {
   readonly limit: number;
   readonly packageId: number | null;
 }): Promise<readonly (typeof SearchResult.Type)[]> =>
-  run(
-    Effect.gen(function* searchRequest() {
-      const { Search: searchRpc } = yield* AredokoClient;
-      const { results } = yield* searchRpc(query);
-      return results;
-    }),
-  );
+  call(({ Search: searchRpc }) => Effect.map(searchRpc(query), ({ results }) => results));
 
 const listAssets = (query: {
   readonly packageId: number | null;
@@ -187,66 +153,37 @@ const listAssets = (query: {
   readonly offset: number;
   readonly limit: number;
 }): Promise<Readonly<{ assets: readonly (typeof SearchResult.Type)[]; total: number }>> =>
-  run(
-    Effect.gen(function* listAssetsRequest() {
-      const { ListAssets: listAssetsRpc } = yield* AredokoClient;
-      return yield* listAssetsRpc(query);
-    }),
-  );
+  call(({ ListAssets: listAssetsRpc }) => listAssetsRpc(query));
 
 const extract = (
   assetIds: readonly number[],
 ): Promise<Readonly<{ path: string; assets: number }>> =>
-  run(
-    Effect.gen(function* extractRequest() {
-      const { Extract: extractRpc } = yield* AredokoClient;
-      const { path, assets } = yield* extractRpc({ assetIds });
-      return { path, assets };
-    }),
-  );
+  call(({ Extract: extractRpc }) => extractRpc({ assetIds }));
 
 const listRenderJobs = (): Promise<readonly Readonly<{ assetId: number; pathname: string }>[]> =>
-  run(
-    Effect.gen(function* listRenderJobsRequest() {
-      const { ListRenderJobs: listRenderJobsRpc } = yield* AredokoClient;
-      const { jobs } = yield* listRenderJobsRpc();
-      return jobs;
-    }),
+  call(({ ListRenderJobs: listRenderJobsRpc }) =>
+    Effect.map(listRenderJobsRpc(), ({ jobs }) => jobs),
   );
 
 const readModel = (
   assetId: number,
 ): Promise<
   Readonly<{ model: Uint8Array; files: readonly Readonly<{ name: string; data: Uint8Array }>[] }>
-> =>
-  run(
-    Effect.gen(function* readModelRequest() {
-      const { ReadModel: readModelRpc } = yield* AredokoClient;
-      return yield* readModelRpc({ assetId });
-    }),
-  );
+> => call(({ ReadModel: readModelRpc }) => readModelRpc({ assetId }));
 
 const putRender = (rendered: {
   readonly assetId: number;
   readonly pngs: readonly Uint8Array[];
-}): Promise<void> =>
-  run(
-    Effect.gen(function* putRenderRequest() {
-      const { PutRender: putRenderRpc } = yield* AredokoClient;
-      yield* putRenderRpc(rendered);
-    }),
-  );
+}): Promise<void> => call(({ PutRender: putRenderRpc }) => putRenderRpc(rendered));
 
 const encodeBase64 = Schema.encodeEffect(Schema.Uint8ArrayFromBase64);
 
 const getPreview = (assetId: number): Promise<string> =>
-  run(
-    Effect.gen(function* getPreviewRequest() {
-      const { GetPreview: getPreviewRpc } = yield* AredokoClient;
-      const { png } = yield* getPreviewRpc({ assetId });
-      const base64 = yield* encodeBase64(png);
-      return `data:image/png;base64,${base64}`;
-    }),
+  call(({ GetPreview: getPreviewRpc }) =>
+    getPreviewRpc({ assetId }).pipe(
+      Effect.flatMap(({ png }) => encodeBase64(png)),
+      Effect.map((base64) => `data:image/png;base64,${base64}`),
+    ),
   );
 
 export {
