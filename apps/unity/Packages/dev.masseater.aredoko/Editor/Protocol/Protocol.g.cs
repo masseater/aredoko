@@ -328,6 +328,9 @@ namespace Aredoko.Protocol
 
     public partial class Status
     {
+        [JsonProperty("analyzingAssetId")]
+        public long? AnalyzingAssetId { get; set; }
+
         [JsonProperty("current")]
         public string? Current { get; set; }
 

@@ -1,7 +1,7 @@
 import { Array, Effect, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { vectorBytes } from "#shared/database";
+import { ASSET_ORDER, vectorBytes } from "#shared/database";
 import { Embedder } from "#shared/embedding";
 import { decodeRows } from "#shared/sql";
 
@@ -11,6 +11,11 @@ const IMAGE_BATCH = 8;
 const NO_IMAGES = 0;
 
 type Image = typeof ImageRow.Type;
+
+interface AnalyzedAsset {
+  readonly assetId: number;
+  readonly pathname: string;
+}
 
 const save = Effect.fn("saveImageVector")(function* saveImageVector(
   { id }: Image,
@@ -50,16 +55,21 @@ const embedOneByOne = Effect.fn("embedOneByOne")(function* embedOneByOne(images:
 });
 
 const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
-  onAsset: (pathname: string) => Effect.Effect<void>,
+  onAsset: (asset: AnalyzedAsset) => Effect.Effect<void>,
 ) {
   const sql = yield* SqlClient.SqlClient;
   const pending = yield* decodeRows(ImageRow)(
-    sql`select i.id, i.png, a.pathname from images i join assets a on a.id = i.asset_id
-      where i.embedded = 0 limit ${IMAGE_BATCH}`,
+    sql`select i.id, i.png, i.asset_id, a.pathname from images i join assets a on a.id = i.asset_id
+      where i.embedded = 0
+      order by ${sql.literal(ASSET_ORDER)}, i.id
+      limit ${IMAGE_BATCH}`,
   );
   yield* pipe(
     Array.head(pending),
-    Option.match({ onNone: () => Effect.void, onSome: ({ pathname }) => onAsset(pathname) }),
+    Option.match({
+      onNone: () => Effect.void,
+      onSome: ({ asset_id: assetId, pathname }) => onAsset({ assetId, pathname }),
+    }),
   );
   yield* embedBatch(pending).pipe(Effect.catchCause(() => embedOneByOne(pending)));
   return pending.length;
@@ -67,9 +77,10 @@ const embedPending = Effect.fn("embedPending")(function* embedPendingImages(
 
 /** @internal */
 const embedImages = Effect.fn("embedImages")(function* embedAllImages(
-  onAsset: (pathname: string) => Effect.Effect<void>,
+  onAsset: (asset: AnalyzedAsset) => Effect.Effect<void>,
 ) {
   yield* embedPending(onAsset).pipe(Effect.repeat({ while: (count) => count > NO_IMAGES }));
 });
 
 export { embedImages };
+export type { AnalyzedAsset };

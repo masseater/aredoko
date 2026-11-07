@@ -24,13 +24,14 @@ const NO_PREVIEW = "プレビューがありません";
 const getStatus = Effect.fn("GetStatus")(function* status() {
   const library = yield* Library;
   const embedder = yield* Embedder;
-  const { indexing, current } = yield* library.activity;
+  const { indexing, current, analyzing } = yield* library.activity;
   const { packages, images } = yield* failed(progress);
   return {
     version: VERSION,
     device: embedder.device,
     indexing,
     current: Option.getOrNull(current),
+    analyzingAssetId: Option.getOrNull(analyzing),
     packages,
     images,
   };

@@ -157,7 +157,7 @@ namespace Aredoko.Window
             {
                 line = status.Packages.Done < status.Packages.Total
                     ? $"取り込み中 {status.Packages.Done} / {status.Packages.Total}"
-                    : $"この PC で解析中 {status.Images.Done} / {status.Images.Total}";
+                    : $"解析中 {status.Images.Done} / {status.Images.Total}";
             }
             else
             {
